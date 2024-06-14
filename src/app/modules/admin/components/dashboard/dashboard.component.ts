@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { ApiServiceService } from '../../../../common/services/apiService.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,13 +23,26 @@ export class DashboardComponent {
 	  data: [{
 		  type: "pie", //change type to column, line, area, doughnut, etc
 		  indexLabel: "{name}: {y}%",
-		  dataPoints: [
-		  	{ name: "Overhead", y: 9.1 },
-		  	{ name: "Problem Solving", y: 3.7 },
-		  	{ name: "Debugging", y: 36.4 },
-		  	{ name: "Writing Code", y: 30.7 },
-		  	{ name: "Firefighting", y: 20.1 }
-		  ]
+		  dataPoints: []
 	  }]
 	}
+  constructor(private apiService: ApiServiceService) { }
+  ngOnInit(): void {
+    this.apiService.getExpenses().subscribe((data: any[]) => {
+      const transformedData = this.transformDataForChart(data);
+      this.chartOptions.data[0].dataPoints = transformedData;
+    });
+  }
+  transformDataForChart(data: any[]): any[] {
+    // Transform your data to the format expected by CanvasJS
+    // Assuming the fetched data is an array of objects like:
+    // { id: number, date: string, type: string, category: string, amount: string, comment: string }
+    // Transform the data according to your requirements
+    return data.map(item => {
+      return {
+        name: item.category,
+        y: parseFloat(item.amount)
+      };
+    });
+  }
 }

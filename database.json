@@ -1,20 +1,66 @@
 {
-    "expenses": [
-      {
-        "id": 1,
-        "date": "2024-05-12",
-        "type": "Banking",
-        "category": "Garment",
-        "amount": "2",
-        "comment":"credit card"
-      },
-      {
-        "id": 2,
-        "date": "2024-05-12",
-        "type": "Banking",
-        "category": "Clothes",
-        "amount": "23",
-        "comment":"debit card"
-      }
-    ]
-  }
+  "expenses": [
+    {
+      "id": 1,
+      "date": "2024-05-12",
+      "type": "Banking",
+      "category": "Garment",
+      "amount": "2",
+      "comment": "credit card"
+    },
+    {
+      "id": 2,
+      "date": "2024-05-12",
+      "type": "Banking",
+      "category": "Clothes",
+      "amount": "23",
+      "comment": "debit card"
+    },
+    {
+      "id": "1256",
+      "date": "2024-06-03",
+      "type": "Banking",
+      "category": "asda",
+      "amount": "1231",
+      "comment": "asd"
+    },
+    {
+      "id": "46a6",
+      "date": "2024-06-03",
+      "type": "Banking",
+      "category": "aqwe",
+      "amount": "3131",
+      "comment": "asd"
+    },
+    {
+      "id": "9a22",
+      "date": "2024-06-03",
+      "type": "Banking",
+      "category": "fsd",
+      "amount": "12312",
+      "comment": "swf"
+    },
+    {
+      "id": "22c6",
+      "date": "2024-06-02",
+      "type": "Banking",
+      "category": "aasd",
+      "amount": "1231",
+      "comment": "Credit"
+    }
+  ],
+  "PaymentType": [
+    {
+      "id": 1,
+      "name": "Credit"
+    },
+    {
+      "id": 2,
+      "name": "Debit"
+    },
+    {
+      "id": 3,
+      "name": "Cash"
+    }
+  ]
+}

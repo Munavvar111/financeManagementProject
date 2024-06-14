@@ -8,7 +8,8 @@ export const layoutRoutes: Routes = [
         children:[
             {
                 path:'',
-                loadComponent:()=>import('../admin/admin.component').then((m)=>m.AdminComponent)
+                redirectTo:'home',
+                pathMatch:'full'
             },
             {
                 path:'home',

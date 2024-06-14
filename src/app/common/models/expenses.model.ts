@@ -6,3 +6,8 @@ export interface Expense {
     amount: number | string;
     comments?: string;
   }
+
+  export interface PaymentType{
+    id?:number,
+    name:string
+  }

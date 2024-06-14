@@ -1,11 +1,11 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer mode="side" closed>
+    <mat-sidenav #drawer mode="side" opened>
       <mat-toolbar color="primary" routerLink="" >Personal Finance Tracker</mat-toolbar>
       <mat-nav-list>
         <a mat-list-item [routerLink]="['/transactions']" routerLinkActive="router-link-active" >Transactions</a>
+        <a mat-list-item [routerLink]="['/addExpenses']">Expenses</a>
         <a mat-list-item routerLink="/accounts">Accounts</a>
         <a mat-list-item routerLink="/incomes">Incomes</a>
-        <a mat-list-item routerLink="/expenses">Expenses</a>
         <a mat-list-item routerLink="/transfers">Amount Transfers</a>
         <a mat-list-item routerLink="/reminders">Reminders</a>
       </mat-nav-list>
