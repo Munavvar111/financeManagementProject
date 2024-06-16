@@ -22,7 +22,15 @@ export const layoutRoutes: Routes = [
             {
                 path:'transactions',
                 loadComponent:()=>import('../admin/components/transection/transection.component').then((m)=>m.TransectionComponent)
-            }
+            },
+            {
+                path:'accounts',
+                loadComponent:()=>import('../admin/components/accounts/accounts.component').then((m)=>m.AccountsComponent)
+            },
+            {
+                path:'incomes',
+                loadComponent:()=>import('../admin/components/incomes/incomes.component').then((m)=>m.IncomesComponent)
+            },
             
         ]
     }

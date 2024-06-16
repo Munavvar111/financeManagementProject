@@ -1,66 +1,78 @@
 {
   "expenses": [
     {
-      "id": 1,
-      "date": "2024-05-12",
+      "id": "1",
+      "date": "2024-06-14",
       "type": "Banking",
       "category": "Garment",
-      "amount": "2",
+      "amount": "200",
       "comment": "credit card"
     },
     {
-      "id": 2,
-      "date": "2024-05-12",
+      "id": "2",
+      "date": "2024-04-12",
       "type": "Banking",
       "category": "Clothes",
-      "amount": "23",
+      "amount": "230",
       "comment": "debit card"
     },
     {
-      "id": "1256",
-      "date": "2024-06-03",
+      "id": "59c1",
+      "date": "2024-07-13",
       "type": "Banking",
-      "category": "asda",
-      "amount": "1231",
-      "comment": "asd"
-    },
-    {
-      "id": "46a6",
-      "date": "2024-06-03",
-      "type": "Banking",
-      "category": "aqwe",
-      "amount": "3131",
-      "comment": "asd"
-    },
-    {
-      "id": "9a22",
-      "date": "2024-06-03",
-      "type": "Banking",
-      "category": "fsd",
-      "amount": "12312",
-      "comment": "swf"
-    },
-    {
-      "id": "22c6",
-      "date": "2024-06-02",
-      "type": "Banking",
-      "category": "aasd",
-      "amount": "1231",
+      "category": "Count",
+      "amount": "100",
       "comment": "Credit"
     }
   ],
   "PaymentType": [
     {
-      "id": 1,
-      "name": "Credit"
+      "id": "1",
+      "name": "Credit",
+      "balnce": 20900
     },
     {
-      "id": 2,
-      "name": "Debit"
+      "id": "2",
+      "name": "Debit",
+      "balnce": 1000
     },
     {
-      "id": 3,
-      "name": "Cash"
+      "id": "3",
+      "name": "Cash",
+      "balnce": 1000
+    },
+    {
+      "id": "e185",
+      "name": "Count",
+      "balnce": 123
+    },
+    {
+      "id": "c8a4",
+      "name": "cash",
+      "balnce": 1234
+    },
+    {
+      "id": "85ee",
+      "name": "adas",
+      "balnce": 123
+    }
+  ],
+  "income": [
+    {
+      "id": "ee40",
+      "date": "2024-06-13",
+      "accountType": "Credit",
+      "amount": 200
+    },{
+      "id": "ee41",
+      "date": "2024-07-13",
+      "accountType": "Credit",
+      "amount": 2000    
+    },{
+      "id": "ee42",
+      "date": "2024-06-13",
+      "accountType": "Credit",
+      "amount": 20000
     }
   ]
 }

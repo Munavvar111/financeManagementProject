@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ data.isEdit ? 'Edit Account' : 'Add Expense' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="data.form">
+    <mat-form-field>
+      <mat-label>Name of the Account</mat-label>
+      <input matInput formControlName="accountName" />
+      <!-- <mat-error *ngIf="data.form.controls.accountName.hasError('required')">
+        Account Name is required
+      </mat-error> -->
+    </mat-form-field>
+    <ng-container *ngIf="!data.isEdit">
+      <mat-form-field>
+        <mat-label>Balance</mat-label>
+        <input matInput formControlName="accountBalance" type="number" />
+        <!-- <mat-error *ngIf="data.form.controls.accountBalance.hasError('required')">
+          Account Balance is required
+        </mat-error> -->
+      </mat-form-field>
+    </ng-container>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button color="primary" [mat-dialog-close]="true" [disabled]="data.form.invalid">
+    {{ data.isEdit ? 'Save' : 'Add' }}
+  </button>
+</mat-dialog-actions>
