@@ -54,7 +54,9 @@ export class ApiServiceService {
     return this.http.post<any>(`${this.url}/categories`,category);
   }
 
-
+  getIncomeAndExpense(): Observable<{ income: Incomes[], expense: Expense[] }> {
+    return this.http.get<{ income: Incomes[], expense: Expense[] }>(`${this.url}/income-and-expense`);
+  }
   updateCategory(id, category): Observable<any> {
     return this.http.put<any>(`${this.url}/categories`,category);
   }
