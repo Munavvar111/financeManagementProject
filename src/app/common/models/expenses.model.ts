@@ -18,3 +18,16 @@ export interface Expense {
     accountType:string,
     amount:number
   }
+export  interface Category {
+    id: number;
+    name: string;
+    type: string;
+    subcategories: Subcategory[];
+}
+
+export interface Subcategory {
+    id: number; 
+    name: string;
+}
+// subcategory.model.ts
+

@@ -1,0 +1,35 @@
+<div>
+    <form [formGroup]="searchForm">
+      <mat-form-field>
+        <input matInput placeholder="Search" formControlName="filterText">
+      </mat-form-field>
+    </form>
+    <div>
+      <button mat-button (click)="selectSection('Income')">Income</button>
+      <button mat-button (click)="selectSection('Expenses')">Expenses</button>
+    </div>
+    <form [formGroup]="addCategoryForm" (ngSubmit)="addCategory()">
+      <mat-form-field>
+        <input matInput placeholder="Add Category" formControlName="name">
+      </mat-form-field>
+      <button mat-button type="submit">Add</button>
+    </form>
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let category of filteredCategories">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>category</mat-icon>
+            {{ category.name }}
+          </mat-panel-title>
+          <mat-panel-description *ngIf="category.section == 'Income' || category.section == 'Expenses'">
+            <button mat-button (click)="deleteCategory(category.id)">Delete</button>
+            <button mat-button (click)="updateCategory(category)">Update</button>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div *ngIf="category.subcategories && category.subcategories.length">
+          <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  

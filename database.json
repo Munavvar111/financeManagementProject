@@ -1,27 +1,31 @@
 {
   "expenses": [
     {
-      "id": "1",
-      "date": "2024-06-14",
-      "type": "Banking",
-      "category": "Garment",
-      "amount": "200",
-      "comment": "credit card"
+      "id": "bae8",
+      "date": "2024-06-17",
+      "category": "Food/Drinks",
+      "amount": 123,
+      "comment": "Credit"
     },
     {
-      "id": "2",
-      "date": "2024-04-12",
-      "type": "Banking",
-      "category": "Clothes",
-      "amount": "230",
-      "comment": "debit card"
+      "id": "2379",
+      "date": "2024-06-17",
+      "category": "Food/Drinks",
+      "amount": 100,
+      "comment": "Credit"
     },
     {
-      "id": "59c1",
-      "date": "2024-07-13",
-      "type": "Banking",
-      "category": "Count",
-      "amount": "100",
+      "id": "f96b",
+      "date": "2024-06-12",
+      "category": "Shopping",
+      "amount": 100,
+      "comment": "Credit"
+    },
+    {
+      "id": "d94e",
+      "date": "2024-06-12",
+      "category": "Shopping",
+      "amount": 200,
       "comment": "Credit"
     }
   ],
@@ -29,7 +33,7 @@
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 20900
+      "balnce": 18982
     },
     {
       "id": "2",
@@ -39,40 +43,70 @@
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 1000
-    },
-    {
-      "id": "e185",
-      "name": "Count",
-      "balnce": 123
-    },
-    {
-      "id": "c8a4",
-      "name": "cash",
-      "balnce": 1234
-    },
-    {
-      "id": "85ee",
-      "name": "adas",
-      "balnce": 123
+      "balnce": 0
     }
   ],
   "income": [
     {
-      "id": "ee40",
-      "date": "2024-06-13",
-      "accountType": "Credit",
-      "amount": 200
-    },{
-      "id": "ee41",
-      "date": "2024-07-13",
-      "accountType": "Credit",
-      "amount": 2000    
-    },{
-      "id": "ee42",
-      "date": "2024-06-13",
-      "accountType": "Credit",
-      "amount": 20000
+      "id": "e42b",
+      "date": "2024-06-12T18:30:00.000Z",
+      "accountType": "Debit",
+      "amount": 1000
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Income",
+      "type": "income",
+      "subcategories": []
+    },
+    {
+      "id": "2",
+      "name": "Expenses",
+      "type": "expense",
+      "subcategories": [
+        {
+          "id": "21",
+          "name": "Food/Drinks"
+        },
+        {
+          "id": "22",
+          "name": "Shopping"
+        },
+        {
+          "id": "23",
+          "name": "Transportation"
+        },
+        {
+          "id": "24",
+          "name": "Entertainment"
+        },
+        {
+          "id": "25",
+          "name": "Home"
+        },
+        {
+          "id": "26",
+          "name": "Family"
+        },
+        {
+          "id": "27",
+          "name": "Health/Sport"
+        },
+        {
+          "id": "28",
+          "name": "Pets"
+        },
+        {
+          "id": "29",
+          "name": "Travels"
+        },
+        {
+          "id": "30",
+          "name": "Other (Expenses)"
+        }
+      ]
     }
   ]
 }

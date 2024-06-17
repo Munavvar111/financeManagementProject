@@ -35,13 +35,26 @@ export class DashboardComponent implements OnInit {
       this.chartdata = result;
       if (this.chartdata != null) {
         this.processExpenses(this.chartdata);
-        for (let i = 0; i < this.chartdata.length; i++) {
-          this.labeldata.push(this.chartdata[i].category);
-          this.realdata.push(this.chartdata[i].amount);
-          this.colordata.push(this.getRandomColor(i, this.chartdata.length));
+      
+        const aggregatedData =this.aggregateDataByCategory(this.chartdata);
+
+
+        
+        this.labeldata=[];
+        this.realdata=[];
+        this.colordata=[];
+        
+        const categories=Object.keys(aggregatedData);
+        for (let i = 0; i < categories.length; i++) {
+          const category = categories[i];
+          const amount = aggregatedData[category];
+  
+          this.labeldata.push(category);
+          this.realdata.push(amount);
+          this.colordata.push(this.getRandomColor(i, categories.length));
         }
         this.last7DaysData = this.getLast7DaysExpenses(this.chartdata);
-
+        
         if (isPlatformBrowser(this.platformId)) {
           this.RenderChart(this.labeldata, this.realdata, this.colordata, 'doughnut', 'doughnutChart');
           const last7DaysLabels = this.last7DaysData.map(item => item.date);
@@ -60,8 +73,25 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
+
   }
 
+  private aggregateDataByCategory(data:any[]):{[category:string]:number}{
+    const aggregatedData = {};
+    for(const item of data){
+      const category=item.category;
+      const amount=item.amount
+    if(aggregatedData[category]){
+      aggregatedData[category]+=amount
+    }
+    else{
+      aggregatedData[category]=amount;
+    }
+    
+  }
+  return aggregatedData
+
+  }
   ngOnDestroy(): void {
     if (this.doughnutChart) {
       this.doughnutChart.destroy();
@@ -134,7 +164,6 @@ export class DashboardComponent implements OnInit {
   }
 
   RenderChart(labeldata: string[], maindata: number[], colordata: string[], type: ChartType, id: string) {
-    if (isPlatformBrowser(this.platformId)) {
       const chartElement = document.getElementById(id) as HTMLCanvasElement;
       if (chartElement) {
         const ctx = chartElement.getContext('2d');
@@ -148,7 +177,7 @@ export class DashboardComponent implements OnInit {
             data: {
               labels: labeldata,
               datasets: [{
-                label: 'Default Label',
+                label: 'Anount',
                 data: maindata,
                 backgroundColor: colordata,
                 borderColor: colordata.map(color => this.adjustColor(color, -20)), // Adjust border color for better visibility
@@ -167,7 +196,6 @@ export class DashboardComponent implements OnInit {
           this[id] = chartInstance;
         }
       }
-    }
   }
 
   getLast7DaysExpenses(data: any[]): { date: string, amount: number }[] {
@@ -179,7 +207,6 @@ export class DashboardComponent implements OnInit {
       date.setDate(today.getDate() - i);
       last7Days.push({ date: date.toDateString(), amount: 0 });
     }
-
     data.forEach(item => {
       const itemDate = new Date(item.date).toDateString();
       const day = last7Days.find(d => d.date === itemDate);
@@ -187,7 +214,6 @@ export class DashboardComponent implements OnInit {
         day.amount += parseFloat(item.amount);
       }
     });
-
     return last7Days;
   }
 

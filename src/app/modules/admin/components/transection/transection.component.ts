@@ -5,12 +5,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-transection',
   standalone: true,
-  imports: [MaterialModule,AsyncPipe],
+  imports: [MaterialModule],
   templateUrl: './transection.component.html',
   styleUrl: './transection.component.css'
 })
@@ -18,6 +17,7 @@ export class TransectionComponent implements OnInit  {
 
   displayedColumns: string[] = ['id', 'date', 'type', 'category',"amount","comment"];
   dataSource: MatTableDataSource<Expense> = new MatTableDataSource();
+  
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -27,7 +27,7 @@ export class TransectionComponent implements OnInit  {
   ngOnInit() {
     this.fetchData()
   }
-
+  
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -46,7 +46,7 @@ export class TransectionComponent implements OnInit  {
                 type: 'Income',
                 category: incomeItem.accountType,
                 amount: incomeItem.amount.toString(),
-                comment: ''
+                comment: 'Add Money'
               }))
             ];
             this.dataSource.data = combinedData;

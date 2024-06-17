@@ -43,8 +43,11 @@
         <div class="col">
           <mat-form-field appearance="fill" class="w-100">
             <mat-label>Category</mat-label>
-            <input matInput type="text" formControlName="category" />
-          </mat-form-field>
+            <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="auto" (input)="filterCategory()" (focus)="filterCategory()" id="account1">
+            <mat-autocomplete requireSelection #auto="matAutocomplete">
+              <mat-option *ngFor="let option of filterCategoryOption" [value]="option">{{option}}</mat-option>
+            </mat-autocomplete>
+                    </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field appearance="fill" class="w-100">

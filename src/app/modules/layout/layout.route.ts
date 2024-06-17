@@ -31,6 +31,14 @@ export const layoutRoutes: Routes = [
                 path:'incomes',
                 loadComponent:()=>import('../admin/components/incomes/incomes.component').then((m)=>m.IncomesComponent)
             },
+            {
+                path:'calenders',
+                loadComponent:()=>import('../admin/components/calendar/calendar.component').then((m)=>m.CalendarComponent)
+            },
+            {
+                path:'category',
+                loadComponent:()=>import('../admin/components/category/category.component').then((m)=>m.CategoryComponent)
+            }
             
         ]
     }

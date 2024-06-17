@@ -1,11 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
-import { Observable } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Expense, PaymentType } from '../../../../common/models/expenses.model';
+import { Category, Expense, PaymentType } from '../../../../common/models/expenses.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-addExpenses',
@@ -16,14 +16,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AddExpensesComponent implements OnInit {
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
+  @ViewChild('inputCategory') inputCategory: ElementRef<HTMLInputElement>;
 
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
   accounts: PaymentType[];
   filteredOptions: string[];
+  filterCategoryOption: string[];
+  categories:string[];
 
-  constructor(private fb: FormBuilder, private apiService: ApiServiceService, private snackBar: MatSnackBar) {
+  constructor(private fb: FormBuilder, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router) {
     this.expenseForm = this.fb.group({
       date: [''],
       account: [''],
@@ -37,6 +40,11 @@ export class AddExpensesComponent implements OnInit {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredOptions = this.options.filter(o => o.toLowerCase().includes(filterValue));
   }
+  filterCategory():void{
+    const filterCategoryValue=this.inputCategory.nativeElement.value.toLowerCase();
+    console.log(filterCategoryValue)
+    this.filterCategoryOption=this.categories.filter(o=>o.toLowerCase().includes(filterCategoryValue))
+  }
 
   //formArray For Category and amount to add multiple expenses
   expenses(): FormArray {
@@ -45,7 +53,7 @@ export class AddExpensesComponent implements OnInit {
   //new expense add in form group
   newExpense(): FormGroup {
     return this.fb.group({
-      category: ['', Validators.required],
+      category:['', Validators.required],
       amount: ['', Validators.required]
     });
   }
@@ -60,8 +68,17 @@ export class AddExpensesComponent implements OnInit {
 
 
   ngOnInit() {
+    console.log("its again come")
     //add first category and amount when page is render
     this.addExpense();
+
+    this.apiService.getCategories().subscribe({
+      next:(response:Category[])=>{
+        this.categories= response[1].subcategories.map(item=>item.name)
+        console.log(this.categories)
+
+      }
+    })
 
     this.apiService.getAccount().subscribe({
       next: (data: PaymentType[]) => {
@@ -84,9 +101,9 @@ export class AddExpensesComponent implements OnInit {
   transformExpenseData(formData: any): Expense[] {
     return formData.expenses.map((expense: any, index: number) => ({
       date: new Date(formData.date).toISOString().split('T')[0],
-      type: 'Banking',
+      type: expense.account,
       category: expense.category,
-      amount: expense.amount.toString(),
+      amount: expense.amount,
       comment: formData.account
     }));
   }
@@ -110,8 +127,11 @@ export class AddExpensesComponent implements OnInit {
       const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
 
       const accountName=this.expenseForm.get("account").value;
+      console.log(accountName)
       const account=this.accounts.find(acc=>acc.name  ==accountName);
+      console.log(account)
       const totalAmount=this.expenseForm.get("totalAmount").value;
+      console.log(totalAmount)
 
       account.balnce -=totalAmount;
 
@@ -130,9 +150,14 @@ export class AddExpensesComponent implements OnInit {
           }
         });
       });
+      this.router.navigate(['addExpenses'])
+
       this.expenseForm.reset();
           this.expenseForm.setControl('expenses', this.fb.array([]));
           this.addExpense();
+          this.expenseForm.get("expenses").valueChanges.subscribe(() => {
+            this.updateTotalAmount();
+          })  
     }
   })
     }

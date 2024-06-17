@@ -1,0 +1,23 @@
+<mat-accordion>
+    @for (subcategory of subcategories; track $index) {
+
+    <mat-expansion-panel >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>subdirectory_arrow_right</mat-icon>
+          {{ subcategory.name }}
+        </mat-panel-title>
+        <mat-panel-description>
+          <button mat-button (click)="deleteCategory(2,subcategory.id)">Delete</button>
+          <button mat-button (click)="updateCategory(subcategory)">Update</button>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (subcategory.subcategories && subcategory.subcategories.length) {
+
+          <app-sub-category [subcategories]="subcategory.subcategories"></app-sub-category>
+        }
+    </mat-expansion-panel>
+}
+
+  </mat-accordion>
+  
