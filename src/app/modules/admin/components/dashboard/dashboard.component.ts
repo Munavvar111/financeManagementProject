@@ -1,23 +1,20 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
-import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { AsyncPipe, CommonModule, isPlatformBrowser } from '@angular/common';
-import { Chart, ChartType, registerables } from 'chart.js';
-import {
-  Expense,
-  Incomes,
-  Transection,
-} from '../../../../common/models/expenses.model';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
+import { ApiServiceService } from '../../../../common/services/apiService.service';
+import { Expense, Incomes, Transection } from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
+import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
+
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule,AsyncPipe,CommonModule],
+  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
   chartdata: Expense[];
@@ -30,107 +27,130 @@ export class DashboardComponent implements OnInit {
   lastNDaysIncomes: number[] = [];
   monthlyExpenses: number[] = Array(12).fill(0);
   monthlyIncome: number[] = Array(12).fill(0);
-  doughnutChart: Chart | undefined;
-  barChart: Chart | undefined;
-  incomeVsExpenseChart: Chart | undefined;
   rangeForm: FormGroup;
   expenses: Expense[];
   transactions: Transection[] = [];
   filteredTransactions: Transection[] = [];
   selectedType: string = 'all'; // 'all', 'income', 'expense'
 
+  doughnutChartData: ChartConfiguration['data'] | null = null;
+  doughnutChartOptions: ChartConfiguration['options'] | null = null;
+  barChartData: ChartConfiguration['data'] | null = null;
+  barChartOptions: ChartConfiguration['options'] | null = null;
+  incomeVsExpenseChartData: ChartConfiguration['data'] | null = null;
+  incomeVsExpenseChartOptions: ChartConfiguration['options'] | null = null;
 
   constructor(
     private service: ApiServiceService,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+
   ) {
     this.rangeForm = this.fb.group({
       selectedRange: [''], // Initial form control value
     });
   }
+
   onRangeChange(): void {
     const selectedRangeValue = this.rangeForm.value.selectedRange;
     this.loadData(selectedRangeValue);
+    // this.cdr.detectChanges()
     console.log(selectedRangeValue);
   }
-  ngOnInit(): void {
-    //load intitial transection
-    this.loadTransactions();
 
+  ngOnInit(): void {
+    this.loadTransactions();
+    this.rangeForm.patchValue({ selectedRange: 'last7' });
+    this.loadInitialData();
+  }
+
+  loadInitialData(): void {
     this.service.getIncomeAndExpenses().subscribe(([incomes, expenses]) => {
       this.transactions = [
-        ...incomes.map((item) => ({ ...item, type: 'income' })),
-        ...expenses.map((item) => ({ ...item, type: 'expenses' })),
+        ...incomes.map(item => ({ ...item, type: 'income' })),
+        ...expenses.map(item => ({ ...item, type: 'expenses' })),
       ];
       console.log(this.transactions);
     });
-    this.rangeForm.patchValue({
-      selectedRange: 'last30', // Default selection
-    });
+
     this.service.getExpenses().subscribe((result) => {
       console.log(result);
       this.chartdata = result;
       if (this.chartdata != null) {
-        this.processExpenses(this.chartdata);
-
-        //identify the number of the uniqu category
-        const aggregatedData = this.aggregateDataByCategory(this.chartdata);
-
-        this.labeldata = [];
-        this.realdata = [];
-        this.colordata = [];
-
-        const categories = Object.keys(aggregatedData);
-        for (let i = 0; i < categories.length; i++) {
-          const category = categories[i];
-          const amount = aggregatedData[category];
-
-          this.labeldata.push(category);
-          this.realdata.push(amount);
-          this.colordata.push(this.getRandomColor(i, categories.length));
-        }
-        this.last7DaysData = this.getLast7DaysExpenses(this.chartdata);
-
-        if (isPlatformBrowser(this.platformId)) {
-          this.RenderChart(
-            this.labeldata,
-            this.realdata,
-            this.colordata,
-            'doughnut',
-            'doughnutChart'
-          );
-          const last7DaysLabels = this.last7DaysData.map((item) => item.date);
-          const last7DaysAmounts = this.last7DaysData.map(
-            (item) => item.amount
-          );
-          this.RenderChart(
-            last7DaysLabels,
-            last7DaysAmounts,
-            this.colordata.slice(0, 7),
-            'bar',
-            'barChart'
-          );
-        }
+        this.processExpenses(this.chartdata);//get month wise expenses
+        this.initializeDoughnutChart();//
+        this.initializeBarChart();
       }
     });
 
     this.service.getIncomeDetails().subscribe((incomeResult) => {
       this.incomeData = incomeResult;
       this.processIncome(this.incomeData);
-      if (this.incomeData != null) {
-        // Process income if needed
-        //put snack bar
-      }
     });
 
-    //initial load the dat
-    this.loadData('last30');
+    this.loadData('last7');
   }
 
-  private aggregateDataByCategory(data: Expense[]): {
-    [category: string]: number;
-  } {
+  initializeDoughnutChart(): void {
+    const aggregatedData = this.aggregateDataByCategory(this.chartdata);
+
+    this.labeldata = [];
+    this.realdata = [];
+    this.colordata = [];
+
+    const categories = Object.keys(aggregatedData);
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+      const amount = aggregatedData[category];
+
+      this.labeldata.push(category);
+      this.realdata.push(amount);
+      this.colordata.push(this.getRandomColor(i, categories.length));
+    }
+
+    this.doughnutChartData = {
+      labels: this.labeldata,
+      datasets: [
+        {
+          data: this.realdata,
+          backgroundColor: this.colordata,
+        },
+      ],
+    };
+    this.doughnutChartOptions = {
+      responsive: true,
+    };
+  }
+
+  initializeBarChart(): void {
+    this.last7DaysData = this.getLast7DaysExpenses(this.chartdata);
+    const last7DaysLabels = this.last7DaysData.map((item) => item.date);
+    const last7DaysAmounts = this.last7DaysData.map((item) => item.amount);
+    console.log(last7DaysAmounts)
+    console.log(last7DaysLabels)
+
+    this.barChartData = {
+      labels: last7DaysLabels,
+      datasets: [
+        {
+          label:"Expenses",
+          data: last7DaysAmounts,
+          backgroundColor: this.colordata.slice(0, 7),
+        },
+      ],
+    };
+    this.barChartOptions = {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+  }
+
+  private aggregateDataByCategory(data: Expense[]): { [category: string]: number } {
     const aggregatedData = {};
     for (const item of data) {
       const category = item.category;
@@ -143,68 +163,27 @@ export class DashboardComponent implements OnInit {
     }
     return aggregatedData;
   }
-  ngOnDestroy(): void {
-    if (this.doughnutChart) {
-      this.doughnutChart.destroy();
-    }
-    if (this.barChart) {
-      this.barChart.destroy();
-    }
-  }
+
+  ngOnDestroy(): void {}
+
   private loadData(selectedRange: string): void {
+    console.log(selectedRange)
     this.service.getExpenses().subscribe((expensesResult) => {
       this.chartdata = expensesResult;
       if (this.chartdata != null) {
-        // Process and render charts based on selectedRange
         switch (selectedRange) {
           case 'last7':
-            this.lastNDaysExpenses = this.getLastnDaysExpenses(
-              this.chartdata,
-              7
-            );
-            this.lastNDaysIncomes = this.getLastnDaysIncomes(
-              this.incomeData,
-              7
-            );
-            if (isPlatformBrowser(this.platformId)) {
-              this.RenderIncomeVsExpenseChart(
-                this.last7DaysData.map((item) => item.date),
-                this.lastNDaysIncomes,
-                this.lastNDaysExpenses
-              );
-            }
+            console.log("hiiiasda")
+            this.lastNDaysExpenses = this.getLastnDaysExpenses(this.chartdata, 7);
+            this.lastNDaysIncomes = this.getLastnDaysIncomes(this.incomeData, 7);
+            this.initializeIncomeVsExpenseChart(this.last7DaysData.map((item) => item.date), this.lastNDaysIncomes, this.lastNDaysExpenses);
             break;
           case 'last30':
-            if (isPlatformBrowser(this.platformId)) {
-              this.RenderIncomeVsExpenseChart(
-                this.getLastnDaysLabels(30),
-                this.getLastnDaysIncomes(this.incomeData, 30),
-                this.getLastnDaysExpenses(this.chartdata, 30)
-              );
-            }
+            this.initializeIncomeVsExpenseChart(this.getLastnDaysLabels(30), this.getLastnDaysIncomes(this.incomeData, 30), this.getLastnDaysExpenses(this.chartdata, 30));
             break;
           case 'last365':
-            const months = [
-              'Jan',
-              'Feb',
-              'Mar',
-              'Apr',
-              'May',
-              'Jun',
-              'Jul',
-              'Aug',
-              'Sep',
-              'Oct',
-              'Nov',
-              'Dec',
-            ];
-            if (isPlatformBrowser(this.platformId)) {
-              this.RenderIncomeVsExpenseChart(
-                months,
-                this.monthlyIncome,
-                this.monthlyExpenses
-              );
-            }
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            this.initializeIncomeVsExpenseChart(months, this.monthlyIncome, this.monthlyExpenses);
             break;
           default:
             break;
@@ -214,9 +193,9 @@ export class DashboardComponent implements OnInit {
   }
 
   processExpenses(expenses: Expense[]): void {
-    expenses.forEach((expenses) => {
-      const month = new Date(expenses.date).getMonth();
-      this.monthlyExpenses[month] += expenses.amount;
+    expenses.forEach((expense) => {
+      const month = new Date(expense.date).getMonth();
+      this.monthlyExpenses[month] += expense.amount;
     });
   }
 
@@ -226,102 +205,41 @@ export class DashboardComponent implements OnInit {
       this.monthlyIncome[month] += income.amount;
     });
   }
-  RenderIncomeVsExpenseChart(
-    labels: string[],
-    incomes: number[],
-    expenses: number[]
-  ) {
-    const chartElement = document.getElementById(
-      'incomeVsExpenseChart'
-    ) as HTMLCanvasElement;
-    if (chartElement) {
-      const ctx = chartElement.getContext('2d');
-      if (ctx) {
-        let chartInstance: Chart | undefined;
-        if (this['incomeVsExpenseChart']) {
-          this['incomeVsExpenseChart'].destroy();
-        }
-        this.incomeVsExpenseChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: 'Income',
-                data: incomes,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false,
-                tension: 0.1,
-              },
-              {
-                label: 'Expense',
-                data: expenses,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-                fill: false,
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          },
-        });
-      }
-    }
-  }
 
-  RenderChart(
-    labeldata: string[],
-    maindata: number[],
-    colordata: string[],
-    type: ChartType,
-    id: string
-  ) {
-    const chartElement = document.getElementById(id) as HTMLCanvasElement;
-    if (chartElement) {
-      const ctx = chartElement.getContext('2d');
-      if (ctx) {
-        let chartInstance: Chart | undefined;
-        if (this[id]) {
-          this[id].destroy();
-        }
-        chartInstance = new Chart(ctx, {
-          type: type,
-          data: {
-            labels: labeldata,
-            datasets: [
-              {
-                label: 'Anount',
-                data: maindata,
-                backgroundColor: colordata,
-                borderColor: colordata.map((color) =>
-                  this.adjustColor(color, -20)
-                ), // Adjust border color for better visibility
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          },
-        });
-        this[id] = chartInstance;
-      }
-    }
+  initializeIncomeVsExpenseChart(labels: string[], incomes: number[], expenses: number[]): void {
+    this.incomeVsExpenseChartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Income',
+          data: incomes,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          fill: false,
+          tension: 0.1,
+        },
+        {
+          label: 'Expense',
+          data: expenses,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          fill: false,
+          tension: 0.1,
+        },
+      ],
+    };
+    this.incomeVsExpenseChartOptions = {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+    // this.cdr.detectChanges(); // Manually trigger change detection
+
   }
 
   getLast7DaysExpenses(data: any[]): { date: string; amount: number }[] {
@@ -342,6 +260,7 @@ export class DashboardComponent implements OnInit {
     });
     return last7Days;
   }
+
   private getLastnDaysLabels(days: number): string[] {
     const labels = [];
     const today = new Date();
@@ -363,15 +282,14 @@ export class DashboardComponent implements OnInit {
     data.forEach((item) => {
       const itemDate = new Date(item.date);
       if (itemDate >= startDate && itemDate <= today) {
-        const index = Math.floor(
-          (itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
-        );
+        const index = Math.floor((itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
         expenses[index] += item.amount;
       }
     });
 
     return expenses;
   }
+
   private getLastnDaysIncomes(data: Incomes[], days: number): number[] {
     const today = new Date();
     const lastNDaysIncomes: number[] = Array(days).fill(0);
@@ -393,21 +311,6 @@ export class DashboardComponent implements OnInit {
     return `hsl(${hue}, 70%, 50%)`;
   }
 
-  adjustColor(color: string, amount: number): string {
-    return (
-      '#' +
-      color
-        .replace(/^#/, '')
-        .replace(/../g, (color) =>
-          (
-            '0' +
-            Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(
-              16
-            )
-          ).substr(-2)
-        )
-    );
-  }
   loadTransactions(): void {
     this.service.getIncomeAndExpenses().subscribe(([income, expenses]) => {
       this.transactions = [
@@ -420,7 +323,6 @@ export class DashboardComponent implements OnInit {
 
   applyFilter(type: string): void {
     this.selectedType = type;
-    console.log(this.transactions)
     let filtered = this.transactions;
     if (type !== 'all') {
       filtered = this.transactions.filter(transaction => transaction.type === type);
@@ -431,8 +333,8 @@ export class DashboardComponent implements OnInit {
 
     // Limit to the last 5 transactions
     this.filteredTransactions = filtered.slice(0, 5);
-    console.log(this.filteredTransactions)
   }
+
   filterTransactions(type: string): void {
     this.applyFilter(type); 
   }
