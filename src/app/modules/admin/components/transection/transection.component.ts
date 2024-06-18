@@ -5,11 +5,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-transection',
   standalone: true,
-  imports: [MaterialModule],
+  imports: [MaterialModule,CommonModule],
   templateUrl: './transection.component.html',
   styleUrl: './transection.component.css'
 })
@@ -37,7 +38,7 @@ export class TransectionComponent implements OnInit  {
     this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
         this.apiService.getIncomeDetails().subscribe({
-          next: (income: any[]) => {
+          next: (income: Incomes[]) => {
             const combinedData = [
               ...expenses.map(expense => ({ ...expense, type: 'Expense' })),
               ...income.map(incomeItem => ({
@@ -45,7 +46,7 @@ export class TransectionComponent implements OnInit  {
                 date: incomeItem.date,
                 type: 'Income',
                 category: incomeItem.accountType,
-                amount: incomeItem.amount.toString(),
+                amount: incomeItem.amount,
                 comment: 'Add Money'
               }))
             ];

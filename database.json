@@ -49,7 +49,7 @@
   "income": [
     {
       "id": "e42b",
-      "date": "2024-06-12T18:30:00.000Z",
+      "date": "2024-06-12",
       "accountType": "Debit",
       "amount": 1000
     }
@@ -59,54 +59,45 @@
       "id": "1",
       "name": "Income",
       "type": "income",
-      "subcategories": []
+      "isOpen": false
     },
     {
       "id": "2",
       "name": "Expenses",
       "type": "expense",
-      "subcategories": [
-        {
-          "id": "21",
-          "name": "Food/Drinks"
-        },
-        {
-          "id": "22",
-          "name": "Shopping"
-        },
-        {
-          "id": "23",
-          "name": "Transportation"
-        },
-        {
-          "id": "24",
-          "name": "Entertainment"
-        },
-        {
-          "id": "25",
-          "name": "Home"
-        },
-        {
-          "id": "26",
-          "name": "Family"
-        },
-        {
-          "id": "27",
-          "name": "Health/Sport"
-        },
-        {
-          "id": "28",
-          "name": "Pets"
-        },
-        {
-          "id": "29",
-          "name": "Travels"
-        },
-        {
-          "id": "30",
-          "name": "Other (Expenses)"
-        }
-      ]
+      "isOpen": true
+    }
+  ],
+  "subcategories": [
+    {
+      "id": "25",
+      "name": "Home",
+      "categoryId": "2"
+    },
+    {
+      "id": "26",
+      "name": "Family",
+      "categoryId": "2"
+    },
+    {
+      "id": "27",
+      "name": "Health/Sport",
+      "categoryId": "2"
+    },
+    {
+      "id": "28",
+      "name": "Pets",
+      "categoryId": "2"
+    },
+    {
+      "id": "29",
+      "name": "Travels",
+      "categoryId": "2"
+    },
+    {
+      "id": "30",
+      "name": "Other (Expenses)",
+      "categoryId": "2"
     }
   ]
 }

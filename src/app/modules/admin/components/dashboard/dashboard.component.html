@@ -1,4 +1,4 @@
-<div class="container mt-3">
+<!-- <div class="container mt-3">
     <div class="row">
 
         <div class="col-lg-4 bg-white p-3">
@@ -18,4 +18,66 @@
 
     </div>
     
+</div> -->
+<div class="container mt-3">
+    <div class="row gap-3">
+        <div class="col-md-5 bg-white">
+            <h1>Last Seven Day Expenses</h1>
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="col-lg-6 bg-white">
+          <div class=" d-flex justify-content-between">
+
+              <h1>Money Flow</h1>
+              <form [formGroup]="rangeForm" class="">
+                
+                <mat-form-field appearance="outline" >
+
+                    <mat-label>Select Date</mat-label>
+                    <mat-select formControlName="selectedRange" (selectionChange)="onRangeChange()" >
+                        <mat-option value="last7">Last 7 Days</mat-option>
+                        <mat-option value="last30">Last 30 Days</mat-option>
+                  <mat-option value="last365">Last 365 Days</mat-option>
+                </mat-select>
+            </mat-form-field>
+          
+        </form>
+    </div>
+          
+            <!-- Chart Canvas -->
+            <canvas id="incomeVsExpenseChart"></canvas>
+          </div>
+          <div class="col-lg-4 bg-white p-3">
+            <h1>Category Charts</h1>
+            <canvas id="doughnutChart"></canvas>
+        </div>
+        <div class="recent-transactions col-lg-4">
+            <div class="header">
+              <span>Recent transactions</span>
+              <mat-form-field appearance="fill">
+                <mat-select [(value)]="selectedType" (selectionChange)="filterTransactions($event.value)">
+                  <mat-option value="all">All</mat-option>
+                  <mat-option value="income">Income</mat-option>
+                  <mat-option value="expenses">Expense</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <div class="transactions">
+              <div *ngFor="let transaction of filteredTransactions" class="transaction">
+                <div class="icon">
+                  <img [src]="transaction.icon" alt="{{ transaction.name }}">
+                </div>
+                <div class="details">
+                  <span class="name">{{ transaction.name }}</span>
+                  <span class="date">{{ transaction.date | date:'MM/dd/yyyy' }}</span>
+                </div>
+                <div class="amount" [ngClass]="{'negative': transaction.amount < 0}">
+                  {{ transaction.amount | currency }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+    </div>
 </div>

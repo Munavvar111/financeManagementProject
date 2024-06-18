@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { Category, Expense, Incomes, PaymentType, Subcategory } from '../models/expenses.model';
 
 @Injectable({
@@ -47,30 +47,21 @@ export class ApiServiceService {
     return this.http.post<Incomes>(`${this.url}/income`,income,{headers});
   }
 
-  getCategories():Observable<Category[]>{
-    return this.http.get<Category[]>(`${this.url}/categories`);
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.url}/categories?_embed=subcategories`);
   }
   addCategory(category): Observable<any> {
     return this.http.post<any>(`${this.url}/categories`,category);
   }
 
-  getIncomeAndExpense(): Observable<{ income: Incomes[], expense: Expense[] }> {
-    return this.http.get<{ income: Incomes[], expense: Expense[] }>(`${this.url}/income-and-expense`);
-  }
-  updateCategory(id, category): Observable<any> {
-    return this.http.put<any>(`${this.url}/categories`,category);
-  }
-  getSubcategories(categoryId: string): Observable<Subcategory[]> {
-    const url = `${this.url}/categories/${categoryId}`;
-    return this.http.get<any>(url).pipe(
-      map((category: any) => category.subcategories as Subcategory[])
-    );
-  }
 
-  deleteCategory(id): Observable<any> {
-    return this.http.delete<any>(`${this.url}/categories/${id}`);
+
+  deleteSubCategory(subcategoryId:number):Observable<Subcategory>{
+    return this.http.delete<Subcategory>(`${this.url}/subcategories/${subcategoryId}`)
   }
-  deleteSubCategory(categoryId: number, subcategoryId: number): Observable<any> {
-    return this.http.delete<any>(`${this.url}/categories/${categoryId}/subcategories/${subcategoryId}`);
+  
+  getIncomeAndExpenses(): Observable<any[]> {
+    return forkJoin([this.getIncomeDetails(), this.getExpenses()]);
   }
 }

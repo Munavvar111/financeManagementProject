@@ -1,8 +1,12 @@
-<div class="mat-elevation-z8">
-  <div class="filter">
-    <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
 
-  </div>
+<div class="filter">
+  <mat-form-field class="">
+
+  <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+</mat-form-field>
+</div>
+<div class="mat-elevation-z8">
+  
   <table mat-table [dataSource]="dataSource" matSort class="mat-table">
 
     <ng-container matColumnDef="id">

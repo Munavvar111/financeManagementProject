@@ -8,8 +8,8 @@
           {{ subcategory.name }}
         </mat-panel-title>
         <mat-panel-description>
-          <button mat-button (click)="deleteCategory(2,subcategory.id)">Delete</button>
-          <button mat-button (click)="updateCategory(subcategory)">Update</button>
+          <button mat-button (click)="deleteCategory(subcategory.id)">Delete</button>
+          <!-- <button mat-button (click)="updateCategory(subcategory)">Update</button> -->
         </mat-panel-description>
       </mat-expansion-panel-header>
       @if (subcategory.subcategories && subcategory.subcategories.length) {

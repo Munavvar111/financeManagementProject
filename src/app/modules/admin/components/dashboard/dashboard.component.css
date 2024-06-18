@@ -1,0 +1,48 @@
+.recent-transactions {
+    font-family: 'Arial, sans-serif';
+    padding: 16px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .transactions .transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .transactions .transaction .icon img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .transactions .transaction .details {
+    flex: 1;
+    margin-left: 12px;
+  }
+  
+  .transactions .transaction .details .name {
+    display: block;
+    font-weight: bold;
+  }
+  
+  .transactions .transaction .details .date {
+    color: #757575;
+  }
+  
+  .transactions .transaction .amount {
+    font-weight: bold;
+  }
+  
+  .transactions .transaction .amount.negative {
+    color: #ff0000;
+  }
+  

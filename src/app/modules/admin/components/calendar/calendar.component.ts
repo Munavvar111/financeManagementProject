@@ -30,26 +30,58 @@ export class CalendarComponent {
   }
 
   loadEvents(): void {
-    // Fetch income and expense data from API
     this.apiService.getIncomeDetails().subscribe(incomeData => {
       this.apiService.getExpenses().subscribe(expenseData => {
-        const events: EventInput[] = [];
-        // Process income data
+        const eventMap: { [date: string]: { income: number, expense: number } } = {};
+        const dailyTotals: { [key: string]: number } = {};
+
+        // Helper function to format the date
+        const formatDate = (date: string | Date): string => {
+          if (typeof date === 'string') {
+            return new Date(date).toISOString().split('T')[0];
+          } else {
+            return date.toISOString().split('T')[0];
+          }
+        };
+
+        // Aggregate income data
         incomeData.forEach((income: Incomes) => {
-          events.push({
-            title: `Income: ${income.amount}`,
-            date: income.date,
-            color: 'green'
-          });
+          const formattedDate = formatDate(income.date);
+          if (!eventMap[formattedDate]) {
+            eventMap[formattedDate] = { income: 0, expense: 0 };
+          }
+          eventMap[formattedDate].income += income.amount;
+          console.log(eventMap[formattedDate].income)
         });
-        // Process expense data
+
+        // Aggregate expense data
         expenseData.forEach((expense: Expense) => {
-          events.push({
-            title: `Expense: ${expense.amount}`,
-            date: expense.date,
-            color: 'red'
-          });
+          const formattedDate = formatDate(expense.date);
+          if (!eventMap[formattedDate]) {
+            eventMap[formattedDate] = { income: 0, expense: 0 };
+          }
+          eventMap[formattedDate].expense += expense.amount;
         });
+
+        // Create events array
+        const events: EventInput[] = [];
+        for (const date in eventMap) {
+          if (eventMap[date].income > 0) {
+            events.push({
+              title: `Income: $${eventMap[date].income.toFixed(2)}`,
+              date: date,
+              color: 'green'
+            });
+          }
+          if (eventMap[date].expense > 0) {
+            events.push({
+              title: `Expense: $${eventMap[date].expense.toFixed(2)}`,
+              date: date,
+              color: 'red'
+            });
+          }
+        }
+
         // Set events for the calendar
         this.calendarOptions.events = events;
       });

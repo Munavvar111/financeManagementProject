@@ -23,6 +23,7 @@ export  interface Category {
     name: string;
     type: string;
     subcategories: Subcategory[];
+    isOpen: boolean
 }
 
 export interface Subcategory {
@@ -31,3 +32,10 @@ export interface Subcategory {
 }
 // subcategory.model.ts
 
+export interface Transection{
+  name: string;
+  date: string;
+  amount: number;
+  icon: string;
+  type: string; // 'income' or 'expense'
+}
