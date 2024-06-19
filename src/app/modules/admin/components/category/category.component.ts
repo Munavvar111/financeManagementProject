@@ -13,7 +13,6 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
-import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { response } from 'express';
@@ -77,6 +76,7 @@ export class CategoryComponent {
           (subcategory) =>
             subcategory.name.toLowerCase().includes(lowerSearchText)
         );
+        console.log(matchingSubcategories)
         return {
           ...category,
           subcategories: matchingSubcategories,

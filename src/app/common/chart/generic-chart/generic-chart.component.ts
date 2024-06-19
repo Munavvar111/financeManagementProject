@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, ElementRef, Inject, Input, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 
 @Component({
@@ -14,10 +15,13 @@ export class GenericChartComponent {
   @Input() chartOptions: any;
   chart: Chart;
   @ViewChild('chartCanvas', { static: true }) chartCanvas: ElementRef<HTMLCanvasElement>;
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['chartData'] || changes['chartOptions']) {
-      this.initializeChart();
+    if (isPlatformBrowser(this.platformId)) {
+      if (changes['chartData'] || changes['chartOptions']) {
+        this.initializeChart();
+      }
     }
   }
 

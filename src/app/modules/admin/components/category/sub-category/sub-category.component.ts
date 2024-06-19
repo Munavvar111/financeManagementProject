@@ -22,6 +22,7 @@ export class SubCategoryComponent {
   constructor(private categoryService: ApiServiceService,private dailog:MatDialog,private fb:FormBuilder) { 
 
     this.editForm=this.fb.group({
+      id:["",Validators.required],
       name:["",Validators.required],
       categoryId:["",Validators.required]
     })
@@ -69,6 +70,7 @@ export class SubCategoryComponent {
   updateCategory(subcategoryId:string):void{
     const subcategoryById=this.subcategories.find(item=>item.id==subcategoryId);
     this.editForm.setValue({
+      id:subcategoryById.id,
       name:subcategoryById.name,
       categoryId:subcategoryById.categoryId
     })
@@ -81,11 +83,22 @@ export class SubCategoryComponent {
       }
     }).afterClosed().subscribe(result=>{
       if(result){
-
+        this.onEditSubmit()
       }
     })
   }
-  
+  onEditSubmit(){
+    
+    if(this.editForm.valid){
+      this.categoryService.updateSubCategory(this.editForm.value).subscribe({
+        next:(response:Subcategory)=>{
+          const index = this.subcategories.findIndex(c => c.id === response.id);
+          if (index !== -1) {
+            this.subcategories[index] = response;
+          }        }
+      })
+    }
+  }
   // updateCategory(category: any): void {
   //   this.categoryService.updateCategory(category.id, category).subscribe(updatedCategory => {
   //     const index = this.subcategories.findIndex(c => c.id === updatedCategory.id);
