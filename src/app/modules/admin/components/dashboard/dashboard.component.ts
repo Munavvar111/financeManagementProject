@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit {
   expenses: Expense[];
   transactions: Transection[] = [];
   filteredTransactions: Transection[] = [];
-  selectedType: string = 'all'; // 'all', 'income', 'expense'
+  selectedType: string = 'all';
 
   doughnutChartData: ChartConfiguration['data'] | null = null;
   doughnutChartOptions: ChartConfiguration['options'] | null = null;
@@ -92,6 +92,7 @@ export class DashboardComponent implements OnInit {
     this.loadData('last7');
   }
 
+  //initialize the doughnutchart of the category
   initializeDoughnutChart(): void {
     const aggregatedData = this.aggregateDataByCategory(this.chartdata);
 
@@ -122,7 +123,7 @@ export class DashboardComponent implements OnInit {
       responsive: true,
     };
   }
-
+  //initialize the bar chart data in data
   initializeBarChart(): void {
     this.last7DaysData = this.getLast7DaysExpenses(this.chartdata);
     const last7DaysLabels = this.last7DaysData.map((item) => item.date);
@@ -150,6 +151,7 @@ export class DashboardComponent implements OnInit {
     };
   }
 
+  //add all expenses for the particular category
   private aggregateDataByCategory(data: Expense[]): { [category: string]: number } {
     const aggregatedData = {};
     for (const item of data) {
@@ -164,8 +166,7 @@ export class DashboardComponent implements OnInit {
     return aggregatedData;
   }
 
-  ngOnDestroy(): void {}
-
+  //load the initial data for the money flow diagram in line chart
   private loadData(selectedRange: string): void {
     console.log(selectedRange)
     this.service.getExpenses().subscribe((expensesResult) => {
@@ -192,13 +193,17 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+
+  //get the monthely expenses add all expenses that credited in months
   processExpenses(expenses: Expense[]): void {
     expenses.forEach((expense) => {
       const month = new Date(expense.date).getMonth();
+      console.log(month )
       this.monthlyExpenses[month] += expense.amount;
     });
   }
 
+  //get the monthely income add all income that recived in months
   processIncome(income: Incomes[]): void {
     income.forEach((income) => {
       const month = new Date(income.date).getMonth();
@@ -206,6 +211,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  //config for the income vs expenses chart
   initializeIncomeVsExpenseChart(labels: string[], incomes: number[], expenses: number[]): void {
     this.incomeVsExpenseChartData = {
       labels: labels,
@@ -238,10 +244,10 @@ export class DashboardComponent implements OnInit {
         },
       },
     };
-    // this.cdr.detectChanges(); // Manually trigger change detection
 
   }
 
+  //bar chart get last 7 day expenses
   getLast7DaysExpenses(data: any[]): { date: string; amount: number }[] {
     const today = new Date();
     const last7Days = [];
@@ -261,6 +267,7 @@ export class DashboardComponent implements OnInit {
     return last7Days;
   }
 
+  //get last n day labels for the chart
   private getLastnDaysLabels(days: number): string[] {
     const labels = [];
     const today = new Date();
@@ -282,7 +289,7 @@ export class DashboardComponent implements OnInit {
     data.forEach((item) => {
       const itemDate = new Date(item.date);
       if (itemDate >= startDate && itemDate <= today) {
-        const index = Math.floor((itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+        const index = Math.floor((itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)+1);
         expenses[index] += item.amount;
       }
     });
@@ -290,7 +297,7 @@ export class DashboardComponent implements OnInit {
     return expenses;
   }
 
-  private getLastnDaysIncomes(data: Incomes[], days: number): number[] {
+  private getLastnDaysIncomes(data: Incomes[], days: number): number[] {  
     const today = new Date();
     const lastNDaysIncomes: number[] = Array(days).fill(0);
 
@@ -311,6 +318,8 @@ export class DashboardComponent implements OnInit {
     return `hsl(${hue}, 70%, 50%)`;
   }
 
+  
+  //recent transection 
   loadTransactions(): void {
     this.service.getIncomeAndExpenses().subscribe(([income, expenses]) => {
       this.transactions = [

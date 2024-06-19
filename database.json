@@ -27,23 +27,44 @@
       "category": "Shopping",
       "amount": 200,
       "comment": "Credit"
+    },
+    {
+      "id": "c616",
+      "date": "2024-06-16",
+      "category": "Family",
+      "amount": 15,
+      "comment": "Credit"
+    },
+    {
+      "id": "20d8",
+      "date": "2024-05-12",
+      "category": "Health/Sport",
+      "amount": 150,
+      "comment": "Debit"
+    },
+    {
+      "id": "13e7",
+      "date": "2024-05-12",
+      "category": "Health/Sport",
+      "amount": 200,
+      "comment": "Debit"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 18982
+      "balnce": 18980
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 1000
+      "balnce": 650
     },
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 0
+      "balnce": 2
     }
   ],
   "income": [
@@ -59,7 +80,7 @@
       "id": "1",
       "name": "Income",
       "type": "income",
-      "isOpen": false
+      "isOpen": true
     },
     {
       "id": "2",
@@ -70,26 +91,6 @@
   ],
   "subcategories": [
     {
-      "id": "25",
-      "name": "Home",
-      "categoryId": "2"
-    },
-    {
-      "id": "26",
-      "name": "Family",
-      "categoryId": "2"
-    },
-    {
-      "id": "27",
-      "name": "Health/Sport",
-      "categoryId": "2"
-    },
-    {
-      "id": "28",
-      "name": "Pets",
-      "categoryId": "2"
-    },
-    {
       "id": "29",
       "name": "Travels",
       "categoryId": "2"
@@ -98,6 +99,11 @@
       "id": "30",
       "name": "Other (Expenses)",
       "categoryId": "2"
+    },
+    {
+      "id": "3c1a",
+      "name": "asad",
+      "categoryId": "1"
     }
   ]
 }

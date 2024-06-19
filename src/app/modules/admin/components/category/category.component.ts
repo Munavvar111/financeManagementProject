@@ -1,19 +1,34 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Category } from '../../../../common/models/expenses.model';
+import {
+  Category,
+  Subcategory,
+} from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
-import { AddCategoryComponent } from './add-category/add-category.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
-import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
+import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { AddCategoryComponent } from './add-category/add-category.component';
+import { response } from 'express';
 
 @Component({
   selector: 'app-category',
-    standalone: true,
-    imports: [MaterialModule,ReactiveFormsModule,CommonModule,SubCategoryComponent,],
+  standalone: true,
+  imports: [
+    MaterialModule,
+    ReactiveFormsModule,
+    CommonModule,
+    SubCategoryComponent,
+  ],
   templateUrl: './category.component.html',
-  styleUrl: './category.component.css'
+  styleUrl: './category.component.css',
 })
 export class CategoryComponent {
   categories: any[] = [];
@@ -25,45 +40,81 @@ export class CategoryComponent {
   constructor(
     private categoryService: ApiServiceService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private dailog: MatDialog
+  ) {
+    this.addCategoryForm = this.fb.group({
+      name: ['', Validators.required],
+      categoryId: ['', Validators.required],
+    });
+  }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      filterText: ['']
+      filterText: [''],
     });
 
-
-    this.categoryService.getCategories().subscribe({
-      next:(response:Category[])=>{
-          this.categories = response;
-          this.filteredCategories = this.categories;
-          console.log(response)
-      }
-    });
-
-    
-
-    this.searchForm.get('filterText').valueChanges.subscribe(value => {
+    this.getCategory();
+    console.log(this.categories)
+    this.searchForm.get('filterText').valueChanges.subscribe((value) => {
       this.filterCategories(value);
     });
   }
- 
+
+  getCategory(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (response: Category[]) => {
+        this.categories = response;
+        this.filteredCategories = this.categories;
+      },
+    });
+  }
+
   filterCategories(searchText: string): void {
     const lowerSearchText = searchText.toLowerCase();
-    this.filteredCategories = this.categories.map(category => {
-      const matchingSubcategories = category.subcategories.filter(subcategory =>
-        subcategory.name.toLowerCase().includes(lowerSearchText)
-      );
-      return {
-        ...category,
-        subcategories: matchingSubcategories,
-        isOpen: matchingSubcategories.length > 0
-      };
-    }).filter(category => category.subcategories.length > 0);
+    this.filteredCategories = this.categories
+      .map((category) => {
+        const matchingSubcategories = category.subcategories.filter(
+          (subcategory) =>
+            subcategory.name.toLowerCase().includes(lowerSearchText)
+        );
+        return {
+          ...category,
+          subcategories: matchingSubcategories,
+          isOpen: matchingSubcategories.length > 0,
+        };
+      })
+      .filter((category) => category.subcategories.length > 0);
+  }
 
-    //detect the change manually if the data async or not automatic change by angular then this will used for the change detection manully
-    this.cdr.detectChanges();
+  openDialog(): void {
+    this.dailog
+      .open(AddCategoryComponent, {
+        width: '300px',
+        data: {
+          form: this.addCategoryForm,
+          isEdit: false,
+          categories: this.categories,
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.onSubmit();
+        }
+      });
+  }
+
+  onSubmit() {
+    if (this.addCategoryForm.valid) {
+      this.categoryService
+        .addSubCategory(this.addCategoryForm.value)
+        .subscribe({
+          next: (response: Subcategory) => {
+            this.getCategory();
+            this.filterCategories('');
+          },
+        });
+    }
   }
 
   // updateCategory(category): void {

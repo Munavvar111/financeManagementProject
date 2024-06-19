@@ -55,10 +55,16 @@ export class ApiServiceService {
     return this.http.post<any>(`${this.url}/categories`,category);
   }
 
+  addSubCategory(subCategory):Observable<Subcategory>{
+    return this.http.post<Subcategory>(`${this.url}/subcategories`,subCategory);
+  }
 
 
   deleteSubCategory(subcategoryId:number):Observable<Subcategory>{
     return this.http.delete<Subcategory>(`${this.url}/subcategories/${subcategoryId}`)
+  }
+  updateSubCategory(subcategory:Subcategory):Observable<Subcategory>{
+    return this.http.put<Subcategory>(`${this.url}/subcategories/${subcategory.id}`,subcategory)
   }
   
   getIncomeAndExpenses(): Observable<any[]> {

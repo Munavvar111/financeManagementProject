@@ -33,7 +33,6 @@ export class CalendarComponent {
     this.apiService.getIncomeDetails().subscribe(incomeData => {
       this.apiService.getExpenses().subscribe(expenseData => {
         const eventMap: { [date: string]: { income: number, expense: number } } = {};
-        const dailyTotals: { [key: string]: number } = {};
 
         // Helper function to format the date
         const formatDate = (date: string | Date): string => {

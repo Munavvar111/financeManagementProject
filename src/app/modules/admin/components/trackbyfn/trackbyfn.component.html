@@ -1,0 +1,9 @@
+<button (click)="shuffleItemswithout()">Shuffle Items</button>
+    <ul>
+      <li *ngFor="let item of items">{{ item.name }}</li>
+    </ul>
+
+    <button (click)="shuffleItems()">Shuffle Items</button>
+    <ul>
+      <li *ngFor="let item1 of items1; trackBy: trackById">{{ item1.name }}</li>
+    </ul>

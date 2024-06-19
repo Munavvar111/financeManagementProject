@@ -51,12 +51,12 @@ export class AddExpensesComponent implements OnInit {
     return this.expenseForm.get('expenses') as FormArray;
   }
   //new expense add in form group
-  newExpense(): FormGroup {
-    return this.fb.group({
-      category:['', Validators.required],
-      amount: ['', Validators.required]
-    });
-  }
+      newExpense(): FormGroup {
+        return this.fb.group({
+          category:['', Validators.required],
+          amount: ['', Validators.required]
+        });
+      }
   //add formarray in the formarray 
   addExpense() {
     this.expenses().push(this.newExpense())

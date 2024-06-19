@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{data.isEdit ? 'Edit Your Category':'Add Your Category'}}</h2>
+<mat-dialog-content>  
+    <form [formGroup]="data.form">
+        <mat-form-field>
+            <mat-label>Name of the Category</mat-label>
+            <input matInput formControlName="name" />
+     
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Favorite food</mat-label>
+            <mat-select formControlName="categoryId" name="food">
+              @for (category of data.categories; track category) {
+                <mat-option [value]="category.id">{{category.name}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <div class="d-flex justify-content-end gap-3">
+           
+            <button mat-button type="submit" [disabled]="data.form.invalid" [matDialogClose]="!data.form.invalid" color="primary">Submit</button>
+            @if (!data.isEdit) {
+                <button type="reset" mat-button color="primary">Reset</button>
+            }
+            @else {
+                <button type="button" [matDialogClose]="true" mat-button color="primary">Reset</button>
+            }
+          </div>
+    </form>
+</mat-dialog-content>

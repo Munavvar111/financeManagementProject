@@ -29,13 +29,14 @@ export  interface Category {
 export interface Subcategory {
     id: number; 
     name: string;
+    categoryId:number;
 }
 // subcategory.model.ts
 
 export interface Transection{
   name: string;
-  date: string;
+  date: Date;
   amount: number;
   icon: string;
-  type: string; // 'income' or 'expense'
+  type: string; 
 }

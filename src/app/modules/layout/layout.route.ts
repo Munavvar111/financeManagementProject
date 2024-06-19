@@ -38,6 +38,10 @@ export const layoutRoutes: Routes = [
             {
                 path:'category',
                 loadComponent:()=>import('../admin/components/category/category.component').then((m)=>m.CategoryComponent)
+            },
+            {
+                path:'traacBy',
+                loadComponent:()=>import('../admin/components/trackbyfn/trackbyfn.component').then((m)=>m.TrackbyfnComponent)
             }
             
         ]

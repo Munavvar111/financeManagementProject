@@ -1,11 +1,16 @@
-<div>
-  <form [formGroup]="searchForm">
+<div class="container mt-3">
+  <form [formGroup]="searchForm" class="d-flex justify-content-between">
     <mat-form-field>
       <input matInput placeholder="Search" formControlName="filterText">
     </mat-form-field>
+    <button mat-fab color="primary" (click)="openDialog()" class="mb-3">
+      <mat-icon>add</mat-icon>
+    </button>
   </form>
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let category of filteredCategories" [expanded]="category.isOpen">
+    @for (category of filteredCategories; track $index) {
+    
+    <mat-expansion-panel  [expanded]="category.isOpen">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon>category</mat-icon>
@@ -20,6 +25,7 @@
         <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
       </div>
     </mat-expansion-panel>
+  }
   </mat-accordion>
 </div>
   
