@@ -55,18 +55,32 @@
       "category": "Travelser",
       "amount": 120,
       "comment": "Credit"
+    },
+    {
+      "id": "00e3",
+      "date": "2024-06-04",
+      "category": "Other (Expenses)",
+      "amount": 123,
+      "comment": "Credit"
+    },
+    {
+      "id": "bf2a",
+      "date": "2024-05-09",
+      "category": "Travelser",
+      "amount": 123,
+      "comment": "Debit"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 18860
+      "balnce": 19737
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 650
+      "balnce": 527
     },
     {
       "id": "3",
@@ -79,6 +93,12 @@
       "id": "e42b",
       "date": "2024-06-12",
       "accountType": "Debit",
+      "amount": 1000
+    },
+    {
+      "id": "a28d",
+      "date": "2024-05-09T18:30:00.000Z",
+      "accountType": "Credit",
       "amount": 1000
     }
   ],

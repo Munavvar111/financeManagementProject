@@ -87,4 +87,11 @@
     font-weight: bold;
     margin-top: 8px;
   }
+  .success {
+    color: green;
+  }
+  
+  .negative {
+    color: red;
+  }
   

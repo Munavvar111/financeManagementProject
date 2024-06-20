@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, Input, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 
 @Component({
@@ -25,6 +25,12 @@ export class GenericChartComponent {
     }
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (this.chart) {
+      this.chart.resize();
+    }
+  }
   initializeChart(): void {
     const canvas = this.chartCanvas.nativeElement;
     const ctx = canvas.getContext('2d');

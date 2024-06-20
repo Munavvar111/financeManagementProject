@@ -153,6 +153,7 @@ export class DashboardComponent implements OnInit {
     };
     this.doughnutChartDataLastMonthOptions = {
       responsive: true,
+
     };
   }
   //initialize the doughnutchart of the category
@@ -184,6 +185,7 @@ export class DashboardComponent implements OnInit {
     };
     this.doughnutChartOptions = {
       responsive: true,
+
     };
   }
   //initialize the bar chart data in data
@@ -206,6 +208,7 @@ export class DashboardComponent implements OnInit {
     };
     this.barChartOptions = {
       responsive: true,
+
       scales: {
         y: {
           beginAtZero: true,
