@@ -79,4 +79,8 @@ export class IncomesComponent implements OnInit {
       
     }
   }
+  isControlInvalid(controlName: string): boolean {
+    const control = this.incomeForm.get(controlName);
+    return control ? control.invalid && control.touched : false;
+  }
 }

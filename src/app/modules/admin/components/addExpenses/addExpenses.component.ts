@@ -28,8 +28,8 @@ export class AddExpensesComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router) {
     this.expenseForm = this.fb.group({
-      date: [''],
-      account: [''],
+      date: ['',Validators.required],
+      account: ['',Validators.required],
       expenses: this.fb.array([]),
       totalAmount: [{ value: 0, disabled: true }]
     });
@@ -40,11 +40,12 @@ export class AddExpensesComponent implements OnInit {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredOptions = this.options.filter(o => o.toLowerCase().includes(filterValue));
   }
-  filterCategory():void{
-    const filterCategoryValue=this.inputCategory.nativeElement.value.toLowerCase();
-    console.log(filterCategoryValue)
-    this.filterCategoryOption=this.categories.filter(o=>o.toLowerCase().includes(filterCategoryValue))
+  filterCategory(inputElement: HTMLInputElement): void {
+    const filterCategoryValue = inputElement.value.toLowerCase();
+    console.log(filterCategoryValue);
+    this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
   }
+  
 
   //formArray For Category and amount to add multiple expenses
   expenses(): FormArray {
@@ -172,6 +173,9 @@ export class AddExpensesComponent implements OnInit {
     console.log(expensesArray.controls)
     const total = expensesArray.controls.reduce((acc, control) => acc + control.get('amount').value, 0);
     this.expenseForm.get('totalAmount').setValue(total);
-
+  }
+  isControlInvalid(controlName: string): boolean {
+    const control = this.expenseForm.get(controlName);
+    return control ? control.invalid && control.touched : false;
   }
 }

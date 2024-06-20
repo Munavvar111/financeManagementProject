@@ -1,5 +1,5 @@
 // transection.component.ts
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { Expense, Incomes } from '../../../../common/models/expenses.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,6 +9,8 @@ import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import * as jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-transection',
@@ -35,6 +37,7 @@ filterForm = new FormGroup({
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('input') input: any;
+  @ViewChild('content') content!: ElementRef;
 
   constructor(private apiService: ApiServiceService,private cdr:ChangeDetectorRef) { }
 
@@ -49,6 +52,31 @@ filterForm = new FormGroup({
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.applyFilter();
+  }
+  exportAsPDF() {
+    const doc = new jspdf.jsPDF();
+    const content = this.content.nativeElement;
+
+    html2canvas(content).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210;
+      const pageHeight = 297; 
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      doc.save('transactions.pdf');
+    });
   }
 
   fetchData() {
@@ -85,28 +113,30 @@ filterForm = new FormGroup({
     const { start, end } = this.range.value;
     const startDate = start ? new Date(start) : null;
     const endDate = end ? new Date(end) : null;
-    this.cdr.detectChanges()
-    this.dataSource.filterPredicate = (data, filter="") => {
+    const combinedFilter = filterValue || ' ';
+    console.log(combinedFilter)
+    this.dataSource.filterPredicate = (data, combinedFilter) => {
       const date = new Date(data.date); 
       console.log(data)
-      console.log(filter)
+      console.log(combinedFilter)
       const isAfterStart = !startDate || date >= startDate;
       const isBeforeEnd = !endDate || date <= endDate;
 
       const matchesDateRange = isAfterStart && isBeforeEnd;
-      const matchesFilterValue = Object.keys(data).some(key => data[key].toString().toLowerCase().includes(filter));
-      return matchesDateRange ;
+      const matchesFilterValue = Object.keys(data).some(key => data[key].toString().toLowerCase().includes(combinedFilter.trim()));
+      return matchesDateRange && matchesFilterValue;
     };
 
     console.log(filterValue)
-    this.dataSource.filter = filterValue;
+    this.dataSource.filter = combinedFilter;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-  onDateRangeChange(event: any) {
-    // Handle date range change event here
-    this.applyFilter();
+
+  clearDateRange() {
+    this.range.reset()
+    this.applyFilter(); 
   }
 }

@@ -1,39 +1,75 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer mode="side" opened>
-      <mat-toolbar color="primary" routerLink="" >Personal Finance Tracker</mat-toolbar>
-      <mat-nav-list>
-        <a mat-list-item [routerLink]="['/']" routerLinkActive="router-link-active" >Dashboard</a>
-        <a mat-list-item [routerLink]="['/transactions']" routerLinkActive="router-link-active" >Transactions</a>
-        <a mat-list-item [routerLink]="['/addExpenses']">Expenses</a>
-        <a mat-list-item routerLink="/accounts">Accounts</a>
-        <a mat-list-item routerLink="/incomes">Incomes</a>
-        <a mat-list-item routerLink="/category">Category</a>
-        <a mat-list-item routerLink="/calenders">Calenders</a>
-      </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <mat-toolbar color="primary">
-        <button mat-icon-button (click)="drawer.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <span>Personal Finance Tracker</span>
-        <span class="spacer"></span>
-        <button mat-button>
-          <mat-icon>subscriptions</mat-icon> Subscription
-        </button>
-        <button mat-button>
-          <mat-icon>edit</mat-icon> Edit this application
-        </button>
-        <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
-          <img src="https://robohash.org/mail@ashallendesign.co.uk" alt="User Avatar" class="user-avatar">
-          <mat-icon>expand_more</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item>Profile</button>
-          <button mat-menu-item>Logout</button>
-        </mat-menu> -->
+  <mat-sidenav
+    #drawer
+    [opened]="!isScreenSmall"
+    [mode]="isScreenSmall ? 'push' : 'side'"
+  >
+    <mat-toolbar color="primary">
+      <img
+        src="https://webapp.fastbudget.app/static/images/app_icon_64.png"
+        alt="App Icon"
+        height="32"
+        width="32"
+      />
+      Fast Budget</mat-toolbar
+    >
+    <mat-nav-list>
+      <a
+        mat-list-item
+        [routerLink]="['/']"
+        routerLinkActive="router-link-active"
+      >
+        <div class="d-flex"><mat-icon class="me-3">dashboard</mat-icon> Dashboard</div></a
+      >
+      <a
+        mat-list-item
+        [routerLink]="['/transactions']"
+        routerLinkActive="router-link-active"
+      >
+        <div class="d-flex">
+          <mat-icon class="me-3">format_list_bulleted</mat-icon>
+          Transactions
+        </div>
+      </a>
+      <a mat-list-item [routerLink]="['/addExpenses']">
+        <div class="d-flex">
+          <mat-icon class="me-3">currency_exchange</mat-icon>Expenses
+        </div>
+      </a>
+      <a mat-list-item routerLink="/accounts">
+        <div class="d-flex">
+          <mat-icon class="me-3">account_balance</mat-icon>
+          Accounts
+        </div>
+      </a>
+      <a mat-list-item routerLink="/incomes">
+        <div class="d-flex">
+          <mat-icon class="me-3">account_balance_wallet</mat-icon>
+          Incomes
+        </div>
+      </a>
+      <a mat-list-item routerLink="/category">
+        <div class="d-flex">
+          <mat-icon class="me-3"> category </mat-icon>
+          Category
+        </div>
+      </a>
+      <a mat-list-item routerLink="/calenders">
+        <div class="d-flex">
+          <mat-icon class="me-3">free_cancellation</mat-icon>
+          Calenders
+        </div>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-spacer"></span>
+      <!-- Additional toolbar content (e.g., buttons, profile menu) can go here -->
     </mat-toolbar>
     <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-  
+  </mat-sidenav-content>
+</mat-sidenav-container>

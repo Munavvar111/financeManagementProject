@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { MaterialModule } from '../../../common/matrial/matrial.module';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { MatSidenav } from '@angular/material/sidenav';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -12,4 +14,30 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class HeaderComponent {
 
+  constructor( private cdref: ChangeDetectorRef ) {}   
+
+  @ViewChild('drawer') drawer!: MatSidenav;
+  isScreenSmall = false;
+
+  @HostListener('window:resize', ['$event'])
+onResize(event: any) {
+  this.isScreenSmall = event.target.innerWidth < 992;
+  this.setSidenavMode();
+  setTimeout(() => {
+}, 0);
+
 }
+ngAfterViewInit() {
+  if (typeof window !== "undefined") {
+    this.isScreenSmall = window.innerWidth < 992;
+    this.cdref.detectChanges();
+    this.setSidenavMode();
+  }
+}
+
+setSidenavMode() {
+  if (this.drawer) {
+    this.drawer.mode = this.isScreenSmall ? 'push' : 'side';
+  }
+}
+} 

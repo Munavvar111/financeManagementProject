@@ -45,4 +45,46 @@
   .transactions .transaction .amount.negative {
     color: #ff0000;
   }
+  .credit-card {
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+  }
+  
+  .card-content {
+    margin-top: 16px;
+  }
+  
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+  }
+  
+  .amount {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .negative {
+    color: #e53935;
+  }
+  
+  .progress-percent {
+    display: flex;
+    justify-content: flex-end;
+    font-weight: bold;
+    margin-top: 8px;
+  }
   

@@ -5,23 +5,25 @@
   <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
     <div class="form-group mb-4">
       <label for="date" class="form-label h4">Date</label>
-      <mat-form-field class="w-100">
+      <mat-form-field class="w-100"  appearance="outline">
         <mat-label>Choose a date</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="date" id="date" />
-        <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="isControlInvalid('date')">date is required.</mat-error>
+
       </mat-form-field>
     </div>
 
     <div class="form-group mb-4">
       <label for="account" class="form-label h4">Account</label>
-      <mat-form-field class="w-100">
+      <mat-form-field class="w-100"  appearance="outline">
         <mat-label>Number</mat-label>
         <input #input type="text" placeholder="Pick one" matInput [formControl]="myControl" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
         <mat-autocomplete requireSelection #auto="matAutocomplete">
           <mat-option *ngFor="let option of filteredOptions" [value]="option">{{option}}</mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="isControlInvalid('account')">date is required.</mat-error>
       </mat-form-field>
     </div>
 
@@ -41,18 +43,22 @@
 
       <div *ngFor="let expense of expenses().controls; let i = index" [formGroupName]="i" class="row align-items-center mb-3">
         <div class="col">
-          <mat-form-field appearance="fill" class="w-100">
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Category</mat-label>
-            <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="auto" (input)="filterCategory()" (focus)="filterCategory()" id="account1">
+            <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="auto" 
+                   (input)="filterCategory(inputCategory)" (focus)="filterCategory(inputCategory)" id="account1">
             <mat-autocomplete requireSelection #auto="matAutocomplete">
               <mat-option *ngFor="let option of filterCategoryOption" [value]="option">{{option}}</mat-option>
             </mat-autocomplete>
-                    </mat-form-field>
+        <mat-error *ngIf="isControlInvalid('category')">category is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="col">
-          <mat-form-field appearance="fill" class="w-100">
+          <mat-form-field appearance="fill" class="w-100" appearance="outline">
             <mat-label>Amount</mat-label>
-            <input matInput type="number" formControlName="amount"  min="1"/>
+            <input matInput type="number" formControlName="amount" min="1"/>
+        <mat-error *ngIf="isControlInvalid('amount')">amount is required.</mat-error>
+
           </mat-form-field>
         </div>
         <div class="col text-center">
@@ -61,11 +67,12 @@
           </button>
         </div>
       </div>
+      
     </div>
 
     <div class="form-group mb-4">
       <label for="totalAmount" class="form-label h4">Total Amount</label>
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Amount</mat-label>
         <input matInput type="number" formControlName="totalAmount" id="totalAmount"/>
       </mat-form-field>

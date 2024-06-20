@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Expense, Incomes, Transection } from '../../../../common/models/expenses.model';
+import { Expense, Incomes, PaymentType, Transection } from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
+import { response } from 'express';
 
 Chart.register(...registerables);
 
@@ -28,6 +29,13 @@ export class DashboardComponent implements OnInit {
   monthlyExpenses: number[] = Array(12).fill(0);
   monthlyIncome: number[] = Array(12).fill(0);
   rangeForm: FormGroup;
+  totalBalance:number=0;
+  currentMonthExpenses: number; 
+  previousMonthExpenses: number; 
+  currentMonthIncome: number; 
+  previousMonthIncome: number;
+
+  PaymentType:PaymentType[];
   expenses: Expense[];
   transactions: Transection[] = [];
   filteredTransactions: Transection[] = [];
@@ -35,6 +43,10 @@ export class DashboardComponent implements OnInit {
 
   doughnutChartData: ChartConfiguration['data'] | null = null;
   doughnutChartOptions: ChartConfiguration['options'] | null = null;
+  doughnutChartDataCurrentMonthData: ChartConfiguration['data'] | null = null;
+  doughnutChartDataCurrentMonthOptions: ChartConfiguration['options'] | null = null;
+  doughnutChartDataLastMonthData: ChartConfiguration['data'] | null = null;
+  doughnutChartDataLastMonthOptions: ChartConfiguration['options'] | null = null;
   barChartData: ChartConfiguration['data'] | null = null;
   barChartOptions: ChartConfiguration['options'] | null = null;
   incomeVsExpenseChartData: ChartConfiguration['data'] | null = null;
@@ -61,8 +73,23 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTransactions();
-    this.rangeForm.patchValue({ selectedRange: 'last7' });
+    this.rangeForm.patchValue({ selectedRange: 'last30' });
     this.loadInitialData();
+    this.getTotalBalance();
+    this.getCurrentAndPreviousMonthData()
+    console.log(this.currentMonthExpenses)
+
+  }
+
+  getTotalBalance(){
+    this.service.getAccount().subscribe({
+      next:(response:PaymentType[])=>{
+        this.PaymentType=response;
+        this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
+        console.log(this.totalBalance)
+      
+      }
+    })
   }
 
   loadInitialData(): void {
@@ -81,17 +108,53 @@ export class DashboardComponent implements OnInit {
         this.processExpenses(this.chartdata);//get month wise expenses
         this.initializeDoughnutChart();//
         this.initializeBarChart();
+        
       }
     });
 
     this.service.getIncomeDetails().subscribe((incomeResult) => {
       this.incomeData = incomeResult;
       this.processIncome(this.incomeData);
+      this.getCurrentAndPreviousMonthData();
+      this.initializeDoughnutChartForCurrentMonth();
+      this.initializeDoughnutChartForLastMonth();
     });
 
-    this.loadData('last7');
+    this.loadData('last365');
+  }
+  initializeDoughnutChartForCurrentMonth(): void {
+    this.labeldata = ["Income", "Expenses"];
+    this.realdata = [this.currentMonthIncome, this.currentMonthExpenses];
+    this.colordata = [this.getRandomColor(0, 2), this.getRandomColor(1, 2)];
+
+    this.doughnutChartDataCurrentMonthData = {
+      labels: this.labeldata,
+      datasets: [{
+        data: this.realdata,
+        backgroundColor: this.colordata,
+      }],
+    };
+    this.doughnutChartDataCurrentMonthOptions = {
+      responsive: true,
+    };
   }
 
+  initializeDoughnutChartForLastMonth(): void {
+    this.labeldata = ["Income", "Expenses"];
+    this.realdata = [this.previousMonthIncome, this.previousMonthExpenses];
+    this.colordata = [this.getRandomColor(0, 2), this.getRandomColor(1, 2)];
+
+    this.doughnutChartDataLastMonthData = {
+      labels: this.labeldata,
+      datasets: [{
+        data: this.realdata,
+        backgroundColor: this.colordata,
+      }],
+    };
+    this.doughnutChartDataLastMonthOptions = {
+      responsive: true,
+    };
+  }
   //initialize the doughnutchart of the category
   initializeDoughnutChart(): void {
     const aggregatedData = this.aggregateDataByCategory(this.chartdata);
@@ -149,6 +212,17 @@ export class DashboardComponent implements OnInit {
         },
       },
     };
+  }
+
+  getCurrentAndPreviousMonthData(): void {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const previousMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+
+    this.currentMonthExpenses = this.monthlyExpenses[currentMonth];
+    this.previousMonthExpenses = this.monthlyExpenses[previousMonth];
+    this.currentMonthIncome = this.monthlyIncome[currentMonth];
+    this.previousMonthIncome = this.monthlyIncome[previousMonth];
   }
 
   //add all expenses for the particular category

@@ -48,13 +48,20 @@
       "category": "Health/Sport",
       "amount": 200,
       "comment": "Debit"
+    },
+    {
+      "id": "c5df",
+      "date": "2024-05-31",
+      "category": "Travelser",
+      "amount": 120,
+      "comment": "Credit"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 18980
+      "balnce": 18860
     },
     {
       "id": "2",

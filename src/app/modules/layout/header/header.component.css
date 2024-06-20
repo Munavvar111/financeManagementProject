@@ -1,20 +1,11 @@
 .sidenav-container {
-    height: 100%;
-  }
-  
-  .spacer {
-    flex: 1 1 auto;
-  }
-  
-  mat-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .user-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
+  height: 100%;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 991px) { /* Adjust this breakpoint if needed */
+
+}
