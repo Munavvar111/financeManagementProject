@@ -4,11 +4,12 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ChangeDetectorRef } from '@angular/core';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MaterialModule,RouterOutlet,HttpClientModule,RouterLink],
+  imports: [MaterialModule,RouterOutlet,HttpClientModule,RouterLink,FooterComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })

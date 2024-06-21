@@ -21,7 +21,10 @@
           <mat-label>Number</mat-label>
           <input #input type="text" placeholder="Pick one" matInput formControlName="accountType" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
           <mat-autocomplete requireSelection #auto="matAutocomplete">
-            <mat-option *ngFor="let option of filteredOptions " [value]="option">{{ option }}</mat-option>
+            @for (option of filteredOptions; track $index) {
+
+              <mat-option  [value]="option">{{ option }}</mat-option>
+            }
           </mat-autocomplete>
         <mat-error *ngIf="isControlInvalid('accountType')">accountType is required.</mat-error>
 

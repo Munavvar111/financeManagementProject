@@ -31,7 +31,6 @@ export interface Subcategory {
     name: string;
     categoryId:number;
 }
-// subcategory.model.ts
 
 export interface Transection{
   name: string;

@@ -1,21 +1,24 @@
-import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Expense, Incomes } from '../../../../common/models/expenses.model';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import {  EventInput } from '@fullcalendar/core';
+import { Expense, Incomes } from '../../../../common/models/expenses.model';
+import { EventInput } from '@fullcalendar/core';
+import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
+import { MaterialModule } from '../../../../common/matrial/matrial.module';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @Component({
   selector: 'app-calendar',
-  standalone: true,
-  imports: [FullCalendarModule,AsyncPipe],
+  standalone:true,
+  imports:[MaterialModule,FullCalendarModule],
   templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.css'
+  styleUrls: ['./calendar.component.css']
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -23,10 +26,19 @@ export class CalendarComponent {
     events: []
   };
 
-  constructor(private apiService: ApiServiceService) { }
+  private eventMap: { [date: string]: { incomes: Incomes[], expenses: Expense[] } } = {};
+  private originalEvents: EventInput[] = [];
+
+  constructor(
+    private apiService: ApiServiceService,
+    private dialog: MatDialog,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) { }
 
   ngOnInit(): void {
-    this.loadEvents();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadEvents();
+    }
   }
 
   loadEvents(): void {
@@ -34,7 +46,6 @@ export class CalendarComponent {
       this.apiService.getExpenses().subscribe(expenseData => {
         const eventMap: { [date: string]: { income: number, expense: number } } = {};
 
-        // Helper function to format the date
         const formatDate = (date: string | Date): string => {
           if (typeof date === 'string') {
             return new Date(date).toISOString().split('T')[0];
@@ -43,19 +54,25 @@ export class CalendarComponent {
           }
         };
 
-        // Aggregate income data
         incomeData.forEach((income: Incomes) => {
           const formattedDate = formatDate(income.date);
+          if (!this.eventMap[formattedDate]) {
+            this.eventMap[formattedDate] = { incomes: [], expenses: [] };
+          }
+          this.eventMap[formattedDate].incomes.push(income);
           if (!eventMap[formattedDate]) {
             eventMap[formattedDate] = { income: 0, expense: 0 };
           }
           eventMap[formattedDate].income += income.amount;
-          console.log(eventMap[formattedDate].income)
         });
 
         // Aggregate expense data
         expenseData.forEach((expense: Expense) => {
           const formattedDate = formatDate(expense.date);
+          if (!this.eventMap[formattedDate]) {
+            this.eventMap[formattedDate] = { incomes: [], expenses: [] };
+          }
+          this.eventMap[formattedDate].expenses.push(expense);
           if (!eventMap[formattedDate]) {
             eventMap[formattedDate] = { income: 0, expense: 0 };
           }
@@ -65,29 +82,64 @@ export class CalendarComponent {
         // Create events array
         const events: EventInput[] = [];
         for (const date in eventMap) {
-          if (eventMap[date].income > 0) {
+          const totalIncome = eventMap[date].income;
+          const totalExpense = eventMap[date].expense;
+          if (totalIncome > 0 && totalExpense > 0) {
+            const netAmount = totalIncome - totalExpense;
             events.push({
-              title: `Income: $${eventMap[date].income.toFixed(2)}`,
+              title: `${netAmount >= 0 ? 'Income: $' : 'Expense: $'}${Math.abs(netAmount).toFixed(2)}`,
+              date: date,
+              classNames: ['income-expense-event'],
+            });
+          } else if (totalIncome > 0) {
+            events.push({
+              title: `Income: $${totalIncome.toFixed(2)}`,
               date: date,
               color: 'green'
             });
-          }
-          if (eventMap[date].expense > 0) {
+          } else if (totalExpense > 0) {
             events.push({
-              title: `Expense: $${eventMap[date].expense.toFixed(2)}`,
+              title: `Expense: $${totalExpense.toFixed(2)}`,
               date: date,
               color: 'red'
             });
           }
         }
 
-        // Set events for the calendar
+        this.originalEvents = events;
         this.calendarOptions.events = events;
       });
     });
   }
 
   handleDateClick(arg) {
-    alert('date click! ' + arg.dateStr)
+    if (isPlatformBrowser(this.platformId)) {
+      const date = arg.dateStr;
+      const details = this.eventMap[date] || { incomes: [], expenses: [] };
+      this.dialog.open(DetailDailogComponent, {
+        data: { date, ...details }
+      });
+    }
+  }
+
+  applyFilter(filterType: string): void {
+    let filteredEvents: EventInput[] = [];
+
+    switch (filterType) {
+      case 'income':
+        filteredEvents = this.originalEvents.filter(event => event.color === 'green');
+        break;
+      case 'expense':
+        filteredEvents = this.originalEvents.filter(event => event.color === 'red');
+        break;
+      case 'both':
+        filteredEvents = this.originalEvents;
+        break;
+      default:
+        filteredEvents = [];
+        break;
+    }
+
+    this.calendarOptions.events = filteredEvents;
   }
 }

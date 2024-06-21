@@ -11,6 +11,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-transection',
@@ -54,6 +55,7 @@ filterForm = new FormGroup({
     this.applyFilter();
   }
   exportAsPDF() {
+
     const doc = new jspdf.jsPDF();
     const content = this.content.nativeElement;
 
@@ -78,7 +80,17 @@ filterForm = new FormGroup({
       doc.save('transactions.pdf');
     });
   }
+  exportAsExcel(): void {
+    // Filtered data to export
+    const filteredData = this.dataSource.filteredData;
 
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(filteredData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
+
+    // Save to file
+    XLSX.writeFile(wb, 'transactions.xlsx');
+  }
   fetchData() {
     this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {

@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { PaymentType } from '../../../../common/models/expenses.model';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AddAccountsComponent } from './add-accounts/add-accounts.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
@@ -14,7 +19,7 @@ import { response } from 'express';
   standalone: true,
   imports: [MaterialModule, CommonModule, AsyncPipe],
   templateUrl: './accounts.component.html',
-  styleUrl: './accounts.component.css'
+  styleUrl: './accounts.component.css',
 })
 export class AccountsComponent implements OnInit {
   accounts: PaymentType[] = [];
@@ -30,10 +35,10 @@ export class AccountsComponent implements OnInit {
   ) {
     this.accountForm = this.fb.group({
       accountName: ['', Validators.required],
-      accountBalance: ['', Validators.required]
+      accountBalance: ['', Validators.required],
     });
     this.editForm = this.fb.group({
-      accountName: ['', Validators.required]
+      accountName: ['', Validators.required],
     });
   }
 
@@ -42,41 +47,47 @@ export class AccountsComponent implements OnInit {
   }
 
   loadAccounts(): void {
-    this.apiService.getAccount().subscribe(accounts => {
+    this.apiService.getAccount().subscribe((accounts) => {
       this.accounts = accounts;
     });
   }
 
   openDialog(): void {
-    this.dialog.open(AddAccountsComponent, {
-      width: '300px',
-      data: {
-        form: this.accountForm,
-        isEdit: false
-      }
-    }).afterClosed().subscribe(result => {
-      if (result) {
-        this.onSubmit();
-      }
-    });
+    this.dialog
+      .open(AddAccountsComponent, {
+        width: '300px',
+        data: {
+          form: this.accountForm,
+          isEdit: false,
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.onSubmit();
+        }
+      });
   }
 
   openEditDialog(index: number): void {
     this.editIndex = index;
     this.editForm.setValue({
-      accountName: this.accounts[index].name
+      accountName: this.accounts[index].name,
     });
-    this.dialog.open(AddAccountsComponent, {
-      width: '300px',
-      data: {
-        form: this.editForm,
-        isEdit: true
-      }
-    }).afterClosed().subscribe(result => {
-      if (result) {
-        this.onEditSubmit();
-      }
-    });
+    this.dialog
+      .open(AddAccountsComponent, {
+        width: '300px',
+        data: {
+          form: this.editForm,
+          isEdit: true,
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.onEditSubmit();
+        }
+      });
   }
 
   isControlInvalid(form: FormGroup, controlName: string): boolean {
@@ -88,25 +99,31 @@ export class AccountsComponent implements OnInit {
     if (this.accountForm.valid) {
       const newAccount: PaymentType = {
         name: this.accountForm.value.accountName,
-        balnce: parseFloat(this.accountForm.value.accountBalance)
+        balnce: parseFloat(this.accountForm.value.accountBalance),
       };
 
-      if (this.accounts.some(account => account.name === newAccount.name)) {
-        this.snackBar.open('Account name already exists', 'Close', { duration: 3000 });
+      if (this.accounts.some((account) => account.name === newAccount.name)) {
+        this.snackBar.open('Account name already exists', 'Close', {
+          duration: 3000,
+        });
         return;
       }
 
       this.apiService.postAccount(newAccount).subscribe({
-        next:(response:PaymentType)=>{
+        next: (response: PaymentType) => {
           console.log('Account added successfully', response);
-    this.accounts.push(response);
-    this.snackBar.open('Account added successfully', 'Close', { duration: 3000 });
-    this.accountForm.reset();
+          this.accounts.push(response);
+          this.snackBar.open('Account added successfully', 'Close', {
+            duration: 3000,
+          });
+          this.accountForm.reset();
         },
-        error:err=>{
+        error: (err) => {
           console.error('Error adding account', err);
-          this.snackBar.open('Error adding account', 'Close', { duration: 3000 });
-        }
+          this.snackBar.open('Error adding account', 'Close', {
+            duration: 3000,
+          });
+        },
       });
     } else {
       this.accountForm.markAllAsTouched();
@@ -117,8 +134,14 @@ export class AccountsComponent implements OnInit {
     if (this.editForm.valid && this.editIndex !== null) {
       const updatedName = this.editForm.value.accountName;
 
-      if (this.accounts.some((account, i) => account.name === updatedName && i !== this.editIndex)) {
-        this.snackBar.open('Account name already exists', 'Close', { duration: 3000 });
+      if (
+        this.accounts.some(
+          (account, i) => account.name === updatedName && i !== this.editIndex
+        )
+      ) {
+        this.snackBar.open('Account name already exists', 'Close', {
+          duration: 3000,
+        });
         return;
       }
 
@@ -126,14 +149,18 @@ export class AccountsComponent implements OnInit {
       this.apiService.postAccount(this.accounts[this.editIndex]).subscribe({
         next: (response: PaymentType) => {
           console.log('Account updated successfully', response);
-          this.snackBar.open('Account updated successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Account updated successfully', 'Close', {
+            duration: 3000,
+          });
           this.editForm.reset();
           this.editIndex = null;
         },
-        error: err => {
+        error: (err) => {
           console.error('Error updating account', err);
-          this.snackBar.open('Error updating account', 'Close', { duration: 3000 });
-        }
+          this.snackBar.open('Error updating account', 'Close', {
+            duration: 3000,
+          });
+        },
       });
     } else {
       this.editForm.markAllAsTouched();

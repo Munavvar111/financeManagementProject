@@ -51,9 +51,7 @@ export class ApiServiceService {
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.url}/categories?_embed=subcategories`);
   }
-  addCategory(category): Observable<any> {
-    return this.http.post<any>(`${this.url}/categories`,category);
-  }
+
 
   addSubCategory(subCategory):Observable<Subcategory>{
     return this.http.post<Subcategory>(`${this.url}/subcategories`,subCategory);

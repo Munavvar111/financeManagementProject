@@ -16,6 +16,7 @@ import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { response } from 'express';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-category',
@@ -39,7 +40,8 @@ export class CategoryComponent {
   constructor(
     private categoryService: ApiServiceService,
     private fb: FormBuilder,
-    private dailog: MatDialog
+    private dailog: MatDialog,
+    private snackbar:MatSnackBar
   ) {
     this.addCategoryForm = this.fb.group({
       name: ['', Validators.required],
@@ -113,6 +115,9 @@ export class CategoryComponent {
             this.getCategory();
             this.filterCategories('');
           },
+          error:err=>{
+            this.snackbar.open("Error While Submiting The Category","Close",{duration:3000})
+          }
         });
     }
   }

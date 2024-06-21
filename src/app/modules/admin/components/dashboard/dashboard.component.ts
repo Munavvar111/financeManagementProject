@@ -40,6 +40,8 @@ export class DashboardComponent implements OnInit {
   transactions: Transection[] = [];
   filteredTransactions: Transection[] = [];
   selectedType: string = 'all';
+  creditCardLimit: number = 100000;  // Define the credit card limit
+  currentCreditUsage: number ; // Define the current credit usage
 
   doughnutChartData: ChartConfiguration['data'] | null = null;
   doughnutChartOptions: ChartConfiguration['options'] | null = null;
@@ -85,11 +87,15 @@ export class DashboardComponent implements OnInit {
     this.service.getAccount().subscribe({
       next:(response:PaymentType[])=>{
         this.PaymentType=response;
+        this.currentCreditUsage=response.find(item=>item.name=='Credit').balnce;
         this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
         console.log(this.totalBalance)
       
       }
     })
+  } 
+  get usagePercentage(): number {
+    return (this.currentCreditUsage / this.creditCardLimit) * 100;
   }
 
   loadInitialData(): void {
@@ -105,8 +111,8 @@ export class DashboardComponent implements OnInit {
       console.log(result);
       this.chartdata = result;
       if (this.chartdata != null) {
-        this.processExpenses(this.chartdata);//get month wise expenses
-        this.initializeDoughnutChart();//
+        this.processExpenses(this.chartdata)
+        this.initializeDoughnutChart();
         this.initializeBarChart();
         
       }
@@ -125,7 +131,7 @@ export class DashboardComponent implements OnInit {
   initializeDoughnutChartForCurrentMonth(): void {
     this.labeldata = ["Income", "Expenses"];
     this.realdata = [this.currentMonthIncome, this.currentMonthExpenses];
-    this.colordata = [this.getRandomColor(0, 2), this.getRandomColor(1, 2)];
+    this.colordata = [this.getRandomColor(1, 3), this.getRandomColor(0, 2)];
 
     this.doughnutChartDataCurrentMonthData = {
       labels: this.labeldata,
@@ -142,7 +148,7 @@ export class DashboardComponent implements OnInit {
   initializeDoughnutChartForLastMonth(): void {
     this.labeldata = ["Income", "Expenses"];
     this.realdata = [this.previousMonthIncome, this.previousMonthExpenses];
-    this.colordata = [this.getRandomColor(0, 2), this.getRandomColor(1, 2)];
+    this.colordata = [this.getRandomColor(1, 3), this.getRandomColor(0, 2)];
 
     this.doughnutChartDataLastMonthData = {
       labels: this.labeldata,
@@ -185,6 +191,7 @@ export class DashboardComponent implements OnInit {
     };
     this.doughnutChartOptions = {
       responsive: true,
+      maintainAspectRatio:false,
 
     };
   }
@@ -202,7 +209,7 @@ export class DashboardComponent implements OnInit {
         {
           label:"Expenses",
           data: last7DaysAmounts,
-          backgroundColor: this.colordata.slice(0, 7),
+          backgroundColor: 'red',
         },
       ],
     };

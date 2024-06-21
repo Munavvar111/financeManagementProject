@@ -100,14 +100,22 @@ export class AddExpensesComponent implements OnInit {
 
   //when form array convert in the list of expenses interface 
   transformExpenseData(formData: any): Expense[] {
+    // Format the date
+    const date = new Date(formData.date);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+  
     return formData.expenses.map((expense: any, index: number) => ({
-      date: new Date(formData.date).toISOString().split('T')[0],
+      date: formattedDate,
       type: expense.account,
       category: expense.category,
       amount: expense.amount,
       comment: formData.account
     }));
   }
+  
 
   validateBalance(): boolean {
     const accountName = this.expenseForm.get('account').value;
@@ -147,6 +155,7 @@ export class AddExpensesComponent implements OnInit {
             console.log('Expense saved successfully:', response);
           },
           error: (err) => {
+            this.snackBar.open("something went Wrong Please Try Again","Close",{duration:3000})
             console.error('Error saving expense:', err);
           }
         });
@@ -164,6 +173,7 @@ export class AddExpensesComponent implements OnInit {
     }
     else {
       this.expenseForm.markAllAsTouched();
+      this.snackBar.open("")
     }
 
   }

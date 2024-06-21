@@ -69,23 +69,37 @@
       "category": "Travelser",
       "amount": 123,
       "comment": "Debit"
+    },
+    {
+      "id": "9839",
+      "date": "2024-06-05",
+      "category": "Travelser",
+      "amount": 1000,
+      "comment": "Credit"
+    },
+    {
+      "id": "530b",
+      "date": "2024-06-01",
+      "category": "Travelser",
+      "amount": 100,
+      "comment": "Credit"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 19737
+      "balnce": 19061
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 527
+      "balnce": 773
     },
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 2
+      "balnce": 302
     }
   ],
   "income": [
@@ -96,10 +110,40 @@
       "amount": 1000
     },
     {
-      "id": "a28d",
-      "date": "2024-05-09T18:30:00.000Z",
+      "id": "4240",
+      "date": "2024-06-12",
+      "accountType": "Debit",
+      "amount": 100
+    },
+    {
+      "id": "1b2d",
+      "date": "2024-05-31",
       "accountType": "Credit",
-      "amount": 1000
+      "amount": 112
+    },
+    {
+      "id": "e06b",
+      "date": "2024-06-05",
+      "accountType": "Credit",
+      "amount": 100
+    },
+    {
+      "id": "8d6f",
+      "date": "2024-06-01",
+      "accountType": "Debit",
+      "amount": 123
+    },
+    {
+      "id": "03b3",
+      "date": "2024-06-02",
+      "accountType": "Debit",
+      "amount": 123
+    },
+    {
+      "id": "8b94",
+      "date": "2024-06-01",
+      "accountType": "Cash",
+      "amount": 200
     }
   ],
   "categories": [

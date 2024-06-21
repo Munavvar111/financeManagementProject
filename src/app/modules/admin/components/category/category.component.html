@@ -1,3 +1,6 @@
+<div class=" p-3 text-center">
+  <h1>Add Category</h1>
+</div>
 <div class="container mt-3">
   <form [formGroup]="searchForm" class="d-flex justify-content-between">
     <mat-form-field appearance="outline" class=" mr-3">
@@ -7,7 +10,7 @@
       <mat-icon>add</mat-icon>
     </button>
   </form>
-  <mat-tab-group mat-stretch-tabs class="mt-3">
+  <mat-tab-group mat-stretch-tabs class="mt-3 custom-tab-group">
     @for (category of filteredCategories; track $index) {
       <mat-tab label="{{ category.name }}">
         <ng-template matTabContent>
