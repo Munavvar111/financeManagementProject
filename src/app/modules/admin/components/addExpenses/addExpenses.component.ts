@@ -6,6 +6,9 @@ import { ApiServiceService } from '../../../../common/services/apiService.servic
 import { Category, Expense, PaymentType } from '../../../../common/models/expenses.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { GenericDailogComponent } from '../../../../common/dailog/generic-dailog/generic-dailog.component';
+import { CommonServiceService } from '../../../../common/services/common-service.service';
 
 @Component({
   selector: 'app-addExpenses',
@@ -26,7 +29,7 @@ export class AddExpensesComponent implements OnInit {
   filterCategoryOption: string[];
   categories:string[];
 
-  constructor(private fb: FormBuilder, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router) {
+  constructor(private fb: FormBuilder,public dialog: MatDialog, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router,private commonService:CommonServiceService) {
     this.expenseForm = this.fb.group({
       date: ['',Validators.required],
       account: ['',Validators.required],
@@ -45,7 +48,6 @@ export class AddExpensesComponent implements OnInit {
     console.log(filterCategoryValue);
     this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
   }
-  
 
   //formArray For Category and amount to add multiple expenses
   expenses(): FormArray {
@@ -108,11 +110,11 @@ export class AddExpensesComponent implements OnInit {
     const formattedDate = `${year}-${month}-${day}`;
   
     return formData.expenses.map((expense: any, index: number) => ({
+      type: "expense",
       date: formattedDate,
-      type: expense.account,
+      account : formData.account,
       category: expense.category,
       amount: expense.amount,
-      comment: formData.account
     }));
   }
   
@@ -128,55 +130,29 @@ export class AddExpensesComponent implements OnInit {
     if (totalAmount > account.balnce) {
       this.snackBar.open("Insufficient balance", "Close", { duration: 3000 })
       return false;
-    }
+    } 
     return true;
   }
-  onSubmit() {
+  onSubmit(): void {
     if (this.expenseForm.valid && this.validateBalance()) {
       const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
+      const accountName = this.expenseForm.get('account').value;
+      const totalAmount = this.expenseForm.get('totalAmount').value;
 
-      const accountName=this.expenseForm.get("account").value;
-      console.log(accountName)
-      const account=this.accounts.find(acc=>acc.name  ==accountName);
-      console.log(account)
-      const totalAmount=this.expenseForm.get("totalAmount").value;
-      console.log(totalAmount)
-
-      account.balnce -=totalAmount;
-
-      this.apiService.updateAccount(account).subscribe({
-        next:(response:PaymentType)=>{
-          this.snackBar.open("Balanced Updated SuccessFully","Close",{duration:3000})
-       
-      //interate the loop to insert the expenses details
-      transformedData.forEach((expense) => {
-        this.apiService.postExpenses(expense).subscribe({
-          next: (response) => {
-            console.log('Expense saved successfully:', response);
-          },
-          error: (err) => {
-            this.snackBar.open("something went Wrong Please Try Again","Close",{duration:3000})
-            console.error('Error saving expense:', err);
-          }
-        });
-      });
-      this.router.navigate(['addExpenses'])
+      this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
 
       this.expenseForm.reset();
-          this.expenseForm.setControl('expenses', this.fb.array([]));
-          this.addExpense();
-          this.expenseForm.get("expenses").valueChanges.subscribe(() => {
-            this.updateTotalAmount();
-          })  
-    }
-  })
-    }
-    else {
+      this.expenseForm.setControl('expenses', this.fb.array([]));
+      this.addExpense();
+      this.expenseForm.get('expenses').valueChanges.subscribe(() => {
+        this.updateTotalAmount();
+      });
+    } else {
       this.expenseForm.markAllAsTouched();
-      this.snackBar.open("")
+      this.snackBar.open('Please fill out the form correctly', 'Close', { duration: 3000 });
     }
-
   }
+
   //update the total
   updateTotalAmount() {
     const expensesArray = this.expenseForm.get('expenses') as FormArray;

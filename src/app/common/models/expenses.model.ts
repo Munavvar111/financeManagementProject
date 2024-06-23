@@ -2,9 +2,9 @@ export interface Expense {
     id?: string;
     date: Date | string;
     category: string;
+    account:string;
     type: string;
     amount: number ;
-    comments?: string;
   }
 
   export interface PaymentType{
@@ -15,8 +15,9 @@ export interface Expense {
   export interface Incomes{
     id?:string,
     date:Date | string,
-    accountType:string,
-    amount:number
+    account:string,
+    category:string,
+    amount:number,
   }
 export  interface Category {
     id: number;
@@ -33,9 +34,17 @@ export interface Subcategory {
 }
 
 export interface Transection{
+  id:string;
   name: string;
   date: Date;
   amount: number;
+  account:string;
   icon: string;
   type: string; 
+}
+export interface FieldConfig {
+  type: string;
+  label: string;
+  name: string;
+  options?: { value: string, label: string }[];
 }

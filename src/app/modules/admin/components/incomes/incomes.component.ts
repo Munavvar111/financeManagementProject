@@ -2,10 +2,11 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Incomes, PaymentType } from '../../../../common/models/expenses.model';
+import { Category, Incomes, PaymentType } from '../../../../common/models/expenses.model';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { response } from 'express';
 
 @Component({
   selector: 'app-incomes',
@@ -16,9 +17,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class IncomesComponent implements OnInit {
   incomeForm: FormGroup;
-  accountTypes: string[] = [];
-  paymentTypes: PaymentType[] = [];
-  filteredOptions: string[] = [];
+  accountTypes: string[] ;
+  paymentTypes: PaymentType[] ;
+  filteredOptions: string[];
+  filterCategoryOption:string[];
+  categories:string[];
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 
@@ -26,6 +29,7 @@ export class IncomesComponent implements OnInit {
     this.incomeForm = this.fb.group({
       date: ['', Validators.required],
       accountType: ["", Validators.required],
+      category: ['', Validators.required],
       amount: ["", [Validators.required, Validators.min(0)]]
     });
   }
@@ -41,13 +45,23 @@ export class IncomesComponent implements OnInit {
         console.log(err);
       }
     });
+    this.apiService.getCategories().subscribe({
+      next:(response:Category[])=>{
+        console.log(response)
+        this.categories=response.filter(item=>item.type==='income').flatMap(item=>item.subcategories.map(item=>item.name))
+      }
+    })
   }
 
   filter(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredOptions = this.accountTypes.filter(option => option.toLowerCase().includes(filterValue));
   }
- 
+  filterCategory(inputElement: HTMLInputElement): void {
+    const filterCategoryValue = inputElement.value.toLowerCase();
+    this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
+  }
+
   onSubmit(): void {
     if (this.incomeForm.valid) {
       const formValue = this.incomeForm.value;

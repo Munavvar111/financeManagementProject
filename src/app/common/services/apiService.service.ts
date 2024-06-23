@@ -21,6 +21,13 @@ export class ApiServiceService {
 
     return this.http.post<Expense>(`${this.url}/expenses`, expenses, { headers })
   }
+
+  updateExpense(expenses:Expense):Observable<Expense>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.put<Expense>(`${this.url}/expenses/${expenses.id}`,expenses,{headers})
+  }
   getAccount(): Observable<PaymentType[]> {
     return this.http.get<PaymentType[]>(`${this.url}/PaymentType`)
   }
@@ -35,6 +42,7 @@ export class ApiServiceService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
+    console.log(account )
     return this.http.put<PaymentType>(`${this.url}/PaymentType/${account.id}`,account,{headers})
   }
   getIncomeDetails():Observable<Incomes[]>{
@@ -46,7 +54,12 @@ export class ApiServiceService {
     });
     return this.http.post<Incomes>(`${this.url}/income`,income,{headers});
   }
-
+  updateIncomeDetails(income:Incomes):Observable<Incomes>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.put<Incomes>(`${this.url}/income/${income.id}`,income,{headers})
+  }
 
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.url}/categories?_embed=subcategories`);

@@ -1,20 +1,21 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { CalendarOptions } from '@fullcalendar/core';
+import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { Expense, Incomes } from '../../../../common/models/expenses.model';
-import { EventInput } from '@fullcalendar/core';
 import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { AddDetailDailogComponent } from './add-detail-dailog/add-detail-dailog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-calendar',
-  standalone:true,
-  imports:[MaterialModule,FullCalendarModule],
+  standalone: true,
+  imports: [MaterialModule, FullCalendarModule],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
@@ -23,6 +24,7 @@ export class CalendarComponent implements OnInit {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
     dateClick: (arg) => this.handleDateClick(arg),
+    eventClick: (arg) => this.handleEventClick(arg),
     events: []
   };
 
@@ -32,6 +34,7 @@ export class CalendarComponent implements OnInit {
   constructor(
     private apiService: ApiServiceService,
     private dialog: MatDialog,
+    private snackbar: MatSnackBar,
     @Inject(PLATFORM_ID) private platformId: any
   ) { }
 
@@ -42,6 +45,8 @@ export class CalendarComponent implements OnInit {
   }
 
   loadEvents(): void {
+    // Clear the event map to avoid duplication
+    this.eventMap = {};
     this.apiService.getIncomeDetails().subscribe(incomeData => {
       this.apiService.getExpenses().subscribe(expenseData => {
         const eventMap: { [date: string]: { income: number, expense: number } } = {};
@@ -66,7 +71,6 @@ export class CalendarComponent implements OnInit {
           eventMap[formattedDate].income += income.amount;
         });
 
-        // Aggregate expense data
         expenseData.forEach((expense: Expense) => {
           const formattedDate = formatDate(expense.date);
           if (!this.eventMap[formattedDate]) {
@@ -79,7 +83,6 @@ export class CalendarComponent implements OnInit {
           eventMap[formattedDate].expense += expense.amount;
         });
 
-        // Create events array
         const events: EventInput[] = [];
         for (const date in eventMap) {
           const totalIncome = eventMap[date].income;
@@ -115,6 +118,45 @@ export class CalendarComponent implements OnInit {
   handleDateClick(arg) {
     if (isPlatformBrowser(this.platformId)) {
       const date = arg.dateStr;
+      this.dialog.open(AddDetailDailogComponent, {
+        data: { date }
+      }).afterClosed().subscribe(result => {
+        if (result) {
+          console.log(result)
+          if (result.type === 'income') {
+            console.log("income")
+            this.apiService.postIncomeDetails(result).subscribe({
+              next: (response: Incomes) => {
+                this.snackbar.open("Your Income Saved Successfully!", "Close", { duration: 3000 });
+                this.loadEvents();
+              },
+              error: err => {
+                this.snackbar.open("Something Went Wrong", "Close", { duration: 3000 });
+              }
+            });
+          } else {
+            console.log("expenses")
+
+            this.apiService.postExpenses(result).subscribe({
+              next: (response: Expense) => {
+                this.snackbar.open("Your Expenses Saved Successfully!", "Close", { duration: 3000 });
+                this.loadEvents();
+              },
+              error: err => {
+                this.snackbar.open("Something Went Wrong", "Close", { duration: 3000 });
+              }
+            });
+          }
+          const { date, account, category, amount } = result;
+          console.log(`Added new entry on ${date}: Account: ${account}, Category: ${category}, Amount: ${amount}`);
+        }
+      });
+    }
+  }
+
+  handleEventClick(arg: EventClickArg) {
+    if (isPlatformBrowser(this.platformId)) {
+      const date = arg.event.startStr;
       const details = this.eventMap[date] || { incomes: [], expenses: [] };
       this.dialog.open(DetailDailogComponent, {
         data: { date, ...details }

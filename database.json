@@ -1,100 +1,64 @@
 {
   "expenses": [
     {
-      "id": "bae8",
-      "date": "2024-06-17",
-      "category": "Food/Drinks",
-      "amount": 123,
-      "comment": "Credit"
-    },
-    {
-      "id": "2379",
-      "date": "2024-06-17",
-      "category": "Food/Drinks",
-      "amount": 100,
-      "comment": "Credit"
-    },
-    {
-      "id": "f96b",
-      "date": "2024-06-12",
-      "category": "Shopping",
-      "amount": 100,
-      "comment": "Credit"
-    },
-    {
-      "id": "d94e",
-      "date": "2024-06-12",
-      "category": "Shopping",
-      "amount": 200,
-      "comment": "Credit"
-    },
-    {
-      "id": "c616",
-      "date": "2024-06-16",
-      "category": "Family",
-      "amount": 15,
-      "comment": "Credit"
-    },
-    {
-      "id": "20d8",
-      "date": "2024-05-12",
-      "category": "Health/Sport",
-      "amount": 150,
-      "comment": "Debit"
-    },
-    {
-      "id": "13e7",
-      "date": "2024-05-12",
-      "category": "Health/Sport",
-      "amount": 200,
-      "comment": "Debit"
-    },
-    {
-      "id": "c5df",
-      "date": "2024-05-31",
+      "id": "afab",
+      "date": "2024-06-07",
+      "type": "expense",
+      "account": "Credit",
       "category": "Travelser",
-      "amount": 120,
-      "comment": "Credit"
+      "amount": 100
     },
     {
-      "id": "00e3",
-      "date": "2024-06-04",
-      "category": "Other (Expenses)",
-      "amount": 123,
-      "comment": "Credit"
-    },
-    {
-      "id": "bf2a",
-      "date": "2024-05-09",
-      "category": "Travelser",
-      "amount": 123,
-      "comment": "Debit"
-    },
-    {
-      "id": "9839",
-      "date": "2024-06-05",
-      "category": "Travelser",
-      "amount": 1000,
-      "comment": "Credit"
-    },
-    {
-      "id": "530b",
+      "id": "12af",
       "date": "2024-06-01",
+      "type": "expense",
+      "account": "Credit",
       "category": "Travelser",
-      "amount": 100,
-      "comment": "Credit"
+      "amount": 100
+    },
+    {
+      "id": "9e2d",
+      "type": "expense",
+      "date": "2024-06-29",
+      "account": "Credit",
+      "category": "Other (Expenses)",
+      "amount": 5000
+    },
+    {
+      "id": "504b",
+      "type": "Expense",
+      "date": "2024-05-30",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 1001
+    },
+    {
+      "id": "bcfe",
+      "type": "Expense",
+      "date": "2024-05-30",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 101
+    },
+    {
+      "id": "2777",
+      "type": "expense",
+      "date": "2024-06-15",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 1752
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 19061
+      "balnce": 227
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 773
+      "balnce": 673
     },
     {
       "id": "3",
@@ -104,46 +68,20 @@
   ],
   "income": [
     {
-      "id": "e42b",
-      "date": "2024-06-12",
-      "accountType": "Debit",
-      "amount": 1000
+      "type": "Income",
+      "date": "2024-06-15",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 22,
+      "id": "b282"
     },
     {
-      "id": "4240",
-      "date": "2024-06-12",
-      "accountType": "Debit",
-      "amount": 100
-    },
-    {
-      "id": "1b2d",
-      "date": "2024-05-31",
-      "accountType": "Credit",
-      "amount": 112
-    },
-    {
-      "id": "e06b",
-      "date": "2024-06-05",
-      "accountType": "Credit",
-      "amount": 100
-    },
-    {
-      "id": "8d6f",
-      "date": "2024-06-01",
-      "accountType": "Debit",
-      "amount": 123
-    },
-    {
-      "id": "03b3",
-      "date": "2024-06-02",
-      "accountType": "Debit",
-      "amount": 123
-    },
-    {
-      "id": "8b94",
-      "date": "2024-06-01",
-      "accountType": "Cash",
-      "amount": 200
+      "type": "Income",
+      "date": "2024-06-22",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 101,
+      "id": "c018"
     }
   ],
   "categories": [

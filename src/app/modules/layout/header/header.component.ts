@@ -32,8 +32,8 @@ ngAfterViewInit() {
   if (typeof window !== "undefined") {
     this.isScreenSmall = window.innerWidth < 992;
     this.cdref.detectChanges();
-    this.setSidenavMode();
-  }
+    setTimeout(() => {
+    }, 0);  }
 }
 
 setSidenavMode() {
