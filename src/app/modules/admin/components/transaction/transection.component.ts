@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-transection',
@@ -129,7 +130,7 @@ export class TransectionComponent implements OnInit, AfterViewInit {
     const title = element.type === 'Income' ? 'Edit Income' : 'Edit Expense';
     const dialogRef = this.dialog.open(DetailDailogComponent, {
       width: '400px',
-      data: { ...element, title } // Pass the element data along with the title
+      data: { ...element, title } 
     });
   
     dialogRef.afterClosed().subscribe(result => {
@@ -149,16 +150,11 @@ export class TransectionComponent implements OnInit, AfterViewInit {
               this.snackbar.open("Account Update Successful", "Close", { duration: 3000 });
               console.log("Account update successful");
 
-              // Update the data table if the account update was successful
               updateFn(result).subscribe({
                 next: (updatedEntry) => {
                   const index = this.dataSource.data.findIndex(item => item.id === updatedEntry.id);
-                  if (index !== -1) {
                     this.dataSource.data[index] = updatedEntry;
-                    this.dataSource.data = [...this.dataSource.data]; // Trigger change detection
-                  } else {
-                    this.dataSource.data = [...this.dataSource.data, updatedEntry];
-                  }
+                    this.dataSource.data = [...this.dataSource.data]; 
                   this.applyFilter();
                   this.snackbar.open("Entry updated successfully", "Close", { duration: 3000 });
                 },
@@ -168,7 +164,6 @@ export class TransectionComponent implements OnInit, AfterViewInit {
                 }
               });
             } else {
-              // Handle the case where balance validation failed
               this.snackbar.open("Insufficient balance or account not found", "Close", { duration: 3000 });
             }
           },
@@ -185,9 +180,53 @@ export class TransectionComponent implements OnInit, AfterViewInit {
 
 
 
-  deleteElement(element: Element): void {
-    // Implement your delete logic here
-    console.log('Delete', element);
+  deleteElement(element: Transection): void {
+    Swal.fire({
+      position: 'top',
+      title: 'Are you sure?',
+      text: 'This process is irreversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, go ahead.',
+      cancelButtonText: 'No, let me think',
+    }).then((result)=>{
+      if(result.value){
+        Swal.fire('Removed!', 'Transaction removed successfully.', 'success');
+        if (element.type === "Income") {
+          this.apiService.deleteIncome(element.id).subscribe({
+            next:(response:Incomes)=>{
+                this.commonService.updateAccountBalance(element.account,"Income",element.amount,0,this.accountType).subscribe({
+                  next:(response:PaymentType)=>{
+                    console.log(response)
+                  }
+                })
+                const index = this.dataSource.data.indexOf(element);
+                if (index > -1) {
+                  this.dataSource.data.splice(index, 1);
+                  this.dataSource.data=[...this.dataSource.data];
+                }          
+            }
+          })
+        }else{
+          this.apiService.deleteExpenses(element.id).subscribe({
+            next:(response:Incomes)=>{
+              this.commonService.updateAccountBalance(element.account,"Expenses",element.amount,0,this.accountType).subscribe({
+                next:(response:PaymentType)=>{
+                  console.log(response)
+                }
+              })
+              const index = this.dataSource.data.indexOf(element);
+              console.log(index)
+                if (index > -1) {
+                  this.dataSource.data.splice(index, 1);
+                  this.dataSource.data=[...this.dataSource.data];
+
+                } 
+            }
+          })
+        }
+      }
+    })
   }
   clearDateRange() {
     this.range.reset()

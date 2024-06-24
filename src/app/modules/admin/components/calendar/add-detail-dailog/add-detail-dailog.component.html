@@ -18,14 +18,14 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Account</mat-label>
-      <input #accountInput type="text" matInput formControlName="account" [matAutocomplete]="autoAccount" (input)="filterAccounts()"  (focus)="filterAccounts()" id="account">
+      <input #accountInput type="text"  matInput formControlName="account" [matAutocomplete]="autoAccount" (input)="filterAccounts()"  (focus)="filterAccounts()" id="account">
       <mat-autocomplete requireSelection #autoAccount="matAutocomplete">
         <mat-option *ngFor="let option of filteredAccounts" [value]="option">{{ option }}</mat-option>
       </mat-autocomplete>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Category</mat-label>
+      <mat-label>Category</mat-label> 
       <input #categoryInput type="text" matInput formControlName="category" [matAutocomplete]="autoCategory" (input)="filterCategories()" (focus)="filterCategories()" id="category">
       <mat-autocomplete requireSelection #autoCategory="matAutocomplete">
         <mat-option *ngFor="let option of filteredCategories" [value]="option">{{ option }}</mat-option>

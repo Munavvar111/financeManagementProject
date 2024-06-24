@@ -24,6 +24,7 @@ export class AddDetailDailogComponent {
   expenseCategories: string[] = [];
   filteredAccounts: string[] = [];
   filteredCategories: string[] = [];
+  category: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -66,9 +67,9 @@ export class AddDetailDailogComponent {
     this.form.get('type').valueChanges.subscribe(type => {
       if (type === 'income') {
         this.form.get('category').reset(); 
-        this.filteredCategories = this.incomeCategories;
+        this.category = this.incomeCategories;
       } else if (type === 'expense') {
-        this.filteredCategories = this.expenseCategories;
+        this.category = this.expenseCategories;
         this.form.get('category').reset(); 
       }
     });
@@ -81,18 +82,16 @@ export class AddDetailDailogComponent {
 
   filterCategories(): void {
     const filterValue = this.categoryInput.nativeElement.value.toLowerCase();
-    this.filteredCategories = this.filteredCategories.filter(option => option.toLowerCase().includes(filterValue));
+    this.filteredCategories = this.category.filter(option => option.toLowerCase().includes(filterValue));
+    console.log(filterValue)
+    console.log(this.filteredCategories)
   }
 
   onSubmit(): void {
     if (this.form.valid) {
       console.log(this.form.value)
-      if (this.form.value.type === 'income') {
-        const { date, account, amount } = this.form.value;
-        this.dialogRef.close({  date, account, amount });
-      } else {
-        this.dialogRef.close(this.form.value);
-      }
+      this.dialogRef.close(this.form.value);
+
     }
   }
   

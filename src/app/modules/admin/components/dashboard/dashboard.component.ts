@@ -70,7 +70,6 @@ export class DashboardComponent implements OnInit {
     const selectedRangeValue = this.rangeForm.value.selectedRange;
     this.loadData(selectedRangeValue);
     // this.cdr.detectChanges()
-    console.log(selectedRangeValue);
   }
 
   ngOnInit(): void {
@@ -79,7 +78,6 @@ export class DashboardComponent implements OnInit {
     this.loadInitialData();
     this.getTotalBalance();
     this.getCurrentAndPreviousMonthData()
-    console.log(this.currentMonthExpenses)
 
   }
 
@@ -89,7 +87,6 @@ export class DashboardComponent implements OnInit {
         this.PaymentType=response;
         this.currentCreditUsage=response.find(item=>item.name=='Credit').balnce;
         this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
-        console.log(this.totalBalance)
       
       }
     })
@@ -104,11 +101,9 @@ export class DashboardComponent implements OnInit {
         ...incomes.map(item => ({ ...item, type: 'income' })),
         ...expenses.map(item => ({ ...item, type: 'expenses' })),
       ];
-      console.log(this.transactions);
     });
 
     this.service.getExpenses().subscribe((result) => {
-      console.log(result);
       this.chartdata = result;
       if (this.chartdata != null) {
         this.processExpenses(this.chartdata)
@@ -200,8 +195,6 @@ export class DashboardComponent implements OnInit {
     this.last7DaysData = this.getLast7DaysExpenses(this.chartdata);
     const last7DaysLabels = this.last7DaysData.map((item) => item.date);
     const last7DaysAmounts = this.last7DaysData.map((item) => item.amount);
-    console.log(last7DaysAmounts)
-    console.log(last7DaysLabels)
 
     this.barChartData = {
       labels: last7DaysLabels,
@@ -252,13 +245,11 @@ export class DashboardComponent implements OnInit {
 
   //load the initial data for the money flow diagram in line chart
   private loadData(selectedRange: string): void {
-    console.log(selectedRange)
     this.service.getExpenses().subscribe((expensesResult) => {
       this.chartdata = expensesResult;
       if (this.chartdata != null) {
         switch (selectedRange) {
           case 'last7':
-            console.log("hiiiasda")
             this.lastNDaysExpenses = this.getLastnDaysExpenses(this.chartdata, 7);
             this.lastNDaysIncomes = this.getLastnDaysIncomes(this.incomeData, 7);
             this.initializeIncomeVsExpenseChart(this.last7DaysData.map((item) => item.date), this.lastNDaysIncomes, this.lastNDaysExpenses);
@@ -282,7 +273,6 @@ export class DashboardComponent implements OnInit {
   processExpenses(expenses: Expense[]): void {
     expenses.forEach((expense) => {
       const month = new Date(expense.date).getMonth();
-      console.log(month )
       this.monthlyExpenses[month] += expense.amount;
     });
   }

@@ -5,19 +5,24 @@ import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Expense, Incomes } from '../../../../common/models/expenses.model';
+import {
+  Expense,
+  Incomes,
+  PaymentType,
+} from '../../../../common/models/expenses.model';
 import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { AddDetailDailogComponent } from './add-detail-dailog/add-detail-dailog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonServiceService } from '../../../../common/services/common-service.service';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
   imports: [MaterialModule, FullCalendarModule],
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent implements OnInit {
   calendarOptions: CalendarOptions = {
@@ -25,31 +30,47 @@ export class CalendarComponent implements OnInit {
     plugins: [dayGridPlugin, interactionPlugin],
     dateClick: (arg) => this.handleDateClick(arg),
     eventClick: (arg) => this.handleEventClick(arg),
-    events: []
+    events: [],
   };
 
-  private eventMap: { [date: string]: { incomes: Incomes[], expenses: Expense[] } } = {};
+  private eventMap: {
+    [date: string]: { incomes: Incomes[]; expenses: Expense[] };
+  } = {};
   private originalEvents: EventInput[] = [];
 
+  accountType: PaymentType[];
   constructor(
     private apiService: ApiServiceService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    @Inject(PLATFORM_ID) private platformId: any
-  ) { }
+    @Inject(PLATFORM_ID) private platformId: any,
+    private commonService: CommonServiceService
+  ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loadEvents();
     }
+    this.apiService.getAccount().subscribe({
+      next: (response: PaymentType[]) => {
+        this.accountType = response;
+      },
+      error: (err) => {
+        this.snackbar.open(
+          "Can't Get The Account Type Please Refrest The Page Or Try Again"
+        );
+      },
+    });
   }
 
   loadEvents(): void {
     // Clear the event map to avoid duplication
     this.eventMap = {};
-    this.apiService.getIncomeDetails().subscribe(incomeData => {
-      this.apiService.getExpenses().subscribe(expenseData => {
-        const eventMap: { [date: string]: { income: number, expense: number } } = {};
+    this.apiService.getIncomeDetails().subscribe((incomeData) => {
+      this.apiService.getExpenses().subscribe((expenseData) => {
+        const eventMap: {
+          [date: string]: { income: number; expense: number };
+        } = {};
 
         const formatDate = (date: string | Date): string => {
           if (typeof date === 'string') {
@@ -58,7 +79,6 @@ export class CalendarComponent implements OnInit {
             return date.toISOString().split('T')[0];
           }
         };
-
         incomeData.forEach((income: Incomes) => {
           const formattedDate = formatDate(income.date);
           if (!this.eventMap[formattedDate]) {
@@ -90,7 +110,9 @@ export class CalendarComponent implements OnInit {
           if (totalIncome > 0 && totalExpense > 0) {
             const netAmount = totalIncome - totalExpense;
             events.push({
-              title: `${netAmount >= 0 ? 'Income: $' : 'Expense: $'}${Math.abs(netAmount).toFixed(2)}`,
+              title: `${netAmount >= 0 ? 'Income: $' : 'Expense: $'}${Math.abs(
+                netAmount
+              ).toFixed(2)}`,
               date: date,
               classNames: ['income-expense-event'],
             });
@@ -98,13 +120,13 @@ export class CalendarComponent implements OnInit {
             events.push({
               title: `Income: $${totalIncome.toFixed(2)}`,
               date: date,
-              color: 'green'
+              color: 'green',
             });
           } else if (totalExpense > 0) {
             events.push({
               title: `Expense: $${totalExpense.toFixed(2)}`,
               date: date,
-              color: 'red'
+              color: 'red',
             });
           }
         }
@@ -118,39 +140,91 @@ export class CalendarComponent implements OnInit {
   handleDateClick(arg) {
     if (isPlatformBrowser(this.platformId)) {
       const date = arg.dateStr;
-      this.dialog.open(AddDetailDailogComponent, {
-        data: { date }
-      }).afterClosed().subscribe(result => {
-        if (result) {
-          console.log(result)
-          if (result.type === 'income') {
-            console.log("income")
-            this.apiService.postIncomeDetails(result).subscribe({
-              next: (response: Incomes) => {
-                this.snackbar.open("Your Income Saved Successfully!", "Close", { duration: 3000 });
-                this.loadEvents();
-              },
-              error: err => {
-                this.snackbar.open("Something Went Wrong", "Close", { duration: 3000 });
-              }
-            });
-          } else {
-            console.log("expenses")
-
-            this.apiService.postExpenses(result).subscribe({
-              next: (response: Expense) => {
-                this.snackbar.open("Your Expenses Saved Successfully!", "Close", { duration: 3000 });
-                this.loadEvents();
-              },
-              error: err => {
-                this.snackbar.open("Something Went Wrong", "Close", { duration: 3000 });
-              }
-            });
+      this.dialog
+        .open(AddDetailDailogComponent, {
+          data: { date },
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            console.log(result);
+            if (result.type === 'income') {
+              this.commonService
+                .updateAccountBalance(
+                  result.account,
+                  'Income',
+                  0,
+                  result.amount,
+                  this.accountType
+                )
+                .subscribe({
+                  next: (response: PaymentType | null) => {
+                    if (response) {
+                      this.apiService.postIncomeDetails(result).subscribe({
+                        next: (response: Incomes) => {
+                          this.snackbar.open(
+                            'Your Income Saved Successfully!',
+                            'Close',
+                            { duration: 3000 }
+                          );
+                          this.loadEvents();
+                        },
+                        error: (err) => {
+                          this.snackbar.open('Something Went Wrong', 'Close', {
+                            duration: 3000,
+                          });
+                        },
+                      });
+                    } else {
+                      console.log('Balnce Is Insufficient');
+                    }
+                  },
+                  error: (err) => {
+                    console.log('Something Went To Wrong');
+                  },
+                });
+            } else {
+              this.commonService
+                .updateAccountBalance(
+                  result.account,
+                  'Expenses',
+                  0,
+                  result.amount,
+                  this.accountType
+                )
+                .subscribe({
+                  next: (response: PaymentType | null) => {
+                    if (response) {
+                      this.apiService.postExpenses(result).subscribe({
+                        next: (response: Incomes) => {
+                          this.snackbar.open(
+                            'Your Expenses Saved Successfully!',
+                            'Close',
+                            { duration: 3000 }
+                          );
+                          this.loadEvents();
+                        },
+                        error: (err) => {
+                          this.snackbar.open('Something Went Wrong', 'Close', {
+                            duration: 3000,
+                          });
+                        },
+                      });
+                    } else {
+                      console.log('Balnce Is Insufficient');
+                    }
+                  },
+                  error: (err) => {
+                    console.log('Something Went To Wrong');
+                  },
+                });
+            }
+            const { date, account, category, amount } = result;
+            console.log(
+              `Added new entry on ${date}: Account: ${account}, Category: ${category}, Amount: ${amount}`
+            );
           }
-          const { date, account, category, amount } = result;
-          console.log(`Added new entry on ${date}: Account: ${account}, Category: ${category}, Amount: ${amount}`);
-        }
-      });
+        });
     }
   }
 
@@ -159,7 +233,7 @@ export class CalendarComponent implements OnInit {
       const date = arg.event.startStr;
       const details = this.eventMap[date] || { incomes: [], expenses: [] };
       this.dialog.open(DetailDailogComponent, {
-        data: { date, ...details }
+        data: { date, ...details },
       });
     }
   }
@@ -169,10 +243,14 @@ export class CalendarComponent implements OnInit {
 
     switch (filterType) {
       case 'income':
-        filteredEvents = this.originalEvents.filter(event => event.color === 'green');
+        filteredEvents = this.originalEvents.filter(
+          (event) => event.color === 'green'
+        );
         break;
       case 'expense':
-        filteredEvents = this.originalEvents.filter(event => event.color === 'red');
+        filteredEvents = this.originalEvents.filter(
+          (event) => event.color === 'red'
+        );
         break;
       case 'both':
         filteredEvents = this.originalEvents;

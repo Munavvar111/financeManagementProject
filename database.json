@@ -1,87 +1,218 @@
 {
   "expenses": [
     {
-      "id": "afab",
-      "date": "2024-06-07",
+      "id": "86d2",
       "type": "expense",
-      "account": "Credit",
-      "category": "Travelser",
-      "amount": 100
-    },
-    {
-      "id": "12af",
-      "date": "2024-06-01",
-      "type": "expense",
-      "account": "Credit",
-      "category": "Travelser",
-      "amount": 100
-    },
-    {
-      "id": "9e2d",
-      "type": "expense",
-      "date": "2024-06-29",
-      "account": "Credit",
+      "date": "2024-06-20",
+      "account": "Debit",
       "category": "Other (Expenses)",
-      "amount": 5000
+      "amount": 100
     },
     {
-      "id": "504b",
-      "type": "Expense",
-      "date": "2024-05-30",
-      "account": "Credit",
-      "category": "Travelser",
-      "amount": 1001
-    },
-    {
-      "id": "bcfe",
-      "type": "Expense",
-      "date": "2024-05-30",
-      "account": "Credit",
-      "category": "Travelser",
-      "amount": 101
-    },
-    {
-      "id": "2777",
+      "id": "2727",
       "type": "expense",
       "date": "2024-06-15",
       "account": "Credit",
       "category": "Travelser",
-      "amount": 1752
+      "amount": 100
+    },
+    {
+      "id": "9e13",
+      "type": "expense",
+      "date": "2024-06-15",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 100
+    },
+    {
+      "id": "938b",
+      "type": "expense",
+      "date": "2024-06-11",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 1
+    },
+    {
+      "id": "c188",
+      "type": "expense",
+      "date": "2024-06-14",
+      "account": "Debit",
+      "category": "Clothing",
+      "amount": 100
+    },
+    {
+      "id": "a2d0",
+      "type": "expense",
+      "date": "2024-06-06",
+      "account": "Credit",
+      "category": "Gifts",
+      "amount": 100
+    },
+    {
+      "id": "be14",
+      "type": "expense",
+      "date": "2024-06-05",
+      "account": "Cash",
+      "category": "Entertainment ",
+      "amount": 100
+    },
+    {
+      "id": "1608",
+      "type": "expense",
+      "date": "2024-06-04",
+      "account": "Debit",
+      "category": "Shoes",
+      "amount": 100
+    },
+    {
+      "id": "87d2",
+      "type": "expense",
+      "date": "2024-06-03",
+      "account": "Debit",
+      "category": "Clothing",
+      "amount": 100
+    },
+    {
+      "id": "2d55",
+      "type": "expense",
+      "date": "2024-06-03",
+      "account": "Cash",
+      "category": "foods",
+      "amount": 100
+    },
+    {
+      "id": "9e69",
+      "type": "expense",
+      "date": "2024-06-02",
+      "account": "Credit",
+      "category": "Other (Expenses)",
+      "amount": 100
+    },
+    {
+      "id": "44bd",
+      "type": "expense",
+      "date": "2024-05-11",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 100
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 227
+      "balnce": 999
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 673
+      "balnce": 1810
     },
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 302
+      "balnce": 1900
     }
   ],
   "income": [
     {
-      "type": "Income",
-      "date": "2024-06-15",
+      "id": "aadf",
+      "type": "income",
+      "date": "2024-06-24",
       "account": "Credit",
       "category": "asaa",
-      "amount": 22,
-      "id": "b282"
+      "amount": 1000
     },
     {
-      "type": "Income",
+      "id": "49e6",
+      "type": "income",
+      "date": "2024-06-12",
+      "account": "Debit",
+      "category": "asaa",
+      "amount": 1000
+    },
+    {
+      "id": "eaf1",
+      "type": "income",
+      "date": "2024-06-20",
+      "account": "Cash",
+      "category": "asaa",
+      "amount": 1000
+    },
+    {
+      "id": "502a",
+      "type": "income",
       "date": "2024-06-22",
+      "account": "Debit",
+      "category": "asaa",
+      "amount": 1000
+    },
+    {
+      "id": "125f",
+      "type": "income",
+      "date": "2024-05-16",
       "account": "Credit",
       "category": "asaa",
-      "amount": 101,
-      "id": "c018"
+      "amount": 100
+    },
+    {
+      "id": "ab84",
+      "type": "income",
+      "date": "2024-06-07",
+      "account": "Cash",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "6d4e",
+      "date": "2024-06-12",
+      "account": "Debit",
+      "category": "asaa",
+      "amount": 110
+    },
+    {
+      "id": "a26d",
+      "date": "2024-06-14",
+      "account": "Debit",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "adb3",
+      "account": "Credit",
+      "date": "2024-06-14",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "73ab",
+      "date": "2024-06-19",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "7108",
+      "type": "income",
+      "date": "2024-06-02",
+      "account": "Cash",
+      "category": "asaa",
+      "amount": 1000
+    },
+    {
+      "id": "09a9",
+      "date": "2024-06-13",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "b198",
+      "type": "income",
+      "date": "2024-05-10",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 100
     }
   ],
   "categories": [
@@ -113,6 +244,36 @@
       "id": "3c1a",
       "name": "asaa",
       "categoryId": "1"
+    },
+    {
+      "id": "83ec",
+      "name": "Clothing",
+      "categoryId": "2"
+    },
+    {
+      "id": "be0d",
+      "name": "Shoes",
+      "categoryId": "2"
+    },
+    {
+      "id": "11cf",
+      "name": "Gifts",
+      "categoryId": "2"
+    },
+    {
+      "id": "dccd",
+      "name": "Fuel",
+      "categoryId": "2"
+    },
+    {
+      "id": "9ff5",
+      "name": "Entertainment ",
+      "categoryId": "2"
+    },
+    {
+      "id": "c7c3",
+      "name": "foods",
+      "categoryId": "2"
     }
   ]
 }

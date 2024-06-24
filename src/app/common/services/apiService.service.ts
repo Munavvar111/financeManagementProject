@@ -80,5 +80,11 @@ export class ApiServiceService {
   
   getIncomeAndExpenses(): Observable<any[]> {
     return forkJoin([this.getIncomeDetails(), this.getExpenses()]);
+  } 
+  deleteExpenses(expenseId:string):Observable<Expense>{
+    return this.http.delete<Expense>(`${this.url}/expenses/${expenseId}`)
+  }
+  deleteIncome(incomeId:string):Observable<Incomes>{
+    return this.http.delete<Expense>(`${this.url}/income/${incomeId}`)
   }
 }

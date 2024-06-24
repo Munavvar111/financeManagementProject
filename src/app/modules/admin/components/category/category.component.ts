@@ -15,7 +15,6 @@ import { CommonModule } from '@angular/common';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddCategoryComponent } from './add-category/add-category.component';
-import { response } from 'express';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({

@@ -48,34 +48,7 @@ export class CommonServiceService {
   
     return this.apiService.updateAccount(account);
   }
-  // updateAccountBalanceEdit(accountName: string,type:string,previousAmount:number, amount: number, accounts: PaymentType[]): void {
-  //   const account = accounts.find(acc => acc.name === accountName);
 
-  //   if (account) {
-  //     if(type==='Expenses'){
-  //       account.balnce +=previousAmount;
-  //       account.balnce -= amount;
-  //       console.log(account.balnce) 
-  //        this.apiService.updateAccount(account).subscribe({
-  //         next:(response:PaymentType)=>{
-  //           console.log(response)
-  //         }
-  //        });
-  //     }
-  //     else{
-  //       account.balnce -=previousAmount;
-  //       account.balnce += amount;
-  //       console.log(account.balnce) 
-  //        this.apiService.updateAccount(account).subscribe({
-  //         next:(response:PaymentType)=>{
-  //           console.log(response)
-  //         }
-  //        });
-  //     }
-  //   } else {
-  //     throw new Error('Account not found');
-  //   }
-  // }
 
   postExpenses(expenses: Expense[]): void {
     expenses.forEach((expense) => {
@@ -107,4 +80,12 @@ export class CommonServiceService {
     });
   }
 
+  formatedDate(formDate:Date):string{
+    const date = new Date(formDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate
+  }
 }

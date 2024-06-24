@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { GenericDailogComponent } from '../../../../common/dailog/generic-dailog/generic-dailog.component';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-addExpenses',
@@ -102,13 +103,8 @@ export class AddExpensesComponent implements OnInit {
 
   //when form array convert in the list of expenses interface 
   transformExpenseData(formData: any): Expense[] {
-    // Format the date
-    const date = new Date(formData.date);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
-    const day = String(date.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-  
+    const formattedDate = this.commonService.formatedDate(formData.date);
+
     return formData.expenses.map((expense: any, index: number) => ({
       type: "expense",
       date: formattedDate,
@@ -140,12 +136,17 @@ export class AddExpensesComponent implements OnInit {
       const totalAmount = this.expenseForm.get('totalAmount').value;
 
       this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-
-      this.expenseForm.reset();
       this.expenseForm.setControl('expenses', this.fb.array([]));
       this.addExpense();
       this.expenseForm.get('expenses').valueChanges.subscribe(() => {
         this.updateTotalAmount();
+      });
+      this.expenseForm.reset();
+      Object.keys(this.expenseForm.controls).forEach(key => {
+        const control = this.expenseForm.get(key);
+        control?.setErrors(null);
+        control?.markAsPristine();
+        control?.markAsUntouched();
       });
     } else {
       this.expenseForm.markAllAsTouched();
@@ -162,6 +163,6 @@ export class AddExpensesComponent implements OnInit {
   }
   isControlInvalid(controlName: string): boolean {
     const control = this.expenseForm.get(controlName);
-    return control ? control.invalid && control.touched : false;
+    return control ? control.invalid && control.dirty : false;
   }
 }

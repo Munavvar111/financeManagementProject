@@ -1,12 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, map, startWith } from 'rxjs';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { Category, Incomes, PaymentType } from '../../../../common/models/expenses.model';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { response } from 'express';
+import { CommonServiceService } from '../../../../common/services/common-service.service';
 
 @Component({
   selector: 'app-incomes',
@@ -25,10 +24,10 @@ export class IncomesComponent implements OnInit {
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 
-  constructor(private fb: FormBuilder, private apiService: ApiServiceService,private snackbar:MatSnackBar) {
+  constructor(private fb: FormBuilder, private apiService: ApiServiceService,private snackbar:MatSnackBar,private commonService:CommonServiceService) {
     this.incomeForm = this.fb.group({
       date: ['', Validators.required],
-      accountType: ["", Validators.required],
+      account: ["", Validators.required],
       category: ['', Validators.required],
       amount: ["", [Validators.required, Validators.min(0)]]
     });
@@ -68,14 +67,10 @@ export class IncomesComponent implements OnInit {
 
 
       // Format the date before submitting
-      const date = new Date(formValue.date);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
-      const day = String(date.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-      formValue.date = formattedDate;
+      
+      formValue.date = this.commonService.formatedDate(formValue.date);
   
-      const selectedAccountType = formValue.accountType;
+      const selectedAccountType = formValue.account;
       const incomeAmount = formValue.amount;
 
       const paymentType=this.paymentTypes.find(pt=>pt.name==selectedAccountType);
@@ -89,6 +84,12 @@ export class IncomesComponent implements OnInit {
           this.apiService.postIncomeDetails(this.incomeForm.value).subscribe({
             next:(response:Incomes)=>{  
               this.incomeForm.reset();
+              Object.keys(this.incomeForm.controls).forEach(key => {
+                const control = this.incomeForm.get(key);
+                control?.setErrors(null);
+                control?.markAsPristine();
+                control?.markAsUntouched();
+              });
               this.snackbar.open("Income Details Are Update Succefully!","Close",{duration:3000})
             },
             error:err=>{
