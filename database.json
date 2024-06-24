@@ -95,13 +95,29 @@
       "account": "Credit",
       "category": "Travelser",
       "amount": 100
+    },
+    {
+      "id": "a0e0",
+      "type": "expense",
+      "date": "2024-06-12",
+      "account": "Credit",
+      "category": "Travelser",
+      "amount": 100
+    },
+    {
+      "id": "ad2e",
+      "type": "expense",
+      "date": "2024-06-12",
+      "account": "Credit",
+      "category": "Clothing",
+      "amount": 100
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 999
+      "balnce": 799
     },
     {
       "id": "2",

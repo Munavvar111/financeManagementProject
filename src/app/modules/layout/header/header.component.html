@@ -1,4 +1,4 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" autosize>
   <mat-sidenav
     #drawer
     [opened]="!isScreenSmall"
@@ -12,16 +12,19 @@
         width="32"
         class="me-3"
       />
-      Fast Budget</mat-toolbar
-    >
+      Fast Budget
+    </mat-toolbar>
     <mat-nav-list>
       <a
         mat-list-item
         [routerLink]="['/']"
         routerLinkActive="router-link-active"
       >
-        <div class="d-flex"><mat-icon class="me-3">dashboard</mat-icon> Dashboard</div></a
-      >
+        <div class="d-flex">
+          <mat-icon class="me-3">dashboard</mat-icon>
+          Dashboard
+        </div>
+      </a>
       <a
         mat-list-item
         [routerLink]="['/transactions']"
@@ -34,28 +37,29 @@
       </a>
       <a mat-list-item [routerLink]="['/addExpenses']">
         <div class="d-flex">
-          <mat-icon class="me-3">currency_exchange</mat-icon>Expenses
+          <mat-icon class="me-3">currency_exchange</mat-icon>
+          Expenses
         </div>
       </a>
-      <a mat-list-item routerLink="/accounts">
+      <a mat-list-item [routerLink]="['/accounts']">
         <div class="d-flex">
           <mat-icon class="me-3">account_balance</mat-icon>
           Accounts
         </div>
       </a>
-      <a mat-list-item routerLink="/incomes">
+      <a mat-list-item [routerLink]="['/incomes']">
         <div class="d-flex">
           <mat-icon class="me-3">account_balance_wallet</mat-icon>
           Incomes
         </div>
       </a>
-      <a mat-list-item routerLink="/category">
+      <a mat-list-item [routerLink]="['/category']">
         <div class="d-flex">
-          <mat-icon class="me-3"> category </mat-icon>
+          <mat-icon class="me-3">category</mat-icon>
           Category
         </div>
       </a>
-      <a mat-list-item routerLink="/calenders">
+      <a mat-list-item [routerLink]="['/calenders']">
         <div class="d-flex">
           <mat-icon class="me-3">free_cancellation</mat-icon>
           Calenders
@@ -72,5 +76,4 @@
     </mat-toolbar>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
-  
 </mat-sidenav-container>
