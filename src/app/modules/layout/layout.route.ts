@@ -38,6 +38,10 @@ export const layoutRoutes: Routes = [
             {
                 path:'category',
                 loadComponent:()=>import('../admin/components/category/category.component').then((m)=>m.CategoryComponent)
+            },
+            {
+                path:'transactionData',
+                loadComponent:()=>import('../admin/components/show-transaction/show-transaction.component').then((m)=>m.ShowTransactionComponent)
             }
             
         ]
