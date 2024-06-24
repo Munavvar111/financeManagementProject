@@ -8,7 +8,7 @@ import { Category, Expense, Incomes, PaymentType, Subcategory } from '../models/
 })
 export class ApiServiceService {
 
-  private url = `http://localhost:3000`;
+  private url = `https://jsonkeeper.com/b/866K`;
   constructor(private http: HttpClient) { }
 
   getExpenses(): Observable<Expense[]> {
