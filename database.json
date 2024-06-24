@@ -117,7 +117,7 @@
     {
       "id": "1",
       "name": "Credit",
-      "balnce": 799
+      "balnce": 899
     },
     {
       "id": "2",
@@ -226,6 +226,13 @@
       "id": "b198",
       "type": "income",
       "date": "2024-05-10",
+      "account": "Credit",
+      "category": "asaa",
+      "amount": 100
+    },
+    {
+      "id": "7bb7",
+      "date": "2024-06-01",
       "account": "Credit",
       "category": "asaa",
       "amount": 100

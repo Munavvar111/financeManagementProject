@@ -25,4 +25,9 @@
   .text-center {
     text-align: center;
   }
-  
+  .custom-tab-group .mat-tab-label-active {
+    background-color: white !important; /* Active tab background */
+  }
+  .custom-tab-group .mat-tab-label {
+    background-color: #f8f8f8; /* Default tab background */
+  }

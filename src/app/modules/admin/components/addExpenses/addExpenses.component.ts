@@ -10,11 +10,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericDailogComponent } from '../../../../common/dailog/generic-dailog/generic-dailog.component';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { Subscription } from 'rxjs';
+import { IncomesComponent } from '../incomes/incomes.component';
 
 @Component({
   selector: 'app-addExpenses',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule],
+  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule,IncomesComponent],
   templateUrl: './addExpenses.component.html',
   styleUrls: ['./addExpenses.component.css']
 })

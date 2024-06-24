@@ -14,9 +14,10 @@
     @for (category of filteredCategories; track $index) {
       <mat-tab label="{{ category.name }}">
         <ng-template matTabContent>
-          <div *ngIf="category.subcategories && category.subcategories.length">
-            <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
-          </div>
+          @if (category.subcategories && category.subcategories.length) {
+
+              <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
+          }
         </ng-template>
       </mat-tab>
     }
