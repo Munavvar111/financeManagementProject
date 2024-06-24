@@ -30,7 +30,7 @@
       <a mat-list-item [routerLink]="['/addExpenses']">
         <div class="d-flex align-items-center">
           <mat-icon class="me-3">currency_exchange</mat-icon>
-          <span *ngIf="isNamesVisible">Expenses</span>
+          <span *ngIf="isNamesVisible">Expenses/Income</span>
         </div>
       </a>
       <a mat-list-item [routerLink]="['/accounts']">
@@ -39,12 +39,12 @@
           <span *ngIf="isNamesVisible">Accounts</span>
         </div>
       </a>
-      <a mat-list-item [routerLink]="['/incomes']">
+      <!-- <a mat-list-item [routerLink]="['/incomes']">
         <div class="d-flex align-items-center">
           <mat-icon class="me-3">account_balance_wallet</mat-icon>
           <span *ngIf="isNamesVisible">Incomes</span>
         </div>
-      </a>
+      </a> -->
       <a mat-list-item [routerLink]="['/category']">
         <div class="d-flex align-items-center">
           <mat-icon class="me-3">category</mat-icon>
