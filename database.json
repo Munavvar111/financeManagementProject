@@ -127,7 +127,7 @@
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 1900
+      "balnce": 1901
     }
   ],
   "income": [
@@ -148,12 +148,12 @@
       "amount": 1000
     },
     {
-      "id": "eaf1",
-      "type": "income",
+      "type": "Income",
       "date": "2024-06-20",
       "account": "Cash",
       "category": "asaa",
-      "amount": 1000
+      "amount": 1001,
+      "id": "eaf1"
     },
     {
       "id": "502a",
