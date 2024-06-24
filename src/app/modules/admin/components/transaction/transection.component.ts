@@ -227,7 +227,7 @@ export class TransectionComponent implements OnInit, AfterViewInit {
         }
       }
     })
-  }
+    }
   clearDateRange() {
     this.range.reset()
     this.applyFilter();
