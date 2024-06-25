@@ -1,4 +1,3 @@
-  
 <div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
   <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()">
     <div class="form-group mb-4">
@@ -18,7 +17,7 @@
         <mat-label>Number</mat-label>
         <input #input type="text" placeholder="Pick one" matInput formControlName="account" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
         <mat-autocomplete requireSelection #auto="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions" [value]="option">{{ option }}</mat-option>
+          <mat-option *ngFor="let option of filteredOptions" [value]="option">{{option}}</mat-option>
         </mat-autocomplete>
         <mat-error *ngIf="isControlInvalid('account')">Account type is required.</mat-error>
       </mat-form-field>

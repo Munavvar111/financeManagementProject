@@ -34,9 +34,7 @@
       </div>
     </div>
    
-    <div class="d-flex align-items-center text-white mx-3 text-uppercase fw-bloder" style="font-size: medium;">
-      <span *ngIf="isNamesVisible" class="text-success fw-blod">Dashboard</span>
-    </div>
+   
     <mat-nav-list>
       <a
         mat-list-item
@@ -49,9 +47,7 @@
         </div>
       </a>
       
-    <div class="d-flex align-items-center text-white mx-3 text-uppercase fw-bloder" style="font-size: medium;">
-      <span *ngIf="isNamesVisible" class="text-success fw-blod">UI Elements</span>
-    </div>
+   
       <a
         mat-list-item
         [routerLink]="['/transactions']"
@@ -92,10 +88,16 @@
           <span *ngIf="isNamesVisible">Calenders</span>
         </div>
       </a>
+     <a mat-list-item [routerLink]="['/transactionData']">
+        <div class="d-flex align-items-center text-white">
+          <mat-icon class="me-3">free_cancellation</mat-icon>
+          <span *ngIf="isNamesVisible">ShowTransaction</span>
+        </div>
+      </a>
      
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content class="sticky" style="background-color: #ededed;">
+  <mat-sidenav-content class="sticky" style="background-color: #ecf0f4;">
     <mat-toolbar class="top-nav-toolbar bg-white ">
       @if (!isScreenSmall) {
 

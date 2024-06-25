@@ -157,7 +157,9 @@ export class AddExpensesComponent implements OnInit {
       this.snackBar.open('Please fill out the form correctly', 'Close', { duration: 3000 });
     }
   }
-
+  onCancel(){
+    this.expenseForm.reset()
+  }
   //update the total
   updateTotalAmount() {
     const expensesArray = this.expenseForm.get('expenses') as FormArray;

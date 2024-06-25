@@ -1,109 +1,91 @@
-<div class=" p-3 text-center">
+<div class="p-3 text-center">
   <h1>Add Expenses/Income</h1>
 </div>
 <div class="container">
-  @defer (when dataIsLoad) {
+  <mat-tab-group mat-stretch-tabs class="mt-3 custom-tab-group">
+    <mat-tab label="Expenses">
+      <div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
+        <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+          <div class="form-group mb-4">
+            <label for="date" class="form-label h4">Date</label>
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Choose a date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="date" id="date" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="isControlInvalid('date')">Date is required.</mat-error>
+            </mat-form-field>
+          </div>
 
-<mat-tab-group mat-stretch-tabs class="mt-3 custom-tab-group">
-  <mat-tab label="Expenses">
+          <div class="form-group mb-4">
+            <label for="account" class="form-label h4">Account</label>
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Number</mat-label>
+              <input #input type="text" placeholder="Pick one" matInput [formControl]="myControl" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
+              <mat-autocomplete requireSelection #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions" [value]="option">{{option}}</mat-option>
+              </mat-autocomplete>
+              <mat-error *ngIf="isControlInvalid('account')">Account is required.</mat-error>
+            </mat-form-field>
+          </div>
 
-  <div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
-  <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
-    <div class="form-group mb-4">
-      <label for="date" class="form-label h4">Date</label>
-      <mat-form-field class="w-100"  appearance="outline">
-        <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="date" id="date" />
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="isControlInvalid('date')">date is required.</mat-error>
+          <div formArrayName="expenses" class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label h4">Expenses</label>
+              <button mat-raised-button color="primary" type="button" (click)="addExpense()">
+                + Add Expense
+              </button>
+            </div>
 
-      </mat-form-field>
-    </div>
+            <div class="row font-weight-bold mb-2 d-flex align-items-center">
+              <div class="col fw-bold d-flex justify-content-end">Category</div>
+              <div class="col fw-bold d-flex justify-content-end">Amount</div>
+              <div class="col fw-bold d-flex justify-content-end">Remove</div>
+            </div>
 
-    <div class="form-group mb-4">
-      <label for="account" class="form-label h4">Account</label>
-      <mat-form-field class="w-100"  appearance="outline">
-        <mat-label>Number</mat-label>
-        <input #input type="text" placeholder="Pick one" matInput [formControl]="myControl" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
-        <mat-autocomplete requireSelection #auto="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions" [value]="option">{{option}}</mat-option>
-        </mat-autocomplete>
-        <mat-error *ngIf="isControlInvalid('account')">date is required.</mat-error>
-      </mat-form-field>
-    </div>
+            <div *ngFor="let expense of expenses().controls; let i = index" [formGroupName]="i" class="expense-row align-items-center mb-3">
+              <div class="col">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Category</mat-label>
+                  <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="autoCategory" (input)="filterCategory(inputCategory)" (focus)="filterCategory(inputCategory)" id="account1">
+                  <mat-autocomplete requireSelection #autoCategory="matAutocomplete">
+                    <mat-option *ngFor="let option of filterCategoryOption" [value]="option">{{option}}</mat-option>
+                  </mat-autocomplete>
+                  <mat-error *ngIf="isControlInvalid('category')">Category is required.</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Amount</mat-label>
+                  <input matInput type="number" formControlName="amount" min="1"/>
+                  <mat-error *ngIf="isControlInvalid('amount')">Amount is required.</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col delete-button text-center">
+                <button *ngIf="expenses().length > 1" mat-icon-button color="warn" type="button" (click)="removeExpense(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
 
-    <div formArrayName="expenses" class="mb-4">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <label>Expenses</label>
-        <button mat-raised-button color="primary" type="button" (click)="addExpense()">
-          + Add Expense
-        </button>
+          <div class="form-group mb-4">
+            <label for="totalAmount" class="form-label h4">Total Amount</label>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" formControlName="totalAmount" id="totalAmount"/>
+            </mat-form-field>
+          </div>
+
+          <div class="text-center">
+            <button mat-raised-button color="primary" type="submit" class="px-5" [disabled]="expenseForm.invalid">Submit</button>
+            <button mat-raised-button type="button" class="px-5" (click)="onCancel()">Cancel</button>
+          </div>
+        </form>
       </div>
-
-      <div class="row font-weight-bold mb-2">
-        <div class="col fw-bold">Category</div>
-        <div class="col fw-bold">Amount</div>
-        <div class="col fw-bold">Remove</div>
-      </div>
-@for (expense of  expenses().controls; track $index) {
-      <div  [formGroupName]="$index" class="row align-items-center mb-3">
-        <div class="col">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Category</mat-label>
-            <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="auto" 
-                   (input)="filterCategory(inputCategory)" (focus)="filterCategory(inputCategory)" id="account1">
-            <mat-autocomplete requireSelection #auto="matAutocomplete">
-              <mat-option *ngFor="let option of filterCategoryOption" [value]="option">{{option}}</mat-option>
-            </mat-autocomplete>
-        <mat-error *ngIf="isControlInvalid('category')">category is required.</mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field appearance="fill" class="w-100" appearance="outline">
-            <mat-label>Amount</mat-label>
-            <input matInput type="number" formControlName="amount" min="1"/>
-        <mat-error *ngIf="isControlInvalid('amount')">amount is required.</mat-error>
-
-          </mat-form-field>
-        </div>
-        <div class="col text-center">
-          <button *ngIf="expenses().length > 1" mat-icon-button color="warn" type="button" (click)="removeExpense($index)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </div>
-    }
-    </div>
-
-    <div class="form-group mb-4">
-      <label for="totalAmount" class="form-label h4">Total Amount</label>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Amount</mat-label>
-        <input matInput type="number" formControlName="totalAmount" id="totalAmount"/>
-      </mat-form-field>
-    </div>
-
-    <div class="text-center">
-
-      <button mat-raised-button color="primary" type="submit" class="px-5" [disabled]="expenseForm  .invalid">Submit</button>
-    </div>
-  </form>
-</div>
-</mat-tab>
-<mat-tab label="income">
-<app-incomes></app-incomes>
-</mat-tab>
-</mat-tab-group>
-}
-
-@placeholder () {
-  <ngx-skeleton-loader appearance="line" count="8"/>
-}
-@loading {
-  <ngx-skeleton-loader appearance="line" count="8"/>
-
-}@error {
-  no data found
-}
+    </mat-tab>
+    <mat-tab label="Income">
+      <app-incomes></app-incomes>
+    </mat-tab>
+  </mat-tab-group>
 </div>

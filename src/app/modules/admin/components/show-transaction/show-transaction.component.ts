@@ -1,26 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { Expense, Incomes, Transection } from '../../../../common/models/expenses.model';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
+import { MaterialModule } from '../../../../common/matrial/matrial.module';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-show-transaction',
   standalone: true,
-  imports: [],
+  imports: [MaterialModule,CommonModule,ReactiveFormsModule],
   templateUrl: './show-transaction.component.html',
   styleUrl: './show-transaction.component.css'
 })
 export class ShowTransactionComponent implements OnInit {
+  transactionData: any[] = [];
+  filteredData: any[] = [];
+  filterForm: FormGroup;
 
-  transactionData:any[];
-  constructor(private apiService:ApiServiceService){
-
+  constructor(private apiService: ApiServiceService, private fb: FormBuilder) {
+    this.filterForm = this.fb.group({
+      dateRange: this.fb.group({
+        start: [''],
+        end: ['']
+      }),
+      searchQuery: [' ']
+    });
   }
 
   ngOnInit(): void {
-    this.fetchData()
-    console.log(this.transactionData)
+    this.fetchData();
+    this.filterForm.valueChanges.subscribe(() => this.applyFilter());
   }
-  fetchData(){
+
+  fetchData() {
     this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
         this.apiService.getIncomeDetails().subscribe({
@@ -36,7 +48,9 @@ export class ShowTransactionComponent implements OnInit {
                 amount: incomeItem.amount,
               }))
             ];
-            this.transactionData = combinedData;
+
+            this.transactionData = combinedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            this.filteredData = this.transactionData;
           },
           error: err => {
             console.error(err);
@@ -47,5 +61,27 @@ export class ShowTransactionComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  applyFilter() {
+    const { dateRange, searchQuery } = this.filterForm.value;
+    const startDate = dateRange.start ? new Date(dateRange.start).getTime() : null;
+    const endDate = dateRange.end ? new Date(dateRange.end).getTime() : null;
+    const query = searchQuery.toLowerCase().trim();
+
+    this.filteredData = this.transactionData.filter(transaction => {
+      const transactionDate = new Date(transaction.date).getTime();
+      const dateMatch = (!startDate || transactionDate >= startDate) && (!endDate || transactionDate <= endDate);
+      const searchMatch = query
+        ? Object.values(transaction).some(value => value.toString().toLowerCase().includes(query))
+        : true;
+
+      return dateMatch && searchMatch;
+    });
+  }
+
+  clearDateRange() {
+    this.filterForm.get('dateRange').reset();
+    this.applyFilter();
   }
 }
