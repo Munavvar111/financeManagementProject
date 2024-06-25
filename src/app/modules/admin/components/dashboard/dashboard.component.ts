@@ -6,14 +6,14 @@ import { ApiServiceService } from '../../../../common/services/apiService.servic
 import { Expense, Incomes, PaymentType, Transection } from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
-import { response } from 'express';
+import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent],
+  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent,NgxSkeletonLoaderModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
   previousMonthExpenses: number; 
   currentMonthIncome: number; 
   previousMonthIncome: number;
+  dataIsLoad:boolean=true;
 
   PaymentType:PaymentType[];
   expenses: Expense[];
@@ -78,7 +79,9 @@ export class DashboardComponent implements OnInit {
     this.loadInitialData();
     this.getTotalBalance();
     this.getCurrentAndPreviousMonthData()
-
+    setTimeout(() => {
+      this.dataIsLoad = true
+    }, 3000);
   }
 
   getTotalBalance(){

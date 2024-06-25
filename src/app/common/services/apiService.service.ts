@@ -1,90 +1,108 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
-import { Category, Expense, Incomes, PaymentType, Subcategory } from '../models/expenses.model';
+import {
+  Category,
+  Expense,
+  Incomes,
+  PaymentType,
+  Subcategory,
+} from '../models/expenses.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiServiceService {
-
   private url = `https://jsonserver-69rb.onrender.com`;
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient) {}
+
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+  }
 
   getExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.url}/expenses`)
+    return this.http.get<Expense[]>(`${this.url}/expenses`);
   }
+  
   postExpenses(expenses: Expense): Observable<Expense> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+    return this.http.post<Expense>(`${this.url}/expenses`, expenses, {
+      headers: this.getHeaders(),
     });
-
-    return this.http.post<Expense>(`${this.url}/expenses`, expenses, { headers })
   }
 
-  updateExpense(expenses:Expense):Observable<Expense>{
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    return this.http.put<Expense>(`${this.url}/expenses/${expenses.id}`,expenses,{headers})
+  updateExpense(expenses: Expense): Observable<Expense> {
+    return this.http.put<Expense>(
+      `${this.url}/expenses/${expenses.id}`,
+      expenses,
+      { headers: this.getHeaders() }
+    );
   }
   getAccount(): Observable<PaymentType[]> {
-    return this.http.get<PaymentType[]>(`${this.url}/PaymentType`)
+    return this.http.get<PaymentType[]>(`${this.url}/PaymentType`);
   }
 
   postAccount(paymentType: PaymentType): Observable<PaymentType> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+    return this.http.post<PaymentType>(`${this.url}/PaymentType`, paymentType, {
+      headers: this.getHeaders(),
     });
-    return this.http.post<PaymentType>(`${this.url}/PaymentType`, paymentType, { headers });
   }
-  updateAccount(account:PaymentType):Observable<PaymentType>{
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+  updateAccount(account: PaymentType): Observable<PaymentType> {
+    console.log(account);
+    return this.http.put<PaymentType>(
+      `${this.url}/PaymentType/${account.id}`,
+      account,
+      { headers: this.getHeaders() }
+    );
+  }
+  getIncomeDetails(): Observable<Incomes[]> {
+    return this.http.get<Incomes[]>(`${this.url}/income`);
+  }
+  postIncomeDetails(income: Incomes): Observable<Incomes> {
+    return this.http.post<Incomes>(`${this.url}/income`, income, {
+      headers: this.getHeaders(),
     });
-    console.log(account )
-    return this.http.put<PaymentType>(`${this.url}/PaymentType/${account.id}`,account,{headers})
   }
-  getIncomeDetails():Observable<Incomes[]>{
-    return this.http.get<Incomes[]>(`${this.url}/income`)
-  }
-  postIncomeDetails(income:Incomes):Observable<Incomes>{
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+  updateIncomeDetails(income: Incomes): Observable<Incomes> {
+    return this.http.put<Incomes>(`${this.url}/income/${income.id}`, income, {
+      headers: this.getHeaders(),
     });
-    return this.http.post<Incomes>(`${this.url}/income`,income,{headers});
-  }
-  updateIncomeDetails(income:Incomes):Observable<Incomes>{
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    return this.http.put<Incomes>(`${this.url}/income/${income.id}`,income,{headers})
   }
 
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.url}/categories?_embed=subcategories`);
+    return this.http.get<Category[]>(
+      `${this.url}/categories?_embed=subcategories`
+    );
   }
 
-
-  addSubCategory(subCategory):Observable<Subcategory>{
-    return this.http.post<Subcategory>(`${this.url}/subcategories`,subCategory);
+  addSubCategory(subCategory): Observable<Subcategory> {
+    return this.http.post<Subcategory>(
+      `${this.url}/subcategories`,
+      subCategory
+    );
   }
 
+  deleteSubCategory(subcategoryId: number): Observable<Subcategory> {
+    return this.http.delete<Subcategory>(
+      `${this.url}/subcategories/${subcategoryId}`
+    );
+  }
+  updateSubCategory(subcategory: Subcategory): Observable<Subcategory> {
+    return this.http.put<Subcategory>(
+      `${this.url}/subcategories/${subcategory.id}`,
+      subcategory
+    );
+  }
 
-  deleteSubCategory(subcategoryId:number):Observable<Subcategory>{
-    return this.http.delete<Subcategory>(`${this.url}/subcategories/${subcategoryId}`)
-  }
-  updateSubCategory(subcategory:Subcategory):Observable<Subcategory>{
-    return this.http.put<Subcategory>(`${this.url}/subcategories/${subcategory.id}`,subcategory)
-  }
-  
   getIncomeAndExpenses(): Observable<any[]> {
     return forkJoin([this.getIncomeDetails(), this.getExpenses()]);
-  } 
-  deleteExpenses(expenseId:string):Observable<Expense>{
-    return this.http.delete<Expense>(`${this.url}/expenses/${expenseId}`)
   }
-  deleteIncome(incomeId:string):Observable<Incomes>{
-    return this.http.delete<Expense>(`${this.url}/income/${incomeId}`)
+  deleteExpenses(expenseId: string): Observable<Expense> {
+    return this.http.delete<Expense>(`${this.url}/expenses/${expenseId}`);
+  }
+  deleteIncome(incomeId: string): Observable<Incomes> {
+    return this.http.delete<Expense>(`${this.url}/income/${incomeId}`);
   }
 }
