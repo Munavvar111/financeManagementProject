@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let transaction of filteredData">
+        <tr *ngFor="let transaction of paginatedData">
           <td>{{ transaction.id }}</td>
           <td>{{ transaction.date }}</td>
           <td>
@@ -56,5 +56,10 @@
         </tr>
       </tbody>
     </table>
+    <mat-paginator [length]="totalItems"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[5, 10, 20]"
+                   (page)="onPageChange($event)">
+    </mat-paginator>
   </div>
   
