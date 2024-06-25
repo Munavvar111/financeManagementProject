@@ -1,4 +1,6 @@
 <div class="container">
+  @defer (when dataIsLoad) {
+
     <div class="d-flex">
       <mat-icon class="text-success" (click)="applyFilter('income')">brightness_1</mat-icon>
       <span class="d-flex fw-bold align-items-center">Income</span>
@@ -8,5 +10,13 @@
       <span class="d-flex fw-bold align-items-center">Both</span>
     </div>
     <full-calendar [options]="calendarOptions"></full-calendar>
+  }
+    @placeholder () {
+      <ngx-skeleton-loader appearance="line" count="8"/>
+    }
+    @loading {
+      <ngx-skeleton-loader appearance="line" count="8"/>
+  
+    }
   </div>
   

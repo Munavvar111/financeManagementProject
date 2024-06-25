@@ -13,11 +13,12 @@ import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { response } from 'express';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-accounts',
   standalone: true,
-  imports: [MaterialModule, CommonModule, AsyncPipe],
+  imports: [MaterialModule, CommonModule, AsyncPipe,NgxSkeletonLoaderModule],
   templateUrl: './accounts.component.html',
   styleUrl: './accounts.component.css',
 })
@@ -25,6 +26,7 @@ export class AccountsComponent implements OnInit {
   accounts: PaymentType[] = [];
   accountForm: FormGroup;
   editForm: FormGroup;
+  dataIsLoad:boolean=false;
   editIndex: number | null = null;
 
   constructor(
@@ -44,6 +46,9 @@ export class AccountsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAccounts();
+    setTimeout(() => {
+      this.dataIsLoad = true
+    }, 3000);
   }
 
   loadAccounts(): void {

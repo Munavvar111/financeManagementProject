@@ -16,6 +16,7 @@ import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-category',
@@ -25,6 +26,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     CommonModule,
     SubCategoryComponent,
+    NgxSkeletonLoaderModule
   ],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css',
@@ -35,7 +37,7 @@ export class CategoryComponent {
   searchForm: FormGroup;
   addCategoryForm: FormGroup;
   selectedSection: 'Income' | 'Expenses' | null = null;
-
+  dataIsLoad:boolean=false;
   constructor(
     private categoryService: ApiServiceService,
     private fb: FormBuilder,
@@ -58,6 +60,9 @@ export class CategoryComponent {
     this.searchForm.get('filterText').valueChanges.subscribe((value) => {
       this.filterCategories(value);
     });
+    setTimeout(() => {
+      this.dataIsLoad = true
+    }, 3000);
   }
 
   getCategory(): void {

@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit {
   previousMonthExpenses: number; 
   currentMonthIncome: number; 
   previousMonthIncome: number;
-  dataIsLoad:boolean=true;
+  dataIsLoad:boolean=false;
 
   PaymentType:PaymentType[];
   expenses: Expense[];

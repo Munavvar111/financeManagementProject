@@ -16,11 +16,12 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { AddDetailDailogComponent } from './add-detail-dailog/add-detail-dailog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [MaterialModule, FullCalendarModule],
+  imports: [MaterialModule, FullCalendarModule,NgxSkeletonLoaderModule],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
@@ -32,10 +33,10 @@ export class CalendarComponent implements OnInit {
     eventClick: (arg) => this.handleEventClick(arg),
     events: [],
   };
+  dataIsLoad:boolean=false;
 
   private eventMap: {
-    [date: string]: { incomes: Incomes[]; expenses: Expense[] };
-  } = {};
+    [date: string]: { incomes: Incomes[]; expenses: Expense[] };} = {};
   private originalEvents: EventInput[] = [];
 
   accountType: PaymentType[];
@@ -61,6 +62,9 @@ export class CalendarComponent implements OnInit {
         );
       },
     });
+    setTimeout(() => {
+      this.dataIsLoad = true
+    }, 3000);
   }
 
   loadEvents(): void {

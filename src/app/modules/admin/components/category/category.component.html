@@ -2,8 +2,10 @@
   <h1>Add Category</h1>
 </div>
 <div class="container mt-3">
-  <form [formGroup]="searchForm" class="d-flex justify-content-between">
-    <mat-form-field appearance="outline" class=" mr-3">
+  @defer (when dataIsLoad) {
+    
+    <form [formGroup]="searchForm" class="d-flex justify-content-between">
+      <mat-form-field appearance="outline" class=" mr-3">
       <input matInput placeholder="Search" formControlName="filterText">
     </mat-form-field>
     <button mat-fab color="primary" (click)="openDialog()">
@@ -15,11 +17,19 @@
       <mat-tab label="{{ category.name }}">
         <ng-template matTabContent>
           @if (category.subcategories && category.subcategories.length) {
-
-              <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
+            
+            <app-sub-category [subcategories]="category.subcategories"></app-sub-category>
           }
         </ng-template>
       </mat-tab>
     }
   </mat-tab-group>
+}
+@placeholder () {
+  <ngx-skeleton-loader appearance="line" count="8"/>
+}
+@loading {
+  <ngx-skeleton-loader appearance="line" count="8"/>
+
+}
 </div>

@@ -15,11 +15,12 @@ import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-transection',
   standalone: true,
-  imports: [MaterialModule, CommonModule, ReactiveFormsModule],
+  imports: [MaterialModule, CommonModule, ReactiveFormsModule,NgxSkeletonLoaderModule],
   templateUrl: './transection.component.html',
   styleUrls: ['./transection.component.css'],
   providers: [provideNativeDateAdapter()],
@@ -29,6 +30,7 @@ import Swal from 'sweetalert2';
 export class TransectionComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['id', 'date', 'type', 'category', 'amount', 'account', 'action'];
   accountType:PaymentType[];
+  dataIsLoad:boolean=false;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -43,7 +45,8 @@ export class TransectionComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('input') input: any;
 
-  constructor(private apiService: ApiServiceService, private cdr: ChangeDetectorRef, public dialog: MatDialog,private commonService:CommonServiceService,private snackbar:MatSnackBar) { }
+  constructor(private apiService: ApiServiceService, private cdr: ChangeDetectorRef, public dialog: MatDialog,private commonService:CommonServiceService,private snackbar:MatSnackBar) {
+   }
 
   ngOnInit() {
     this.fetchData();
@@ -58,12 +61,15 @@ export class TransectionComponent implements OnInit, AfterViewInit {
     this.range.valueChanges.subscribe(() => {
       this.applyFilter();
     });
+   
+    
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.applyFilter();
+      this.dataIsLoad = true
   }
 
   exportAsExcel(): void {
@@ -93,7 +99,9 @@ export class TransectionComponent implements OnInit, AfterViewInit {
             ];
             this.dataSource.data = combinedData;
             this.applyFilter();
-          },
+            setTimeout(() => {
+              this.dataIsLoad = true
+            }, 3000);          },
           error: err => {
             console.error(err);
           }

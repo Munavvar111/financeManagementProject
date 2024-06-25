@@ -11,18 +11,19 @@ import { GenericDailogComponent } from '../../../../common/dailog/generic-dailog
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { Subscription } from 'rxjs';
 import { IncomesComponent } from '../incomes/incomes.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-addExpenses',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule,IncomesComponent],
+  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule,IncomesComponent,NgxSkeletonLoaderModule],
   templateUrl: './addExpenses.component.html',
   styleUrls: ['./addExpenses.component.css']
 })
 export class AddExpensesComponent implements OnInit {
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
   @ViewChild('inputCategory') inputCategory: ElementRef<HTMLInputElement>;
-
+  dataIsLoad:boolean=false;
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
@@ -99,7 +100,9 @@ export class AddExpensesComponent implements OnInit {
     this.expenseForm.get("expenses").valueChanges.subscribe(() => {
       this.updateTotalAmount();
     })
-
+    setTimeout(() => {
+      this.dataIsLoad = true
+    }, 3000);
   }
 
   //when form array convert in the list of expenses interface 
