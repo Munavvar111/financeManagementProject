@@ -7,13 +7,14 @@ import { Expense, Incomes, PaymentType, Transection } from '../../../../common/m
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CalendarComponent } from '../calendar/calendar.component';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent,NgxSkeletonLoaderModule],
+  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent,NgxSkeletonLoaderModule,CalendarComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
@@ -75,7 +76,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTransactions();
-    this.rangeForm.patchValue({ selectedRange: 'last30' });
+    this.rangeForm.patchValue({ selectedRange: 'last365' });
     this.loadInitialData();
     this.getTotalBalance();
     this.getCurrentAndPreviousMonthData()
@@ -110,6 +111,7 @@ export class DashboardComponent implements OnInit {
       this.chartdata = result;
       if (this.chartdata != null) {
         this.processExpenses(this.chartdata)
+        this.cdr.detectChanges()
         this.initializeDoughnutChart();
         this.initializeBarChart();
         
@@ -120,8 +122,10 @@ export class DashboardComponent implements OnInit {
       this.incomeData = incomeResult;
       this.processIncome(this.incomeData);
       this.getCurrentAndPreviousMonthData();
+
       this.initializeDoughnutChartForCurrentMonth();
       this.initializeDoughnutChartForLastMonth();
+      this.cdr.detectChanges()
     });
 
     this.loadData('last365');
@@ -138,9 +142,12 @@ export class DashboardComponent implements OnInit {
         backgroundColor: this.colordata,
       }],
     };
+    
     this.doughnutChartDataCurrentMonthOptions = {
       responsive: true,
-    };
+      maintainAspectRatio: false,
+
+        };
   }
 
   initializeDoughnutChartForLastMonth(): void {
@@ -152,6 +159,7 @@ export class DashboardComponent implements OnInit {
       labels: this.labeldata,
       datasets: [{
         data: this.realdata,
+        borderRadius:2,
         backgroundColor: this.colordata,
       }],
     };
@@ -307,7 +315,7 @@ export class DashboardComponent implements OnInit {
           data: expenses,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
+          borderWidth: 2,
           fill: false,
           tension: 0.1,
         },

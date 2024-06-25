@@ -76,7 +76,7 @@
     </div>
   </div>
 </div> -->
-<div class="container mt-3">
+<!-- <div class="container-fluid mt-3">
   <div class="row g-2 ">
     
     @defer (when dataIsLoad) {
@@ -265,4 +265,133 @@
 
   }
   </div>
+</div> -->
+<div class="container-fluid mt-3">
+  <div class="row g-3 "> 
+    @defer (when dataIsLoad) {
+      <div class="col-md-6">
+        <mat-card >
+          <mat-card-title class="text-center font-weight-medium" >Money Flow</mat-card-title>
+          <mat-card-content>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <form [formGroup]="rangeForm">
+                <mat-form-field appearance="outline">
+                  <mat-label>Select Date</mat-label>
+                  <mat-select formControlName="selectedRange" (selectionChange)="onRangeChange()">
+                    <mat-option value="last7">Last 7 Days</mat-option>
+                    <mat-option value="last30">Last 30 Days</mat-option>
+                    <mat-option value="last365">Last 365 Days</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </form>
+            </div>
+            <app-generic-chart
+              *ngIf="incomeVsExpenseChartData && incomeVsExpenseChartOptions"
+              [chartType]="'line'"
+              [chartData]="incomeVsExpenseChartData"
+              [chartOptions]="incomeVsExpenseChartOptions">
+            </app-generic-chart>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-md-6"> 
+        <mat-card class="h-100">
+          <mat-card-title class="text-center">Recent Transactions</mat-card-title>
+          <mat-card-content>
+            <div class="header d-flex justify-content-between align-items-center mb-3">
+              <mat-form-field appearance="outline">
+                <mat-select [(value)]="selectedType" (selectionChange)="filterTransactions($event.value)">
+                  <mat-option value="all">All</mat-option>
+                  <mat-option value="income">Income</mat-option>
+                  <mat-option value="expenses">Expense</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="transactions">
+              @for (transaction of filteredTransactions; track $index) {
+                <div class="transaction d-flex align-items-center mb-2">
+                  <div class="icon me-3">
+                    @if(transaction.type==='income'){
+                      <img src="assets/income.jpg" alt="{{ transaction.name }}" />
+                    }
+                    @else {
+                      <img src="assets/expenses.png" alt="{{ transaction.name }}" />
+                    }
+                  </div>
+                  <div class="details flex-grow-1">
+                    <span class="name d-block">{{ transaction.name }}</span>
+                    <span class="date d-block">{{ transaction.date | date : "MM/dd/yyyy" }}</span>
+                  </div>
+                  <div class="amount" [ngClass]="{ success: transaction.type === 'income', negative: transaction.type === 'expense' }">
+                    {{ transaction.amount | currency }}
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-md-12">
+        <div class="report-summary">
+          <div class="header">
+            <span> Summary</span>
+          </div>
+          <div class="summary-cards row">
+            @for (item of PaymentType; track $index) {
+
+              <div class="summary-card col-md-4">
+                <div class="summary-content">
+                  <h2>{{item.name}}</h2>
+                  <p class="text-muted fw-bolder fs-5">${{item.balnce}}</p>
+                </div>
+                <div class="summary-icon" style="background-color: #28a745;">
+                  <mat-icon>attach_money</mat-icon>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        
+      </div>
+      <div class="col-md-6">
+
+ <mat-card class="h-100">
+        <mat-card-title class="text-center font-weight-medium">Last Seven Day Expenses</mat-card-title>
+        <mat-card-content> 
+          <app-generic-chart
+            *ngIf="barChartData && barChartOptions"
+            [chartType]="'bar'"
+            [chartData]="barChartData"
+            [chartOptions]="barChartOptions">
+          </app-generic-chart>
+        </mat-card-content>
+      </mat-card>
+      </div>
+      <div class="col-md-6">
+        <mat-card class="h-100">
+          <mat-card-title class="text-center font-weight-medium">Category Chart</mat-card-title>
+            <app-generic-chart
+            *ngIf="doughnutChartData && doughnutChartOptions"
+            [chartType]="'doughnut'"
+            [chartData]="doughnutChartData"
+            [chartOptions]="doughnutChartOptions"
+          ></app-generic-chart>
+      </mat-card>
+      </div>
+      <!-- <div class="col-md-6">
+        <app-calendar></app-calendar>
+      </div> -->
+     
+          
+    }
+    @placeholder () {
+      <ngx-skeleton-loader appearance="line" count="8"/>
+    }
+    @loading {
+      <ngx-skeleton-loader appearance="line" count="8"/>
+  
+    }
+  
+  </div>
+
 </div>

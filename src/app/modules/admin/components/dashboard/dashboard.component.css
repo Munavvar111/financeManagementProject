@@ -26,7 +26,7 @@
   
   .transactions .transaction .details {
     flex: 1;
-    margin-left: 12px;
+    margin-left: 12p  x;
   }
   
   .transactions .transaction .details .name {
@@ -94,4 +94,62 @@
   .negative {
     color: red;
   }
-  
+  .text-center{
+    color: #343a40;
+  }
+  .report-summary {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.summary-cards {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  flex: 1;
+  margin-right: 20px;
+  padding: 20px;
+  align-items: center;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+}
+
+a {
+  color: #6f42c1;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.font-weight-medium{
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600
+}
