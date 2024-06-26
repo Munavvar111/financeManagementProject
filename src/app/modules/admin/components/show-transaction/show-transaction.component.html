@@ -1,10 +1,13 @@
-<div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
+<div class="d-flex justify-content-center mt-3">
+    <h1>Transactions</h1>
+  </div>
+<div class=" container-fluid ">
+    <div class="bg-white p-4 rounded">
+
     @defer (when dataIsLoad) {
 
-    <h2 class="mb-4">Transactions</h2>
-    <form [formGroup]="filterForm" class="d-flex mb-4 gap-3 justify-content-between">
+        <form [formGroup]="filterForm" class="d-flex mb-4 gap-3 justify-content-between">
       <mat-form-field appearance="outline" class="">
-        <mat-label>Enter  Date Range</mat-label>
         <mat-date-range-input formGroupName="dateRange" [rangePicker]="picker">
           <input matStartDate formControlName="start" placeholder="Start date">
           <input matEndDate formControlName="end" placeholder="End date">
@@ -20,8 +23,8 @@
         <mat-error *ngIf="filterForm.get('dateRange.end').hasError('matEndDateInvalid')">Invalid end date</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline" class="">
-        <mat-label>Search Any Field</mat-label>
-        <input matInput formControlName="searchQuery" placeholder="Filter">
+        <mat-label>Search Transaction</mat-label>
+        <input matInput formControlName="searchQuery">
       </mat-form-field>
     </form>
     
@@ -54,7 +57,7 @@
           <td>{{ transaction.amount }}</td>
           <td>{{ transaction.account }}</td>
           <td>
-            <button mat-button color="primary" (click)="editElement(transaction)">Edit</button>
+            <button mat-button color="primary"  (click)="editElement(transaction)">Edit</button>
             <button mat-button color="warn" (click)="deleteElement(transaction)">Delete</button>
           </td>
         </tr>
@@ -75,5 +78,7 @@
     <ngx-skeleton-loader appearance="line" count="8"/>
   
   }
+</div>
+
   </div>
   

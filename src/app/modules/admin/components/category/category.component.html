@@ -2,8 +2,9 @@
   <h1>Add Category</h1>
 </div>
 
-<div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
-      <form [formGroup]="searchForm" class="d-flex align-items-center justify-content-between px-4 py-2">
+<div class=" container-fluid ">
+  <div class="bg-white p-4 rounded">
+          <form [formGroup]="searchForm" class="d-flex align-items-center justify-content-between px-4 py-2">
         <mat-form-field appearance="outline" class=" mr-3 mt-3">
           <mat-label>Search Category</mat-label>
           <input matInput placeholder="Search" formControlName="filterText">
@@ -36,7 +37,7 @@
         </table>
       </div>
     </div>
-
+</div>
   <ng-template #loadingSkeleton>
     <ngx-skeleton-loader appearance="line" count="8"></ngx-skeleton-loader>
   </ng-template>
