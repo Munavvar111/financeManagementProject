@@ -140,16 +140,16 @@ export class AddExpensesComponent implements OnInit {
         const totalAmount = this.expenseForm.get('totalAmount').value;
 
         this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-
-        this.expenseForm.reset();
-
-        const expensesFormArray = this.expenseForm.get('expenses') as FormArray;
-        while (expensesFormArray.length) {
-          expensesFormArray.removeAt(0);
-        }
-        this.addExpense()
-
-        console.log(this.expenseForm)
+        this.expenseForm.reset({
+          date: '',
+          account: '',
+          expenses: [],
+          totalAmount: 0
+        });
+        this.expenseForm.markAsPristine();
+        this.expenseForm.markAsUntouched();
+        console.log(this
+          .expenseForm)
         this.expenseForm.get('expenses').valueChanges.subscribe(() => {
           this.updateTotalAmount();
         });
