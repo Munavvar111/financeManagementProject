@@ -75,10 +75,15 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //for recent Transaction
     this.loadTransactions();
+    //for patchValue in dropdown in money flow chart
     this.rangeForm.patchValue({ selectedRange: 'last365' });
+    //initial data 
     this.loadInitialData();
+    //total balance for to display in the data
     this.getTotalBalance();
+    //
     this.getCurrentAndPreviousMonthData()
     setTimeout(() => {
       this.dataIsLoad = true
@@ -111,6 +116,7 @@ export class DashboardComponent implements OnInit {
       this.chartdata = result;
       if (this.chartdata != null) {
         this.processExpenses(this.chartdata)
+        
         this.cdr.detectChanges()
         this.initializeDoughnutChart();
         this.initializeBarChart();
@@ -282,10 +288,14 @@ export class DashboardComponent implements OnInit {
 
   //get the monthely expenses add all expenses that credited in months
   processExpenses(expenses: Expense[]): void {
+    console.log(expenses)
     expenses.forEach((expense) => {
+      console.log(expense)
       const month = new Date(expense.date).getMonth();
+      console.log(expense.amount)
       this.monthlyExpenses[month] += expense.amount;
     });
+    console.log(this.monthlyExpenses)
   }
 
   //get the monthely income add all income that recived in months

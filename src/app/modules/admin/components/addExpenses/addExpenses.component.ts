@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { AsyncPipe, CommonModule } from '@angular/common';
@@ -27,12 +27,13 @@ export class AddExpensesComponent implements OnInit {
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
+  expensesArray:FormGroup;
   accounts: PaymentType[];
   filteredOptions: string[];
   filterCategoryOption: string[];
   categories:string[];
 
-  constructor(private fb: FormBuilder,public dialog: MatDialog, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router,private commonService:CommonServiceService) {
+  constructor(private fb: FormBuilder,public dialog: MatDialog,private cdr:ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router,private commonService:CommonServiceService) {
     this.expenseForm = this.fb.group({
       date: ['',Validators.required],
       account: ['',Validators.required],
@@ -63,19 +64,16 @@ export class AddExpensesComponent implements OnInit {
           amount: ['', Validators.required]
         });
       }
-  //add formarray in the formarray 
   addExpense() {
-    this.expenses().push(this.newExpense())
+    const expensesFormArray = this.expenses();
+    expensesFormArray.push(this.newExpense());
   }
-  //remove the formarray
   removeExpense(i: number) {
     this.expenses().removeAt(i);
   }
 
 
   ngOnInit() {
-    console.log("its again come")
-    //add first category and amount when page is render
     this.addExpense();
 
     this.apiService.getCategories().subscribe({
@@ -138,25 +136,50 @@ export class AddExpensesComponent implements OnInit {
       const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
       const accountName = this.expenseForm.get('account').value;
       const totalAmount = this.expenseForm.get('totalAmount').value;
-
+  
       this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-      this.expenseForm.setControl('expenses', this.fb.array([]));
-      this.addExpense();
-      this.expenseForm.get('expenses').valueChanges.subscribe(() => {
-        this.updateTotalAmount();
-      });
+      
       this.expenseForm.reset();
+      
+      const expensesFormArray = this.expenseForm.get('expenses') as FormArray;
+      while (expensesFormArray.length) {
+        expensesFormArray.removeAt(0);
+      }
       Object.keys(this.expenseForm.controls).forEach(key => {
         const control = this.expenseForm.get(key);
         control?.setErrors(null);
         control?.markAsPristine();
         control?.markAsUntouched();
       });
+      console.log(expensesFormArray.length)
+      expensesFormArray.controls.forEach(control => {
+        control.get('category').setErrors(null);
+        control.get('category').markAsPristine();
+        control.get('category').markAsUntouched();
+        control.get('amount').setErrors(null);
+        control.get('amount').markAsPristine();
+        control.get('amount').markAsUntouched();
+        console.log(control)
+
+      });
+  
+      console.log(this.expenseForm)
+      this.expenseForm.get('expenses').valueChanges.subscribe(() => {
+        this.updateTotalAmount();
+      });
+  this.router.navigate['/addExpenses']
+      this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
     } else {
+      const expensesFormArrayCheck = this.expenseForm.get('expenses') as FormArray;
+
+      if(expensesFormArrayCheck.length==0){
+        this.addExpense()
+      }
       this.expenseForm.markAllAsTouched();
       this.snackBar.open('Please fill out the form correctly', 'Close', { duration: 3000 });
     }
   }
+  
   onCancel(){
     this.expenseForm.reset()
   }

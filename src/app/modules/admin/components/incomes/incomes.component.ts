@@ -112,4 +112,7 @@ export class IncomesComponent implements OnInit {
     const control = this.incomeForm.get(controlName);
     return control ? control.invalid && control.touched : false;
   }
+  onCancel(){
+    this.incomeForm.reset()
+  }
 }

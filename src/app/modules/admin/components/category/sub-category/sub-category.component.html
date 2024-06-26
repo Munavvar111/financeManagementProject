@@ -1,23 +1,16 @@
-<mat-accordion>
+<div class="subcategory-list">
   @for (subcategory of subcategories; track $index) {
 
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        {{ subcategory.name }}
-      </mat-panel-title>
-      <mat-panel-description class="justify-content-end">
-        <button mat-icon-button color="warn" (click)="deleteCategory(subcategory.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-icon-button color="primary" (click)="updateCategory(subcategory.id)">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    @if (subcategory.subcategories && subcategory.subcategories.length) {
-        <app-sub-category [subcategories]="subcategory.subcategories"></app-sub-category>
-    }
-  </mat-expansion-panel>
+    <div class="subcategory-item">
+      <div>{{ subcategory.name }}</div>
+      <div class="actions">
+      <button mat-icon-button color="warn" (click)="deleteCategory(subcategory.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="updateCategory(subcategory.id)">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  </div>
 }
-</mat-accordion>
+</div>

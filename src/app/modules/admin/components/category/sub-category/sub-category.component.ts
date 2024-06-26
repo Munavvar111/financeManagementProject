@@ -51,8 +51,9 @@ export class SubCategoryComponent {
         this.categoryService.deleteSubCategory(subcategoryId).subscribe({
           next: (response: Subcategory) => {
             this.subcategories = this.subcategories.filter(
-              (c) => c.id !== response.id
+              (c) => c.id !== subcategoryId
             );
+            
           },
           error:err=>{
             this.snackbar.open("error while removing the category","Close",{duration:3000})

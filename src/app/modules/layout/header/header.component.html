@@ -50,7 +50,7 @@
    
       <a
         mat-list-item
-        [routerLink]="['/transactions']"
+        [routerLink]="['/transactionData']"
         routerLinkActive="router-link-active"
       >
         <div class="d-flex align-items-center text-white">
@@ -88,12 +88,12 @@
           <span *ngIf="isNamesVisible">Calenders</span>
         </div>
       </a>
-     <a mat-list-item [routerLink]="['/transactionData']">
+     <!-- <a mat-list-item [routerLink]="['/transactionData']">
         <div class="d-flex align-items-center text-white">
           <mat-icon class="me-3">free_cancellation</mat-icon>
           <span *ngIf="isNamesVisible">ShowTransaction</span>
         </div>
-      </a>
+      </a> -->
      
     </mat-nav-list>
   </mat-sidenav>
@@ -110,27 +110,25 @@
         <mat-icon>menu</mat-icon>
       </button>
       }
-      <span class="font-weight-medium" *ngIf="!isScreenSmall"
-        >Welcome fastbudget dashboard!</span
-      >
+      
       <span class="spacer"></span>
-      <button mat-icon-button *ngIf="!isScreenSmall">
-        <mat-icon>search</mat-icon>
-      </button>
-      <button mat-icon-button *ngIf="!isScreenSmall">
-        <mat-icon>shopping_cart</mat-icon>
-      </button>
-      <button mat-icon-button *ngIf="!isScreenSmall">
-        <mat-icon>bar_chart</mat-icon>
-      </button>
-      <button mat-icon-button *ngIf="!isScreenSmall">
-        <mat-icon>chat</mat-icon>
-        <span class="badge">7</span>
-      </button>
-      <mat-menu #langMenu="matMenu" *ngIf="!isScreenSmall">
-        <button mat-menu-item>English</button>
-        <button mat-menu-item>Spanish</button>
-      </mat-menu>
+        <!-- <button mat-icon-button *ngIf="!isScreenSmall">
+          <mat-icon>search</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!isScreenSmall">
+          <mat-icon>shopping_cart</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!isScreenSmall">
+          <mat-icon>bar_chart</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!isScreenSmall">
+          <mat-icon>chat</mat-icon>
+          <span class="badge">7</span>
+        </button>
+        <mat-menu #langMenu="matMenu" *ngIf="!isScreenSmall">
+          <button mat-menu-item>English</button>
+          <button mat-menu-item>Spanish</button>
+        </mat-menu> -->
 
       <mat-menu #profileMenu="matMenu">
         <button mat-menu-item>Profile</button>

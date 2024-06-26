@@ -6,11 +6,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { ApiServiceService } from '../../../../../common/services/apiService.service';
 import { Category, PaymentType } from '../../../../../common/models/expenses.model';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-add-detail-dailog',
   standalone: true,
-  imports: [MaterialModule, CommonModule, ReactiveFormsModule],
+  imports: [MaterialModule, CommonModule, ReactiveFormsModule,NgxSkeletonLoaderModule],
   templateUrl: './add-detail-dailog.component.html',
   styleUrl: './add-detail-dailog.component.css'
 })
@@ -25,11 +28,14 @@ export class AddDetailDailogComponent {
   filteredAccounts: string[] = [];
   filteredCategories: string[] = [];
   category: string[] = [];
+  dataIsLoad:boolean=false;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddDetailDailogComponent>,
     private apiService: ApiServiceService,
+    private router:Router,
+    private snackbar:MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: { date: string }
   ) {
     this.form = this.fb.group({
@@ -50,8 +56,13 @@ export class AddDetailDailogComponent {
       next: (response: PaymentType[]) => {
         this.accountOptions = response.map(item => item.name);
         this.filteredAccounts = this.accountOptions;
+      },
+      error:err=>{
+        this.snackbar.open("Something Went Wrong Please Try again!!","Close",{duration:3000})
+        this.router.navigate(['/home'])
       }
     });
+
 
     // Load categories
     this.apiService.getCategories().subscribe({
@@ -61,6 +72,10 @@ export class AddDetailDailogComponent {
           .flatMap(item => item.subcategories.map(sub => sub.name));
         this.expenseCategories = response.filter(item => item.type === 'expense')
           .flatMap(item => item.subcategories.map(sub => sub.name));
+      },
+      error:err=>{
+        this.snackbar.open("Something Went Wrong Please Try again!!","Close",{duration:3000})
+        this.router.navigate(['/home'])
       }
     });
 
@@ -73,6 +88,9 @@ export class AddDetailDailogComponent {
         this.form.get('category').reset(); 
       }
     });
+    setTimeout(() => {
+      this.dataIsLoad=true;
+    }, 3000);
   }
 
   filterAccounts(): void {

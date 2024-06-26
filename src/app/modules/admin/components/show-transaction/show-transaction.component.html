@@ -1,6 +1,8 @@
 <div class="main-container container my-5 p-4 shadow-sm bg-white rounded">
-    <h2 class="mb-4">Hoverable Table</h2>
-    <form [formGroup]="filterForm" class="d-flex mb-4">
+    @defer (when dataIsLoad) {
+
+    <h2 class="mb-4">Transactions</h2>
+    <form [formGroup]="filterForm" class="d-flex mb-4 gap-3">
       <mat-form-field appearance="outline" class="flex-grow-1">
         <mat-label>Enter a date range</mat-label>
         <mat-date-range-input formGroupName="dateRange" [rangePicker]="picker">
@@ -22,6 +24,7 @@
         <input matInput formControlName="searchQuery" placeholder="Filter">
       </mat-form-field>
     </form>
+    
     <table class="table table-hover">
       <thead>
         <tr>
@@ -35,7 +38,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let transaction of paginatedData">
+        @for (transaction of paginatedData; track $index) {
+        <tr >
           <td>{{ transaction.id }}</td>
           <td>{{ transaction.date }}</td>
           <td>
@@ -50,10 +54,12 @@
           <td>{{ transaction.amount }}</td>
           <td>{{ transaction.account }}</td>
           <td>
-            <button mat-button color="primary">Edit</button>
-            <button mat-button color="warn">Delete</button>
+            <button mat-button color="primary" (click)="editElement(transaction)">Edit</button>
+            <button mat-button color="warn" (click)="deleteElement(transaction)">Delete</button>
           </td>
         </tr>
+    }
+
       </tbody>
     </table>
     <mat-paginator [length]="totalItems"
@@ -61,5 +67,13 @@
                    [pageSizeOptions]="[5, 10, 20]"
                    (page)="onPageChange($event)">
     </mat-paginator>
+}
+@placeholder () {
+    <ngx-skeleton-loader appearance="line" count="8"/>
+  }
+  @loading {
+    <ngx-skeleton-loader appearance="line" count="8"/>
+  
+  }
   </div>
   

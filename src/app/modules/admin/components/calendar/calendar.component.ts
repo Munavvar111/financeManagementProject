@@ -134,6 +134,8 @@ export class CalendarComponent implements OnInit {
             });
           }
         }
+        this.dataIsLoad=true;
+
 
         this.originalEvents = events;
         this.calendarOptions.events = events;
@@ -150,6 +152,7 @@ export class CalendarComponent implements OnInit {
         })
         .afterClosed()
         .subscribe((result) => {
+          this.dataIsLoad=false;
           if (result) {
             console.log(result);
             if (result.type === 'income') {
@@ -172,6 +175,7 @@ export class CalendarComponent implements OnInit {
                             { duration: 3000 }
                           );
                           this.loadEvents();
+                          
                         },
                         error: (err) => {
                           this.snackbar.open('Something Went Wrong', 'Close', {
@@ -206,6 +210,7 @@ export class CalendarComponent implements OnInit {
                             'Close',
                             { duration: 3000 }
                           );
+                          this.dataIsLoad=true;
                           this.loadEvents();
                         },
                         error: (err) => {
