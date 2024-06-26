@@ -2,9 +2,9 @@
     @defer (when dataIsLoad) {
 
     <h2 class="mb-4">Transactions</h2>
-    <form [formGroup]="filterForm" class="d-flex mb-4 gap-3">
-      <mat-form-field appearance="outline" class="flex-grow-1">
-        <mat-label>Enter a date range</mat-label>
+    <form [formGroup]="filterForm" class="d-flex mb-4 gap-3 justify-content-between">
+      <mat-form-field appearance="outline" class="">
+        <mat-label>Enter  Date Range</mat-label>
         <mat-date-range-input formGroupName="dateRange" [rangePicker]="picker">
           <input matStartDate formControlName="start" placeholder="Start date">
           <input matEndDate formControlName="end" placeholder="End date">
@@ -19,7 +19,7 @@
         <mat-error *ngIf="filterForm.get('dateRange.start').hasError('matStartDateInvalid')">Invalid start date</mat-error>
         <mat-error *ngIf="filterForm.get('dateRange.end').hasError('matEndDateInvalid')">Invalid end date</mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="flex-grow-1">
+      <mat-form-field appearance="outline" class="">
         <mat-label>Search Any Field</mat-label>
         <input matInput formControlName="searchQuery" placeholder="Filter">
       </mat-form-field>

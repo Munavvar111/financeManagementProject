@@ -26,7 +26,7 @@ export class ApiServiceService {
   getExpenses(): Observable<Expense[]> {
     return this.http.get<Expense[]>(`${this.url}/expenses`);
   }
-  
+
   postExpenses(expenses: Expense): Observable<Expense> {
     return this.http.post<Expense>(`${this.url}/expenses`, expenses, {
       headers: this.getHeaders(),
@@ -76,7 +76,9 @@ export class ApiServiceService {
       `${this.url}/categories?_embed=subcategories`
     );
   }
-
+  getSubCategories():Observable<Subcategory[]>{
+    return this.http.get<Subcategory[]>(`${this.url}/subcategories`)
+  }
   addSubCategory(subCategory): Observable<Subcategory> {
     return this.http.post<Subcategory>(
       `${this.url}/subcategories`,

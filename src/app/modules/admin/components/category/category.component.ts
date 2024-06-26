@@ -17,6 +17,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-category',
@@ -32,19 +34,30 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   styleUrl: './category.component.css',
 })
 export class CategoryComponent {
-  categories: any[] = [];
-  filteredCategories: any[] = [];
+  categories: Category[] = [];
+  subcategories:Subcategory[];
+  displayedSubcategories: any[] = [];
   searchForm: FormGroup;
   addCategoryForm: FormGroup;
+  editForm: FormGroup;
   selectedSection: 'Income' | 'Expenses' | null = null;
-  dataIsLoad:boolean=false;
+  dataIsLoad: boolean = false;
+  displayedColumns: string[] = ['id', 'categoryName', 'subcategoryName', 'actions'];
+
   constructor(
     private categoryService: ApiServiceService,
     private fb: FormBuilder,
-    private dailog: MatDialog,
-    private snackbar:MatSnackBar
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private router:Router
+    
   ) {
     this.addCategoryForm = this.fb.group({
+      name: ['', Validators.required],
+      categoryId: ['', Validators.required],
+    });
+    this.editForm = this.fb.group({
+      id: ['', Validators.required],
       name: ['', Validators.required],
       categoryId: ['', Validators.required],
     });
@@ -54,46 +67,59 @@ export class CategoryComponent {
     this.searchForm = this.fb.group({
       filterText: [''],
     });
-
+    this.getSubCategory();
     this.getCategory();
-    console.log(this.categories)
     this.searchForm.get('filterText').valueChanges.subscribe((value) => {
       this.filterCategories(value);
     });
     setTimeout(() => {
-      this.dataIsLoad = true
+      this.dataIsLoad = true;
     }, 3000);
   }
 
+  getSubCategory():void{
+    this.categoryService.getSubCategories().subscribe({
+      next:(response:Subcategory[])=>{
+        console.log(response)
+        this.subcategories=response;
+      },
+      error:err=>{
+        this.snackbar.open("SomeThing Went Wrong","Close",{duration:3000});
+        this.router.navigate(['/home'])
+      }
+    })
+  }
   getCategory(): void {
     this.categoryService.getCategories().subscribe({
       next: (response: Category[]) => {
         this.categories = response;
-        this.filteredCategories = this.categories;
+        this.filterCategories('');
       },
     });
   }
 
   filterCategories(searchText: string): void {
     const lowerSearchText = searchText.toLowerCase();
-    this.filteredCategories = this.categories
-      .map((category) => {
-        const matchingSubcategories = category.subcategories.filter(
-          (subcategory) =>
-            subcategory.name.toLowerCase().includes(lowerSearchText)
+    this.displayedSubcategories = this.categories
+      .reduce((acc, category) => {
+        const matchingSubcategories = category.subcategories.filter(subcategory =>
+          subcategory.name.toLowerCase().includes(lowerSearchText)
         );
-        console.log(matchingSubcategories)
-        return {
-          ...category,
-          subcategories: matchingSubcategories,
-          isOpen: matchingSubcategories.length > 0,
-        };
-      })
-      .filter((category) => category.subcategories.length > 0);
+        if (matchingSubcategories.length > 0 || category.name.toLowerCase().includes(lowerSearchText)) {
+          matchingSubcategories.forEach(subcategory => {
+            acc.push({
+              id: subcategory.id,
+              categoryName: category.name,
+              subcategoryName: subcategory.name,
+            });
+          });
+        }
+        return acc;
+      }, []);
   }
 
   openDialog(): void {
-    this.dailog
+    this.dialog
       .open(AddCategoryComponent, {
         width: '300px',
         data: {
@@ -112,34 +138,87 @@ export class CategoryComponent {
 
   onSubmit() {
     if (this.addCategoryForm.valid) {
-      this.categoryService
-        .addSubCategory(this.addCategoryForm.value)
-        .subscribe({
-          next: (response: Subcategory) => {
-            this.getCategory();
-            this.filterCategories('');
-          },
-          error:err=>{
-            this.snackbar.open("Error While Submiting The Category","Close",{duration:3000})
-          }
-        });
+      this.categoryService.addSubCategory(this.addCategoryForm.value).subscribe({
+        next: (response: Subcategory) => {
+          this.getCategory();
+          this.filterCategories('');
+          this.getSubCategory();
+        },
+        error: (err) => {
+          this.snackbar.open('Error While Submitting The Category', 'Close', { duration: 3000 });
+        },
+      });
     }
   }
 
-  // updateCategory(category): void {
-  //   this.categoryService.updateCategory(category.id, category).subscribe(updatedCategory => {
-  //     const index = this.categories.findIndex(c => c.id === updatedCategory.id);
-  //     this.categories[index] = updatedCategory;
-  //     this.filteredCategories = this.categories;
-  //   });
-  // }
+  updateCategory(subcategoryId: string): void {
+    console.log(this.subcategories)
+    console.log(subcategoryId)
+    const subcategoryById = this.subcategories.find(
+      (item) => item.id == subcategoryId
+    );
+    this.editForm.setValue({
+      id: subcategoryById.id,
+      name: subcategoryById.name,
+      categoryId: subcategoryById.categoryId,
+    });
+    this.dialog
+      .open(AddCategoryComponent, {
+        width: '300px',
+        data: {
+          form: this.editForm,
+          isEdit: true,
+          categories: this.categories,
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.onEditSubmit();
+        }
+      });
+  }
+  onEditSubmit() {
+    if (this.editForm.valid) {
+      this.categoryService.updateSubCategory(this.editForm.value).subscribe({
+        next: (response: Subcategory) => {
+         this.getCategory()
+         this.filterCategories("")
+        },
+        error:err=>{
+          this.snackbar.open("Error While The Updateing The Data","Close",{duration:3000})
+        }
+      });
+    }
+  }
 
-  // deleteCategory(categoryId): void {
-  //   this.categoryService.deleteCategory(categoryId).subscribe(() => {
-  //     this.categories = this.categories.filter(c => c.id !== categoryId);
-  //     this.filteredCategories = this.categories;
-  //   });
-  // }
+  deleteSubcategory(subcategoryId:number): void {
+    Swal.fire({
+      position: 'top',
+      title: 'Are you sure?',
+      text: 'This process is irreversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, go ahead.',
+      cancelButtonText: 'No, let me think',
+    }).then((result) => {
+      if (result.value) {
+        Swal.fire('Removed!', 'Item removed successfully.', 'success');
+        this.categoryService.deleteSubCategory(subcategoryId).subscribe({
+          next: (response: Subcategory) => {
+            this.getCategory()
+         this.filterCategories("")
+            
+          },
+          error:err=>{
+            this.snackbar.open("error while removing the category","Close",{duration:3000})
+          }
+          
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Cancelled', 'Item is safe.)', 'error');
+      }
+    });  }
 
   selectSection(section: 'Income' | 'Expenses'): void {
     this.selectedSection = section;
