@@ -8,8 +8,8 @@ export const layoutRoutes: Routes = [
         children:[
             {
                 path:'',
-                redirectTo:'home',
-                pathMatch:'full'
+                loadComponent:()=>import('../admin/components/dashboard/dashboard.component').then((m)=>m.DashboardComponent)
+
             },
             {
                 path:'home',
