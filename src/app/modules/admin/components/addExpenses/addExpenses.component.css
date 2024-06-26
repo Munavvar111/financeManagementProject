@@ -27,7 +27,10 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #138f9e;
 }
-
+button[type="submit"]:disabled {
+  background-color: #a6d5dd; /* Color for disabled submit button */
+  color: #d8e3e6; /* Text color for disabled submit button */
+}
 button[type="button"] {
   background-color: #6c757d;
   color: #fff;
@@ -63,4 +66,8 @@ button[type="button"]:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.deletebutton{
+  background-color: red!important;
+  color: rgb(255, 255, 255)!important;
 }

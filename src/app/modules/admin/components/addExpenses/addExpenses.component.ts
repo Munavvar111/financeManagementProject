@@ -16,31 +16,25 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
   selector: 'app-addExpenses',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule,IncomesComponent,NgxSkeletonLoaderModule],
+  imports: [ReactiveFormsModule, MaterialModule, AsyncPipe, CommonModule, FormsModule, IncomesComponent, NgxSkeletonLoaderModule],
   templateUrl: './addExpenses.component.html',
   styleUrls: ['./addExpenses.component.css']
 })
 export class AddExpensesComponent implements OnInit {
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
   @ViewChild('inputCategory') inputCategory: ElementRef<HTMLInputElement>;
-  dataIsLoad:boolean=false;
+  dataIsLoad: boolean = false;
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
-  expensesArray:FormGroup;
+  expensesArray: FormGroup;
   accounts: PaymentType[];
   filteredOptions: string[];
   filterCategoryOption: string[];
-  categories:string[];
+  categories: string[];
 
-  constructor(private fb: FormBuilder,public dialog: MatDialog,private cdr:ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar,private router:Router,private commonService:CommonServiceService) {
-    this.expenseForm = this.fb.group({
-      date: ['',Validators.required],
-      account: ['',Validators.required],
-      expenses: this.fb.array([]),
-      totalAmount: [{ value: 0, disabled: true }]
-    });
-    this.myControl = this.expenseForm.get('account') as FormControl;
+  constructor(private fb: FormBuilder, public dialog: MatDialog, private cdr: ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar, private router: Router, private commonService: CommonServiceService) {
+   
   }
   //Filter For AutoComplete
   filter(): void {
@@ -58,12 +52,12 @@ export class AddExpensesComponent implements OnInit {
     return this.expenseForm.get('expenses') as FormArray;
   }
   //new expense add in form group
-      newExpense(): FormGroup {
-        return this.fb.group({
-          category:['', Validators.required],
-          amount: ['', Validators.required]
-        });
-      }
+  newExpense(): FormGroup {
+    return this.fb.group({
+      category: ['', Validators.required],
+      amount: ['', Validators.required]
+    });
+  }
   addExpense() {
     const expensesFormArray = this.expenses();
     expensesFormArray.push(this.newExpense());
@@ -74,11 +68,18 @@ export class AddExpensesComponent implements OnInit {
 
 
   ngOnInit() {
+    this.expenseForm = this.fb.group({
+      date: ['', Validators.required],
+      account: ['', Validators.required],
+      expenses: this.fb.array([]),
+      totalAmount: [{ value: 0, disabled: true }]
+    });
+    this.myControl = this.expenseForm.get('account') as FormControl;
     this.addExpense();
 
     this.apiService.getCategories().subscribe({
-      next:(response:Category[])=>{
-        this.categories= response[1].subcategories.map(item=>item.name)
+      next: (response: Category[]) => {
+        this.categories = response[1].subcategories.map(item => item.name)
         console.log(this.categories)
 
       }
@@ -110,12 +111,12 @@ export class AddExpensesComponent implements OnInit {
     return formData.expenses.map((expense: any, index: number) => ({
       type: "expense",
       date: formattedDate,
-      account : formData.account,
+      account: formData.account,
       category: expense.category,
       amount: expense.amount,
     }));
   }
-  
+
 
   validateBalance(): boolean {
     const accountName = this.expenseForm.get('account').value;
@@ -128,59 +129,51 @@ export class AddExpensesComponent implements OnInit {
     if (totalAmount > account.balnce) {
       this.snackBar.open("Insufficient balance", "Close", { duration: 3000 })
       return false;
-    } 
+    }
     return true;
   }
   onSubmit(): void {
-    if (this.expenseForm.valid && this.validateBalance()) {
-      const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
-      const accountName = this.expenseForm.get('account').value;
-      const totalAmount = this.expenseForm.get('totalAmount').value;
-  
-      this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-      
-      this.expenseForm.reset();
-      
-      const expensesFormArray = this.expenseForm.get('expenses') as FormArray;
-      while (expensesFormArray.length) {
-        expensesFormArray.removeAt(0);
-      }
-      Object.keys(this.expenseForm.controls).forEach(key => {
-        const control = this.expenseForm.get(key);
-        control?.setErrors(null);
-        control?.markAsPristine();
-        control?.markAsUntouched();
-      });
-      console.log(expensesFormArray.length)
-      expensesFormArray.controls.forEach(control => {
-        control.get('category').setErrors(null);
-        control.get('category').markAsPristine();
-        control.get('category').markAsUntouched();
-        control.get('amount').setErrors(null);
-        control.get('amount').markAsPristine();
-        control.get('amount').markAsUntouched();
-        console.log(control)
+    if (this.expenseForm.valid) {
+      if (this.validateBalance()) {
+        const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
+        const accountName = this.expenseForm.get('account').value;
+        const totalAmount = this.expenseForm.get('totalAmount').value;
 
-      });
-  
-      console.log(this.expenseForm)
-      this.expenseForm.get('expenses').valueChanges.subscribe(() => {
-        this.updateTotalAmount();
-      });
-  this.router.navigate['/addExpenses']
-      this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
-    } else {
+        this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
+
+        this.expenseForm.reset();
+
+        const expensesFormArray = this.expenseForm.get('expenses') as FormArray;
+        while (expensesFormArray.length) {
+          expensesFormArray.removeAt(0);
+        }
+        this.addExpense()
+
+        console.log(this.expenseForm)
+        this.expenseForm.get('expenses').valueChanges.subscribe(() => {
+          this.updateTotalAmount();
+        });
+        this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
+      } else {
+
+        this.snackBar.open('Please Enter The Some Income!!', 'Close', { duration: 3000 });
+      }
+    }
+
+    else {
       const expensesFormArrayCheck = this.expenseForm.get('expenses') as FormArray;
 
-      if(expensesFormArrayCheck.length==0){
+      if (expensesFormArrayCheck.length == 0) {
         this.addExpense()
+        expensesFormArrayCheck.markAsUntouched()
       }
       this.expenseForm.markAllAsTouched();
       this.snackBar.open('Please fill out the form correctly', 'Close', { duration: 3000 });
     }
+
   }
-  
-  onCancel(){
+
+  onCancel() {
     this.expenseForm.reset()
   }
   //update the total

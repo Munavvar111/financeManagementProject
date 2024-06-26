@@ -17,7 +17,7 @@ export const layoutRoutes: Routes = [
             },
             {
                 path:'addExpenses',
-                loadComponent:()=>import('../admin/components/addExpenses/addExpenses.component').then((m)=>m.AddExpensesComponent)
+                loadComponent:()=>import('../admin/components/addExpenses/addExpenses.component').then((m)=>m.AddExpensesComponent  )
             },
             {
                 path:'transactions',
