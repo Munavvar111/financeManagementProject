@@ -2,9 +2,9 @@
     <h1>Transactions</h1>
   </div>
 <div class=" container-fluid ">
+    @defer (when dataIsLoad) {
     <div class="bg-white p-4 rounded">
 
-    @defer (when dataIsLoad) {
 
         <form [formGroup]="filterForm" class="d-flex mb-4 gap-3 justify-content-between">
       <mat-form-field appearance="outline" class="">
@@ -70,6 +70,7 @@
                    [pageSizeOptions]="[5, 10, 20]"
                    (page)="onPageChange($event)">
     </mat-paginator>
+</div>
 }
 @placeholder () {
     <ngx-skeleton-loader appearance="line" count="8"/>
@@ -78,7 +79,6 @@
     <ngx-skeleton-loader appearance="line" count="8"/>
   
   }
-</div>
 
   </div>
   
