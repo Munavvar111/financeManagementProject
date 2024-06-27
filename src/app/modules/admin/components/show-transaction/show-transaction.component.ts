@@ -87,6 +87,7 @@ accountData(){
           next: (income: Incomes[]) => {
             const combinedData = [
               ...expenses.map(expense => {
+                console.log(expenses)
                 const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
                 const account = this.accountType.find(item => item.id == expense.account).name;
                 const category = subCategoryItem ? subCategoryItem.name : '';
