@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './show-transaction.component.html',
   styleUrl: './show-transaction.component.css'
 })
-export class ShowTransactionComponent implements OnInit,OnDestroy {
+export class ShowTransactionComponent implements OnInit {
   transactionData: any[] = [];
   filteredData: any[] = [];
   paginatedData: any[] = [];
@@ -51,25 +51,17 @@ export class ShowTransactionComponent implements OnInit,OnDestroy {
   
   ngOnInit(): void {
     this.accountData();
-    this.cdr.detectChanges()
     this.fetchData();
-    this.cdr.detectChanges()
     this.filterForm.valueChanges.subscribe(() => this.applyFilter());
     setTimeout(() => {
       this.dataIsLoad=true;
-      this.cdr.detectChanges()
     }, 2000);
   }
-  ngOnDestroy(): void {
-    console.log(this.subscriptions)
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    console.log(this.accountType)
-  }
+ 
 accountData(){
   const accountSub = this.apiService.getAccount().subscribe({
     next: (response: PaymentType[]) => {
       this.accountType = response;
-      this.cdr.detectChanges();
     },
     error: (err) => {
       this.snackbar.open('Something Went Wrong', 'Close', { duration: 3000 });
@@ -80,19 +72,16 @@ accountData(){
 
 }
   fetchData() {
-    const subCategoriesSub = this.apiService.getSubCategories().subscribe({
+    this.apiService.getSubCategories().subscribe({
       next: (response: Subcategory[]) => {
         this.subCategory = response;
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.snackbar.open('Something Went To Wrong!', 'Close', { duration: 3000 });
       }
     });
-    this.subscriptions.push(subCategoriesSub);
   
-    this.cdr.detectChanges()
-    const expensesSub = this.apiService.getExpenses().subscribe({
+     this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
         const incomeSub = this.apiService.getIncomeDetails().subscribe({
           next: (income: Incomes[]) => {
@@ -127,19 +116,17 @@ accountData(){
             this.transactionData = combinedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             this.totalItems = this.transactionData.length;
             this.applyFilter();
-            this.cdr.detectChanges();
           },
           error: err => {
             console.error(err);
           }
         });
-        this.subscriptions.push(incomeSub);
+       
       },
       error: err => {
         console.error(err);
       }
     });
-    this.subscriptions.push(expensesSub);
   }
  
   applyFilter() {
@@ -273,7 +260,6 @@ accountData(){
                 if (index > -1) {
                 this.transactionData.splice(index, 1);
                 this.transactionData = [...this.transactionData];
-                this.cdr.detectChanges()
                 this.applyFilter()
               }
             },
@@ -301,7 +287,6 @@ accountData(){
                 if (index > -1) {
                 this.transactionData.splice(index, 1);
                 this.transactionData = [...this.transactionData];
-                this.cdr.detectChanges()
                 this.applyFilter()
               }
             },
