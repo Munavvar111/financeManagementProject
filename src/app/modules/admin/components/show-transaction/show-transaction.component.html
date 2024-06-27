@@ -41,6 +41,8 @@
         </tr>
       </thead>
       <tbody>
+        @if (paginatedData.length!=0) {
+
         @for (transaction of paginatedData; track $index) {
         <tr >
           <td>{{ transaction.id }}</td>
@@ -62,7 +64,10 @@
           </td>
         </tr>
     }
-
+  }
+@else {
+  <h1>No Data Found</h1>
+}
       </tbody>
     </table>
     <mat-paginator [length]="totalItems"
