@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit {
     this.service.getAccount().subscribe({
       next:(response:PaymentType[])=>{
         this.PaymentType=response;
-        this.currentCreditUsage=response.find(item=>item.name=='Credit').balnce;
+        this.currentCreditUsage=response.find(item=>item.id=='1').balnce;
         this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
       
       }

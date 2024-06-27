@@ -9,24 +9,56 @@
       "id": "e026"
     },
     {
-      "id": "887c",
-      "type": "expense",
+      "type": "Expense",
       "date": "2024-06-13",
+      "account": "2",
+      "category": "83ec",
+      "amount": 1000,
+      "id": "887c"
+    },
+    {
+      "id": "ab62",
+      "type": "expense",
+      "date": "2024-06-04",
+      "account": "2",
+      "category": "be0d",
+      "amount": 100
+    },
+    {
+      "id": "4b9a",
+      "type": "expense",
+      "date": "2024-06-04",
+      "account": "2",
+      "category": "30",
+      "amount": 100
+    },
+    {
+      "id": "34ba",
+      "type": "expense",
+      "date": "2024-06-17",
+      "account": "1",
+      "category": "30",
+      "amount": 10
+    },
+    {
+      "id": "fffc",
+      "type": "expense",
+      "date": "2024-06-17",
       "account": "1",
       "category": "83ec",
-      "amount": 1000
+      "amount": 100
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credite",
-      "balnce": 1298
+      "balnce": 1188
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 4130
+      "balnce": 3930
     },
     {
       "id": "3",
