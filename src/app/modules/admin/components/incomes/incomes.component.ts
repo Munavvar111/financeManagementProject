@@ -91,7 +91,10 @@ export class IncomesComponent implements OnInit {
         next:()=>{
           this.apiService.postIncomeDetails(this.incomeForm.value).subscribe({
             next:(response:Incomes)=>{  
-              this.router.navigate(['/transactionData'])
+              setTimeout(() => {
+                this.router.navigate(['/transactionData'])
+                
+              }, 3000);
               this.snackbar.open("Income Details Are Update Succefully!","Close",{duration:3000})
             },
             error:err=>{
