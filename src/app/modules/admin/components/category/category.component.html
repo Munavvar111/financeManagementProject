@@ -26,15 +26,24 @@
           </tr>
         </thead>
           <tbody>
-            <tr *ngFor="let subcategory of displayedSubcategories">
-              <td>{{ subcategory.id }}</td>
-              <td>{{ subcategory.categoryName }}</td>
-              <td>{{ subcategory.subcategoryName }}</td>
-              <td>
-                <button mat-button color="primary" (click)="updateCategory(subcategory.id)">Edit</button>
-                <button mat-button color="warn" (click)="deleteSubcategory(subcategory.id)">Delete</button>
-              </td>
-            </tr>
+            @if (displayedSubcategories) {
+
+              @for (subcategory of displayedSubcategories; track $index) {
+                
+                <tr>
+                  <td>{{ subcategory.id }}</td>
+                  <td>{{ subcategory.categoryName }}</td>
+                  <td>{{ subcategory.subcategoryName }}</td>
+                  <td>
+                    <button mat-button color="primary" (click)="updateCategory(subcategory.id)">Edit</button>
+                    <button mat-button color="warn" (click)="deleteSubcategory(subcategory.id)">Delete</button>
+                  </td>
+                </tr>
+              }
+            }@else {
+              <h1>Data Is Not Found</h1>
+            }
+
           </tbody>
         </table>
       </div>
