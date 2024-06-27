@@ -74,7 +74,7 @@ export class CommonServiceService {
         setTimeout(() => {
           this.router.navigate(['/transactionData'])
           
-        }, 2000);
+        }, 3000);
 
       },
       error: (err) => {
