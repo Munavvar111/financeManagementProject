@@ -9,6 +9,7 @@ import {
   Expense,
   Incomes,
   PaymentType,
+  Subcategory,
 } from '../../../../common/models/expenses.model';
 import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
@@ -26,6 +27,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent implements OnInit {
+  subCategory:Subcategory[];
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -61,10 +63,23 @@ export class CalendarComponent implements OnInit {
           "Can't Get The Account Type Please Refrest The Page Or Try Again"
         );
       },
+
     });
+    this.getSubCategory()
     setTimeout(() => {
       this.dataIsLoad = true
     }, 3000);
+  }
+
+  getSubCategory(){
+    this.apiService.getSubCategories().subscribe({
+      next:(response:Subcategory[])=>{
+        this.subCategory=response;
+      },
+      error:err=>{
+        this.snackbar.open("SomeThing Went To Wrong!")
+      }
+    })
   }
 
   loadEvents(): void {
@@ -152,6 +167,8 @@ export class CalendarComponent implements OnInit {
         })
         .afterClosed()
         .subscribe((result) => {
+          result.account=this.accountType.find(item=>item.name==result.account).id,
+          result.category=this.subCategory.find(item=>item.name==result.category).id,
           this.dataIsLoad=false;
           if (result) {
             console.log(result);

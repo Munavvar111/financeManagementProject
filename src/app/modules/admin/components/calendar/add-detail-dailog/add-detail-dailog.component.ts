@@ -64,33 +64,34 @@ export class AddDetailDailogComponent {
     });
 
 
-    // Load categories
     this.apiService.getCategories().subscribe({
       next: (response: Category[]) => {
-        console.log(response)
-        this.incomeCategories = response.filter(item => item.type === 'income')
+        console.log(response);
+        this.incomeCategories = response
+          .filter(item => item.type === 'income')
           .flatMap(item => item.subcategories.map(sub => sub.name));
-        this.expenseCategories = response.filter(item => item.type === 'expense')
+        this.expenseCategories = response
+          .filter(item => item.type === 'expense')
           .flatMap(item => item.subcategories.map(sub => sub.name));
-      },
-      error:err=>{
-        this.snackbar.open("Something Went Wrong Please Try again!!","Close",{duration:3000})
-        this.router.navigate(['/home'])
-      }
-    });
+        
+        // Set up value changes subscription only after categories are loaded
+        this.form.get('type').valueChanges.subscribe(type => {
+          if (type === 'income') {
+            this.form.get('category').reset();
+            this.category = this.incomeCategories;
+          } else if (type === 'expense') {
+            this.form.get('category').reset();
+            this.category = this.expenseCategories;
+          }
+        });
 
-    this.form.get('type').valueChanges.subscribe(type => {
-      if (type === 'income') {
-        this.form.get('category').reset(); 
-        this.category = this.incomeCategories;
-      } else if (type === 'expense') {
-        this.category = this.expenseCategories;
-        this.form.get('category').reset(); 
+        this.dataIsLoad = true;
+      },
+      error: err => {
+        this.snackbar.open("Something Went Wrong Please Try again!!", "Close", { duration: 3000 });
+        this.router.navigate(['/home']);
       }
     });
-    setTimeout(() => {
-      this.dataIsLoad=true;
-    }, 3000);
   }
 
   filterAccounts(): void {

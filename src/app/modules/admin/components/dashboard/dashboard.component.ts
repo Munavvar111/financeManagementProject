@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Expense, Incomes, PaymentType, Transection } from '../../../../common/models/expenses.model';
+import { Expense, Incomes, PaymentType, Subcategory, Transection } from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit {
   chartdata: Expense[];
   labeldata: string[] = [];
   incomeData: Incomes[];
+  subCategory:Subcategory[];
   realdata: number[] = [];
   colordata: string[] = [];
   last7DaysData: { date: string; amount: number }[] = [];
@@ -76,6 +77,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     //for recent Transaction
+    this.loadSubCategory();
     this.loadTransactions();
     //for patchValue in dropdown in money flow chart
     this.rangeForm.patchValue({ selectedRange: 'last365' });
@@ -89,7 +91,16 @@ export class DashboardComponent implements OnInit {
       this.dataIsLoad = true
     }, 3000);
   }
-
+loadSubCategory(){
+  this.service.getSubCategories().subscribe({
+    next:(response:Subcategory[])=>{
+      this.subCategory=response;
+    },
+    error:err=>{
+      console.log("Something Went Wrong")
+    }
+  })
+}
   getTotalBalance(){
     this.service.getAccount().subscribe({
       next:(response:PaymentType[])=>{
@@ -249,7 +260,8 @@ export class DashboardComponent implements OnInit {
   private aggregateDataByCategory(data: Expense[]): { [category: string]: number } {
     const aggregatedData = {};
     for (const item of data) {
-      const category = item.category;
+      console.log(data)
+      const category = this.subCategory.find(items=>items.id==item.category).name;
       const amount = item.amount;
       if (aggregatedData[category]) {
         aggregatedData[category] += amount;
