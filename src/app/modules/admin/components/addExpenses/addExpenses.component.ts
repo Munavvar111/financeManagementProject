@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Category, Expense, PaymentType } from '../../../../common/models/expenses.model';
+import { Category, Expense, PaymentType, Subcategory } from '../../../../common/models/expenses.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ export class AddExpensesComponent implements OnInit {
   accounts: PaymentType[];
   filteredOptions: string[];
   filterCategoryOption: string[];
-  categories: string[];
+  categories: Subcategory[];
 
   constructor(private fb: FormBuilder, public dialog: MatDialog, private cdr: ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar, private router: Router, private commonService: CommonServiceService) {
    
@@ -41,11 +41,11 @@ export class AddExpensesComponent implements OnInit {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredOptions = this.options.filter(o => o.toLowerCase().includes(filterValue));
   }
-  filterCategory(inputElement: HTMLInputElement): void {
-    const filterCategoryValue = inputElement.value.toLowerCase();
-    console.log(filterCategoryValue);
-    this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
-  }
+  // filterCategory(inputElement: HTMLInputElement): void {
+  //   const filterCategoryValue = inputElement.value.toLowerCase();
+  //   console.log(filterCategoryValue);
+  //   this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
+  // }
 
   //formArray For Category and amount to add multiple expenses
   expenses(): FormArray {
@@ -54,8 +54,8 @@ export class AddExpensesComponent implements OnInit {
   //new expense add in form group
   newExpense(): FormGroup {
     return this.fb.group({
-      category: ['', Validators.required],
-      amount: ['', Validators.required]
+      category: [null, Validators.required],
+      amount: [null, Validators.required]
     });
   }
   addExpense() {
@@ -69,17 +69,17 @@ export class AddExpensesComponent implements OnInit {
 
   ngOnInit() {
     this.expenseForm = this.fb.group({
-      date: ['', Validators.required],
-      account: ['', Validators.required],
+      date: [null, Validators.required],
+      account: [null, Validators.required],
       expenses: this.fb.array([]),
       totalAmount: [{ value: 0, disabled: true }]
     });
     this.myControl = this.expenseForm.get('account') as FormControl;
     this.addExpense();
 
-    this.apiService.getCategories().subscribe({
-      next: (response: Category[]) => {
-        this.categories = response[1].subcategories.map(item => item.name)
+    this.apiService.getSubCategories().subscribe({
+      next: (response: Subcategory[]) => {
+        this.categories =response.filter(item => item.categoryId=="2")
         console.log(this.categories)
 
       }
@@ -120,7 +120,7 @@ export class AddExpensesComponent implements OnInit {
 
   validateBalance(): boolean {
     const accountName = this.expenseForm.get('account').value;
-    const account = this.accounts.find(acc => acc.name == accountName);
+    const account = this.accounts.find(acc => acc.id == accountName);
     if (!account) {
       this.snackBar.open("Invalid account selected", 'Close', { duration: 3000 })
       return false;
@@ -140,16 +140,8 @@ export class AddExpensesComponent implements OnInit {
         const totalAmount = this.expenseForm.get('totalAmount').value;
 
         this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-        this.expenseForm.reset({
-          date: '',
-          account: '',
-          expenses: [],
-          totalAmount: 0
-        });
-        this.expenseForm.markAsPristine();
-        this.expenseForm.markAsUntouched();
-        console.log(this
-          .expenseForm)
+        this.router.navigate(['/transactionData'])
+        
         this.expenseForm.get('expenses').valueChanges.subscribe(() => {
           this.updateTotalAmount();
         });

@@ -28,7 +28,7 @@ export class CommonServiceService {
     return true;
   }
   updateAccountBalance(accountName: string, type: string, previousAmount: number, amount: number, accounts: PaymentType[]): Observable<PaymentType> {
-    const account = accounts.find(acc => acc.name === accountName);
+    const account = accounts.find(acc => acc.id === accountName);
   
     if (!account) {
       throw new Error('Account not found');
@@ -71,7 +71,6 @@ export class CommonServiceService {
       next: (response: PaymentType) => {
         this.snackBar.open("Balance updated successfully", "Close", { duration: 3000 });
         this.postExpenses(transformedData);
-        this.router.navigate(['addExpenses']);
       },
       error: (err) => {
         this.snackBar.open("Error updating balance", "Close", { duration: 3000 });

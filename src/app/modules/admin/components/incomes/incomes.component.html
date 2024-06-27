@@ -15,27 +15,25 @@
       <label for="account" class="form-label h4">Account</label>
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Number</mat-label>
-        <input #input type="text" placeholder="Pick one" matInput formControlName="account" [matAutocomplete]="auto" (input)="filter()" (focus)="filter()" id="account">
-        <mat-autocomplete requireSelection #auto="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions" [value]="option">{{option}}</mat-option>
-        </mat-autocomplete>
+        <mat-select formControlName="account" id="account">
+          <mat-option *ngFor="let option of paymentTypes" [value]="option.id">{{ option.name }}</mat-option>
+        </mat-select>
         <mat-error *ngIf="isControlInvalid('account')">Account type is required.</mat-error>
       </mat-form-field>
     </div>
-
+    
     <div class="row">
       <div class="col form-group mb-4">
         <label for="category" class="form-label h4">Category</label>
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Category</mat-label>
-          <input #inputCategory type="text" placeholder="Pick one" matInput formControlName="category" [matAutocomplete]="categoryAuto" 
-                 (input)="filterCategory(inputCategory)" (focus)="filterCategory(inputCategory)" id="account1">
-          <mat-autocomplete requireSelection #categoryAuto="matAutocomplete">
-            <mat-option *ngFor="let option of filterCategoryOption" [value]="option">{{option}}</mat-option>
-          </mat-autocomplete>
+          <mat-select formControlName="category" id="category">
+            <mat-option *ngFor="let option of categories" [value]="option.id">{{ option.name }}</mat-option>
+          </mat-select>
           <mat-error *ngIf="isControlInvalid('category')">Category is required.</mat-error>
         </mat-form-field>
       </div>
+    
 
       <div class="col form-group mb-4">
         <label for="amount" class="form-label h4">Amount</label>

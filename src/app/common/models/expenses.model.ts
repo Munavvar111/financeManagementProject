@@ -7,7 +7,7 @@ export interface Expense {
     amount: number ;
   }
 
-  export interface PaymentType{
+  export interface  PaymentType{
     id?:string,
     name:string,
     balnce:number
@@ -30,7 +30,7 @@ export  interface Category {
 export interface Subcategory {
     id: string; 
     name: string;
-    categoryId:number;
+    categoryId:string;
 }
 
 export interface Transection{

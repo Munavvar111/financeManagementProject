@@ -151,7 +151,7 @@ export class AccountsComponent implements OnInit {
       }
 
       this.accounts[this.editIndex].name = updatedName;
-      this.apiService.postAccount(this.accounts[this.editIndex]).subscribe({
+      this.apiService.updateAccount(this.accounts[this.editIndex]).subscribe({
         next: (response: PaymentType) => {
           console.log('Account updated successfully', response);
           this.snackBar.open('Account updated successfully', 'Close', {

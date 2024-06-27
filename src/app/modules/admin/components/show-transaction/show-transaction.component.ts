@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Expense, Incomes, PaymentType, Transection } from '../../../../common/models/expenses.model';
+import { Expense, Incomes, PaymentType, Subcategory, Transection } from '../../../../common/models/expenses.model';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { CommonModule } from '@angular/common';
@@ -26,6 +26,7 @@ export class ShowTransactionComponent implements OnInit {
   filterForm: FormGroup;
   pageSize = 10;
   pageIndex = 0;
+  subCategory:Subcategory[]
   totalItems = 0;
   dataIsLoad:boolean=false;
   accountType:PaymentType[];
@@ -46,8 +47,8 @@ export class ShowTransactionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchData();
     this.accountData();
+    this.fetchData();
     this.filterForm.valueChanges.subscribe(() => this.applyFilter());
     setTimeout(() => {
       this.dataIsLoad=true;
@@ -65,20 +66,46 @@ accountData(){
   });
 }
   fetchData() {
+    this.apiService.getSubCategories().subscribe({
+      next:(response:Subcategory[])=>{
+        this.subCategory=response
+      },
+      error:err=>{
+        this.snackbar.open("Something Went To Wrong!","Close",{duration:3000})
+      }
+    })
     this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
         this.apiService.getIncomeDetails().subscribe({
           next: (income: Incomes[]) => {
             const combinedData = [
-              ...expenses.map(expense => ({ ...expense, type: 'Expense' })),
-              ...income.map(incomeItem => ({
-                id: incomeItem.id,
-                date: incomeItem.date,
-                account: incomeItem.account,
-                type: 'Income',
-                category: incomeItem.category,
-                amount: incomeItem.amount,
-              }))
+              ...expenses.map(expense => {
+                const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
+                const account=this.accountType.find(item=>item.id==expense.account).name
+                const category = subCategoryItem ? subCategoryItem.name : ''; // Handle undefined case
+                return {
+                  id: expense.id,
+                  date: expense.date,
+                  account: account,
+                  type: 'Expense',
+                  category: category,
+                  amount: expense.amount,
+                };
+              }),
+              ...income.map(incomeItem => {
+                const subCategoryItem = this.subCategory.find(item => item.id === incomeItem.category);
+                console.log(this.accountType)
+                const account=this.accountType.find(item=>item.id==incomeItem.account).name
+                const category = subCategoryItem ? subCategoryItem.name : ''; // Handle undefined case
+                return {
+                  id: incomeItem.id,
+                  date: incomeItem.date,
+                  account: account  ,
+                  type: 'Income',
+                  category: category,
+                  amount:  incomeItem.amount,
+                };
+              })
             ];
 
             this.transactionData = combinedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -127,6 +154,8 @@ accountData(){
       if (result) {
         console.log('Dialog result:', result);
         result.id = element.id;
+        result.category=this.subCategory.find(item=>item.name==result.category).id;
+        result.account=this.accountType.find(item=>item.name==result.account).id;
         const updateFn =
           result.type === 'Expense'
             ? this.apiService.updateExpense.bind(this.apiService)
@@ -142,7 +171,7 @@ accountData(){
               this.accountType
             )
             : this.commonService.updateAccountBalance(
-              result.account,
+              result.account  ,
               'Income',
               element.amount,
               result.amount,
@@ -159,11 +188,7 @@ accountData(){
 
               updateFn(result).subscribe({
                 next: (updatedEntry) => {
-                  const index = this.transactionData.findIndex(
-                    (item) => item.id === updatedEntry.id
-                  );
-                  this.transactionData[index] = updatedEntry;
-                  this.transactionData = [...this.transactionData];
+                  this.fetchData()
                   this.applyFilter();
                   this.snackbar.open('Entry updated successfully', 'Close', {
                     duration: 3000,
@@ -211,7 +236,7 @@ accountData(){
             next: (response: Incomes) => {
               this.commonService
                 .updateAccountBalance(
-                  element.account,
+                  this.accountType.find(item=>item.name==element.account).id,
                   'Income',
                   element.amount,
                   0,
@@ -239,7 +264,7 @@ accountData(){
             next: (response: Expense) => {
               this.commonService
                 .updateAccountBalance(
-                  element.account,
+                  this.accountType.find(item=>item.name==element.account).id,
                   'Expenses',
                   element.amount,
                   0,

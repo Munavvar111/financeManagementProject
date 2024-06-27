@@ -13,7 +13,7 @@ import {
   providedIn: 'root',
 })
 export class ApiServiceService {
-  private url = `https://jsonserver-69rb.onrender.com`;
+  private url = `http://localhost:3000`;
 
   constructor(private http: HttpClient) {}
 

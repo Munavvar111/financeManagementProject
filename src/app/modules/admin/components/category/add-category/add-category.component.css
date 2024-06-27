@@ -23,4 +23,7 @@ button[type="submit"] {
   
   button[type="reset"]:hover {
     background-color: #5a6268;
+  }button[type="submit"]:disabled {
+    background-color: #a6d5dd; /* Color for disabled submit button */
+    color: #d8e3e6; /* Text color for disabled submit button */
   }

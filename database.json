@@ -1,47 +1,54 @@
 {
   "expenses": [
     {
-      "id": "86d2",
-      "type": "expense",
-      "date": "2024-06-20",
-      "account": "Debit",
-      "category": "Other (Expenses)",
-      "amount": 100
+      "type": "Expense",
+      "date": "2024-06-11",
+      "account": "2",
+      "category": "29",
+      "amount": 500,
+      "id": "e026"
     },
     {
-      "id": "2727",
+      "id": "887c",
       "type": "expense",
-      "date": "2024-06-15",
-      "account": "Credit",
-      "category": "Travelser",
-      "amount": 100
+      "date": "2024-06-13",
+      "account": "1",
+      "category": "83ec",
+      "amount": 1000
     }
- 
   ],
   "PaymentType": [
     {
       "id": "1",
-      "name": "Credit",
-      "balnce": 799
+      "name": "Credite",
+      "balnce": 1298
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 1810
+      "balnce": 4130
     },
     {
       "id": "3",
       "name": "Cash",
-      "balnce": 1901
+      "balnce": 5000
     }
   ],
   "income": [
     {
-      "id": "7bb7",
-      "date": "2024-06-01",
-      "account": "Credit",
-      "category": "asaa",
+      "id": "181c",
+      "date": "2024-06-06",
+      "account": "1",
+      "category": "3c1a",
       "amount": 100
+    },
+    {
+      "type": "Income",
+      "date": "2024-06-06",
+      "account": "1",
+      "category": "3c1a",
+      "amount": 410,
+      "id": "dc04"
     }
   ],
   "categories": [
@@ -61,7 +68,7 @@
   "subcategories": [
     {
       "id": "29",
-      "name": "Travelser",
+      "name": "Travelsers",
       "categoryId": "2"
     },
     {
@@ -71,7 +78,7 @@
     },
     {
       "id": "3c1a",
-      "name": "asaa",
+      "name": "asaaa",
       "categoryId": "1"
     },
     {

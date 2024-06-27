@@ -1,11 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Category, Incomes, PaymentType } from '../../../../common/models/expenses.model';
+import { Category, Incomes, PaymentType, Subcategory } from '../../../../common/models/expenses.model';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-incomes',
@@ -20,11 +21,11 @@ export class IncomesComponent implements OnInit {
   paymentTypes: PaymentType[] ;
   filteredOptions: string[];
   filterCategoryOption:string[];
-  categories:string[];
+  categories:Subcategory[];
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 
-  constructor(private fb: FormBuilder, private apiService: ApiServiceService,private snackbar:MatSnackBar,private commonService:CommonServiceService) {
+  constructor(private fb: FormBuilder, private apiService: ApiServiceService,private snackbar:MatSnackBar,private commonService:CommonServiceService,private router:Router) {
     this.incomeForm = this.fb.group({
       date: ['', Validators.required],
       account: ["", Validators.required],
@@ -44,10 +45,17 @@ export class IncomesComponent implements OnInit {
         console.log(err);
       }
     });
-    this.apiService.getCategories().subscribe({
-      next:(response:Category[])=>{
-        console.log(response)
-        this.categories=response.filter(item=>item.type==='income').flatMap(item=>item.subcategories.map(item=>item.name))
+    // this.apiService.getCategories().subscribe({
+    //   next:(response:Category[])=>{
+    //     console.log(response)
+    //     this.categories=response.filter(item=>item.type==='income').flatMap(item=>item.subcategories.map(item=>item.name))
+    //   }
+    // })
+    this.apiService.getSubCategories().subscribe({
+      next: (response: Subcategory[]) => {
+        this.categories =response.filter(item => item.categoryId=="1")
+        console.log(this.categories)
+
       }
     })
   }
@@ -56,10 +64,10 @@ export class IncomesComponent implements OnInit {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredOptions = this.accountTypes.filter(option => option.toLowerCase().includes(filterValue));
   }
-  filterCategory(inputElement: HTMLInputElement): void {
-    const filterCategoryValue = inputElement.value.toLowerCase();
-    this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
-  }
+  // filterCategory(inputElement: HTMLInputElement): void {
+  //   const filterCategoryValue = inputElement.value.toLowerCase();
+  //   this.filterCategoryOption = this.categories.filter(o => o.toLowerCase().includes(filterCategoryValue));
+  // }
 
   onSubmit(): void {
     if (this.incomeForm.valid) {
@@ -73,7 +81,7 @@ export class IncomesComponent implements OnInit {
       const selectedAccountType = formValue.account;
       const incomeAmount = formValue.amount;
 
-      const paymentType=this.paymentTypes.find(pt=>pt.name==selectedAccountType);
+      const paymentType=this.paymentTypes.find(pt=>pt.id==selectedAccountType);
 
       if(paymentType){
         paymentType.balnce += incomeAmount;
@@ -83,13 +91,7 @@ export class IncomesComponent implements OnInit {
         next:()=>{
           this.apiService.postIncomeDetails(this.incomeForm.value).subscribe({
             next:(response:Incomes)=>{  
-              this.incomeForm.reset();
-              Object.keys(this.incomeForm.controls).forEach(key => {
-                const control = this.incomeForm.get(key);
-                control?.setErrors(null);
-                control?.markAsPristine();
-                control?.markAsUntouched();
-              });
+              this.router.navigate(['/transactionData'])
               this.snackbar.open("Income Details Are Update Succefully!","Close",{duration:3000})
             },
             error:err=>{
