@@ -32,8 +32,8 @@
           <div class="form-group mb-4">
             <label for="account" class="form-label h4">Account</label>
             <mat-form-field class="w-100" appearance="outline">
-              <mat-label>Number</mat-label>
-              <mat-select placeholder="Select a number" [formControl]="myControl">
+              <mat-label>Account</mat-label>
+              <mat-select  [formControl]="myControl">
                 <mat-option *ngFor="let option of accounts" [value]="option.id">
                   {{ option.name }}
                 </mat-option>
@@ -69,7 +69,7 @@
               <div class="col">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Category</mat-label>
-                  <mat-select formControlName="category" placeholder="Select a category">
+                  <mat-select formControlName="category" >
                     <mat-option *ngFor="let option of categories" [value]="option.id">
                       {{ option.name }}
                     </mat-option>

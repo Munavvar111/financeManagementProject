@@ -14,7 +14,7 @@
     <div class="form-group mb-4">
       <label for="account" class="form-label h4">Account</label>
       <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Number</mat-label>
+        <mat-label>Accounts</mat-label>
         <mat-select formControlName="account" id="account">
           <mat-option *ngFor="let option of paymentTypes" [value]="option.id">{{ option.name }}</mat-option>
         </mat-select>
