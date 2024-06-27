@@ -140,7 +140,6 @@ export class AddExpensesComponent implements OnInit {
         const totalAmount = this.expenseForm.get('totalAmount').value;
 
         this.commonService.handleExpenses(accountName, totalAmount, this.accounts, transformedData);
-        this.router.navigate(['/transactionData'])
         
         this.expenseForm.get('expenses').valueChanges.subscribe(() => {
           this.updateTotalAmount();

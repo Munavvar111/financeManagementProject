@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiServiceService } from './apiService.service';
 import { Expense, PaymentType } from '../models/expenses.model';
@@ -16,7 +16,7 @@ export class CommonServiceService {
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private router: Router,
-    private apiService: ApiServiceService
+    private apiService: ApiServiceService,
   ) {}
 
   
@@ -71,6 +71,11 @@ export class CommonServiceService {
       next: (response: PaymentType) => {
         this.snackBar.open("Balance updated successfully", "Close", { duration: 3000 });
         this.postExpenses(transformedData);
+        setTimeout(() => {
+          this.router.navigate(['/transactionData'])
+          
+        }, 2000);
+
       },
       error: (err) => {
         this.snackBar.open("Error updating balance", "Close", { duration: 3000 });

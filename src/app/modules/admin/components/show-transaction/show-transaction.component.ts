@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Expense, Incomes, PaymentType, Subcategory, Transection } from '../../../../common/models/expenses.model';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailDailogComponent } from '../transaction/detail-dailog/detail-dailog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-show-transaction',
@@ -19,7 +20,7 @@ import { DetailDailogComponent } from '../transaction/detail-dailog/detail-dailo
   templateUrl: './show-transaction.component.html',
   styleUrl: './show-transaction.component.css'
 })
-export class ShowTransactionComponent implements OnInit {
+export class ShowTransactionComponent implements OnInit,OnDestroy {
   transactionData: any[] = [];
   filteredData: any[] = [];
   paginatedData: any[] = [];
@@ -30,6 +31,7 @@ export class ShowTransactionComponent implements OnInit {
   totalItems = 0;
   dataIsLoad:boolean=false;
   accountType:PaymentType[];
+  private subscriptions: Subscription[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -46,6 +48,7 @@ export class ShowTransactionComponent implements OnInit {
     });
   }
 
+  
   ngOnInit(): void {
     this.accountData();
     this.cdr.detectChanges()
@@ -54,37 +57,50 @@ export class ShowTransactionComponent implements OnInit {
     this.filterForm.valueChanges.subscribe(() => this.applyFilter());
     setTimeout(() => {
       this.dataIsLoad=true;
+      this.cdr.detectChanges()
     }, 2000);
   }
+  ngOnDestroy(): void {
+    console.log(this.subscriptions)
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    console.log(this.accountType)
+  }
 accountData(){
-  this.apiService.getAccount().subscribe({
+  const accountSub = this.apiService.getAccount().subscribe({
     next: (response: PaymentType[]) => {
       this.accountType = response;
-
+      this.cdr.detectChanges();
     },
     error: (err) => {
       this.snackbar.open('Something Went Wrong', 'Close', { duration: 3000 });
     },
   });
+
+  this.subscriptions.push(accountSub);
+
 }
   fetchData() {
-    this.apiService.getSubCategories().subscribe({
-      next:(response:Subcategory[])=>{
-        this.subCategory=response
+    const subCategoriesSub = this.apiService.getSubCategories().subscribe({
+      next: (response: Subcategory[]) => {
+        this.subCategory = response;
+        this.cdr.detectChanges();
       },
-      error:err=>{
-        this.snackbar.open("Something Went To Wrong!","Close",{duration:3000})
+      error: (err) => {
+        this.snackbar.open('Something Went To Wrong!', 'Close', { duration: 3000 });
       }
-    })
-    this.apiService.getExpenses().subscribe({
+    });
+    this.subscriptions.push(subCategoriesSub);
+  
+    this.cdr.detectChanges()
+    const expensesSub = this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
-        this.apiService.getIncomeDetails().subscribe({
+        const incomeSub = this.apiService.getIncomeDetails().subscribe({
           next: (income: Incomes[]) => {
             const combinedData = [
               ...expenses.map(expense => {
                 const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
-                const account=this.accountType.find(item=>item.id==expense.account).name
-                const category = subCategoryItem ? subCategoryItem.name : ''; // Handle undefined case
+                const account = this.accountType.find(item => item.id == expense.account).name;
+                const category = subCategoryItem ? subCategoryItem.name : '';
                 return {
                   id: expense.id,
                   date: expense.date,
@@ -96,36 +112,36 @@ accountData(){
               }),
               ...income.map(incomeItem => {
                 const subCategoryItem = this.subCategory.find(item => item.id === incomeItem.category);
-                console.log(this.accountType)
-                const account=this.accountType.find(item=>item.id==incomeItem.account).name
-                const category = subCategoryItem ? subCategoryItem.name : ''; // Handle undefined case
+                const account = this.accountType.find(item => item.id == incomeItem.account).name;
+                const category = subCategoryItem ? subCategoryItem.name : '';
                 return {
                   id: incomeItem.id,
                   date: incomeItem.date,
-                  account: account  ,
+                  account: account,
                   type: 'Income',
                   category: category,
-                  amount:  incomeItem.amount,
+                  amount: incomeItem.amount,
                 };
               })
             ];
-
             this.transactionData = combinedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             this.totalItems = this.transactionData.length;
             this.applyFilter();
+            this.cdr.detectChanges();
           },
           error: err => {
             console.error(err);
           }
         });
+        this.subscriptions.push(incomeSub);
       },
       error: err => {
         console.error(err);
       }
     });
-    this.cdr.detectChanges()
+    this.subscriptions.push(expensesSub);
   }
-
+ 
   applyFilter() {
     const { dateRange, searchQuery } = this.filterForm.value;
     const startDate = dateRange.start ? new Date(dateRange.start).getTime() : null;
