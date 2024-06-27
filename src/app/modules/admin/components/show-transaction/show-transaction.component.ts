@@ -48,7 +48,9 @@ export class ShowTransactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.accountData();
+    this.cdr.detectChanges()
     this.fetchData();
+    this.cdr.detectChanges()
     this.filterForm.valueChanges.subscribe(() => this.applyFilter());
     setTimeout(() => {
       this.dataIsLoad=true;
@@ -121,6 +123,7 @@ accountData(){
         console.error(err);
       }
     });
+    this.cdr.detectChanges()
   }
 
   applyFilter() {
