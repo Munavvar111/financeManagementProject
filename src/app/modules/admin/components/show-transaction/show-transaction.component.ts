@@ -12,6 +12,7 @@ import { CommonServiceService } from '../../../../common/services/common-service
 import { MatDialog } from '@angular/material/dialog';
 import { DetailDailogComponent } from '../transaction/detail-dailog/detail-dailog.component';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-show-transaction',
@@ -37,6 +38,7 @@ export class ShowTransactionComponent implements OnInit {
 
   constructor(private apiService: ApiServiceService, private fb: FormBuilder,private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
+    private router:Router,
     private commonService: CommonServiceService,
     private snackbar: MatSnackBar) {
     this.filterForm = this.fb.group({
@@ -75,6 +77,12 @@ accountData(){
     this.apiService.getSubCategories().subscribe({
       next: (response: Subcategory[]) => {
         this.subCategory = response;
+        if(this.subCategory){
+          this.snackbar.open("Please try again after some time due to api load","Close",{duration:3000})
+          setTimeout(() => {
+            this.router.navigate(['/'])
+          }, 3000);
+        }
       },
       error: (err) => {
         this.snackbar.open('Something Went To Wrong!', 'Close', { duration: 3000 });
