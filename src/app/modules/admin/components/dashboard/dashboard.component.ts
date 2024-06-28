@@ -82,9 +82,12 @@ export class DashboardComponent implements OnInit {
     //for patchValue in dropdown in money flow chart
     this.rangeForm.patchValue({ selectedRange: 'last365' });
     //initial data 
-    this.loadInitialData();
     //total balance for to display in the data
     this.getTotalBalance();
+    setTimeout(() => {
+    this.loadInitialData();
+      
+    }, 1000);
     //
     this.getCurrentAndPreviousMonthData()
     setTimeout(() => {
