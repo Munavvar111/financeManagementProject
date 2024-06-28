@@ -53,11 +53,13 @@ export class ShowTransactionComponent implements OnInit {
   
   ngOnInit(): void {
     this.accountData();
-    this.fetchData();
-    this.filterForm.valueChanges.subscribe(() => this.applyFilter());
+    this.getSubcategory()
     setTimeout(() => {
-      this.dataIsLoad=true;
-    }, 2000);
+      
+      this.fetchData();
+    }, 1000);
+    this.filterForm.valueChanges.subscribe(() => this.applyFilter());
+   
   }
  
 accountData(){
@@ -73,21 +75,25 @@ accountData(){
   this.subscriptions.push(accountSub);
 
 }
-  fetchData() {
-    this.apiService.getSubCategories().subscribe({
-      next: (response: Subcategory[]) => {
-        this.subCategory = response;
-        if(this.subCategory==null){
-          this.snackbar.open("Please try again after some time due to api load","Close",{duration:3000})
-          setTimeout(() => {
-            this.router.navigate(['/transactionData'])
-          }, 3000);
-        }
-      },
-      error: (err) => {
-        this.snackbar.open('Something Went To Wrong!', 'Close', { duration: 3000 });
+getSubcategory(){
+  this.apiService.getSubCategories().subscribe({
+    next: (response: Subcategory[]) => {
+      this.subCategory = response;
+      console.log(this.subCategory,"good")
+      if(this.subCategory==null){
+        this.snackbar.open("Please try again after some time due to api load","Close",{duration:3000})
+        setTimeout(() => {
+          this.router.navigate(['/transactionData'])
+        }, 3000);
       }
-    });
+    },
+    error: (err) => {
+      this.snackbar.open('Something Went To Wrong!', 'Close', { duration: 3000 });
+    }
+  });
+}
+  fetchData() {
+   
   
      this.apiService.getExpenses().subscribe({
       next: (expenses: Expense[]) => {
@@ -96,17 +102,19 @@ accountData(){
             const combinedData = [
               ...expenses.map(expense => {
                 console.log(expenses)
-                const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
-                const account = this.accountType.find(item => item.id == expense.account).name;
-                const category = subCategoryItem ? subCategoryItem.name : '';
-                return {
-                  id: expense.id,
-                  date: expense.date,
-                  account: account,
-                  type: 'Expense',
-                  category: category,
-                  amount: expense.amount,
-                };
+                console.log(this.subCategory)
+                    
+                  const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
+                  const account = this.accountType.find(item => item.id == expense.account).name;
+                  const category = subCategoryItem ? subCategoryItem.name : '';
+                  return {
+                    id: expense.id,
+                    date: expense.date,
+                    account: account,
+                    type: 'Expense',
+                    category: category,
+                    amount: expense.amount,
+                  };
               }),
               ...income.map(incomeItem => {
                 const subCategoryItem = this.subCategory.find(item => item.id === incomeItem.category);
@@ -121,7 +129,12 @@ accountData(){
                   amount: incomeItem.amount,
                 };
               })
+              
             ];
+            
+            setTimeout(() => {
+              this.dataIsLoad=true;
+            }, 2000);
             this.transactionData = combinedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             this.totalItems = this.transactionData.length;
             this.applyFilter();
