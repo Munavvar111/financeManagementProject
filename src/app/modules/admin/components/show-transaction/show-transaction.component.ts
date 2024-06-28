@@ -77,10 +77,10 @@ accountData(){
     this.apiService.getSubCategories().subscribe({
       next: (response: Subcategory[]) => {
         this.subCategory = response;
-        if(this.subCategory){
+        if(this.subCategory==null){
           this.snackbar.open("Please try again after some time due to api load","Close",{duration:3000})
           setTimeout(() => {
-            this.router.navigate(['/'])
+            this.router.navigate(['/transactionData'])
           }, 3000);
         }
       },
