@@ -98,19 +98,37 @@
       "category": "be0d",
       "amount": 96,
       "userId": "76aa"
+    },
+    {
+      "id": "99e2",
+      "type": "expense",
+      "date": "2024-07-03",
+      "account": "1",
+      "category": "be0d",
+      "amount": 100,
+      "userId": "76aa"
+    },
+    {
+      "id": "a64c",
+      "type": "expense",
+      "date": "2024-07-08",
+      "account": "2",
+      "category": "11cf",
+      "amount": 100,
+      "userId": "76aa"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credite",
-      "balnce": 992,
+      "balnce": 892,
       "userId": "76aa"
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 3730,
+      "balnce": 3630,
       "userId": "76aa"
     },
     {

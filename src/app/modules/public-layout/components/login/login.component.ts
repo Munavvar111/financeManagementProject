@@ -16,7 +16,8 @@ import { Registration, User } from '../../../../common/models/expenses.model';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-
+  isLoading=false;
+  showLinebar=false;
   constructor(private fb: FormBuilder,private apiService:ApiServiceService,private snackBar:MatSnackBar,private router:Router) { }
 
   ngOnInit(): void {
@@ -27,21 +28,26 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    this.isLoading=true
+
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
       this.apiService.loginUser(email, password).subscribe({
         next: (register: Registration[]) => {
           const user = register.find(user => user.email === email && user.password === password);
           if (user) {
-            const loggedInUser = new User(email,user.id); // Assuming User constructor takes email and password
+            const loggedInUser = new User(email,user.id,user.firstName,user.Lastname); 
             localStorage.setItem("user", JSON.stringify(loggedInUser));
             this.snackBar.open('Login Successful', 'Close', { duration: 3000 });
-            this.router.navigate(['/admin']); // Redirect to a dashboard or home page
+            this.isLoading=false;
+            this.router.navigate(['/admin']); 
           } else {
+            this.isLoading=false;
             this.snackBar.open('Invalid email or password', 'Close', { duration: 3000 });
           }
         },
         error: (err) => {
+          this.isLoading=false;
           console.error('Error during login', err);
           this.snackBar.open('Login failed', 'Close', { duration: 3000 });
         }

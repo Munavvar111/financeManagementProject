@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -22,12 +22,13 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [MaterialModule, FullCalendarModule,NgxSkeletonLoaderModule],
+  imports: [MaterialModule, FullCalendarModule,NgxSkeletonLoaderModule,CommonModule],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent implements OnInit {
   subCategory:Subcategory[];
+  
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -37,6 +38,8 @@ export class CalendarComponent implements OnInit {
   };
   dataIsLoad:boolean=false;
 userId:string;
+isLoading:boolean;
+showLinebar = false;
   private eventMap: {
     [date: string]: { incomes: Incomes[]; expenses: Expense[] };} = {};
   private originalEvents: EventInput[] = [];
@@ -154,7 +157,7 @@ if (userString) {
             });
           }
         }
-        this.dataIsLoad=true;
+        this.isLoading=false;
 
 
         this.originalEvents = events;
@@ -172,6 +175,7 @@ if (userString) {
         })
         .afterClosed()
         .subscribe((result) => {
+          this.isLoading=true;
           result.account=this.accountType.find(item=>item.name==result.account).id,
           result.category=this.subCategory.find(item=>item.name==result.category).id,
           this.dataIsLoad=false;
@@ -197,20 +201,23 @@ if (userString) {
                             { duration: 3000 }
                           );
                           this.loadEvents();
-                          
                         },
                         error: (err) => {
                           this.snackbar.open('Something Went Wrong', 'Close', {
                             duration: 3000,
                           });
+                          this.isLoading=false;
+
                         },
                       });
                     } else {
                       console.log('Balnce Is Insufficient');
+                      this.isLoading=false;
                     }
                   },
                   error: (err) => {
                     console.log('Something Went To Wrong');
+                    this.isLoading=false;
                   },
                 });
             } else {
@@ -232,20 +239,22 @@ if (userString) {
                             'Close',
                             { duration: 3000 }
                           );
-                          this.dataIsLoad=true;
                           this.loadEvents();
                         },
                         error: (err) => {
                           this.snackbar.open('Something Went Wrong', 'Close', {
                             duration: 3000,
                           });
+                          this.isLoading=false;
                         },
                       });
                     } else {
+                      this.isLoading=false;
                       console.log('Balnce Is Insufficient');
                     }
                   },
                   error: (err) => {
+                    this.isLoading=false;
                     console.log('Something Went To Wrong');
                   },
                 });

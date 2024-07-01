@@ -31,13 +31,19 @@ export class DetailDailogComponent {
     private apiService: ApiServiceService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     this.title = data.title;
     this.form = this.fb.group({
       type: [{ value: data.type, disabled: true }, Validators.required],
       date: [data.date, Validators.required],
       account: [data.account, Validators.required],
       category: [data.category, Validators.required],
-      amount: [data.amount, [Validators.required, Validators.min(0.01)]]
+      amount: [data.amount, [Validators.required, Validators.min(0.01)]],
+      userId:[this.userId]
     });
 
     this.filteredAccounts = this.accountOptions;
@@ -45,11 +51,7 @@ export class DetailDailogComponent {
   }
 
   ngOnInit(): void {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      const user = JSON.parse(userString);
-      this.userId = user.id;
-    }
+    
     this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.accountOptions = response.map(item => item.name);
@@ -64,7 +66,6 @@ export class DetailDailogComponent {
         this.expenseCategories = response.filter(item => item.type === 'expense')
           .flatMap(item => item.subcategories.map(sub => sub.name));
         
-        // Set filtered categories based on initial type
         this.filteredCategories = this.data.type === 'Income' ? this.incomeCategories : this.expenseCategories;
       }
     });

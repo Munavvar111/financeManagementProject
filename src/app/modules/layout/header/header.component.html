@@ -30,7 +30,7 @@
         *ngIf="isNamesVisible"
       />
       <div class="user-info">
-        <span class="user-name" *ngIf="isNamesVisible">Munavvar Popatiya</span>
+        <span class="user-name" *ngIf="isNamesVisible">{{firstName}}</span>
       </div>
     </div>
    
@@ -144,7 +144,7 @@
           alt="Profile Image"
           class="profile-image"
         />
-        Munavvar Popatiya
+        {{firstName}}
       </button>
     </mat-toolbar>
 

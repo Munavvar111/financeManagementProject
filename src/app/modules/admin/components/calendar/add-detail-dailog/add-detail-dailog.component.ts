@@ -39,12 +39,19 @@ export class AddDetailDailogComponent {
     private snackbar:MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: { date: string }
   ) {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     this.form = this.fb.group({
       type: ['', Validators.required],
       date: [data.date, Validators.required],
       account: ['', Validators.required],
       category: ['', Validators.required],
-      amount: ['', [Validators.required, Validators.min(0.01)]]
+      amount: ['', [Validators.required, Validators.min(0.01)]],
+      userId:[this.userId]
+
     });
 
     this.filteredAccounts = this.accountOptions;
@@ -52,11 +59,7 @@ export class AddDetailDailogComponent {
   }
 
   ngOnInit(): void {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      const user = JSON.parse(userString);
-      this.userId = user.id;
-    }
+   
     // Load accounts
     this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {

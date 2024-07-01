@@ -1,29 +1,41 @@
 <mat-card class="login-card">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <h2>Login</h2>
-  
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" required>
-        <mat-error *ngIf="loginForm.get('email').hasError('required')">
-          Email is required
-        </mat-error>
-        <mat-error *ngIf="loginForm.get('email').hasError('email')">
-          Please enter a valid email address
-        </mat-error>
-      </mat-form-field>
-  
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput formControlName="password" type="password" required>
-        <mat-error *ngIf="loginForm.get('password').hasError('required')">
-          Password is required
-        </mat-error>
-      </mat-form-field>
-  
-      <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-        Login
-      </button>
-    </form>
-  </mat-card>
-  
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <h2>Login</h2>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" required />
+      <mat-error *ngIf="loginForm.get('email').hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="loginForm.get('email').hasError('email')">
+        Please enter a valid email address
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password" type="password" required />
+      <mat-error *ngIf="loginForm.get('password').hasError('required')">
+        Password is required
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="loginForm.invalid"
+    >
+      Login
+    </button>
+  </form>
+</mat-card>
+<div
+  class="line-progress-bar"
+  [class.show-progress]="showLinebar"
+  [class.hide-progress]="!showLinebar"
+></div>
+<div class="loader-container" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>

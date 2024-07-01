@@ -17,7 +17,8 @@ import { Router } from '@angular/router';
 export class RegistrationComponent {
   registerForm: FormGroup;
   emailExists: boolean = false;
-
+  isLoading=false;
+  showLinebar=false;
   constructor(
     private fb: FormBuilder,
     private apiService: ApiServiceService,
@@ -54,6 +55,8 @@ export class RegistrationComponent {
   }
 
   onSubmit() {
+    this.isLoading=true
+
     if (this.registerForm.valid && !this.emailExists) {
       this.apiService.registrationUser(this.registerForm.value).subscribe({
         next: (response: Registration) => {
@@ -69,9 +72,11 @@ export class RegistrationComponent {
             this.apiService.postAccount(paymentType).subscribe({
               next: (accountResponse: PaymentType) => {
                 this.snackBar.open('Registration Successful', 'Close', { duration: 3000 });
+                this.isLoading=false;
                 this.router.navigate(['/login']);
               },
               error: (err) => {
+                this.isLoading=false;
                 this.snackBar.open('Error creating account', 'Close', { duration: 3000 });
               }
             });

@@ -67,9 +67,13 @@ export interface Login{
 export class User {
   public email: string;
   public id:string;
+  public firstName:string;
+  public lastName:string;
 
-  constructor( email: string,id:string) {
+  constructor( email: string,id:string,firstName:string,lastName:string) {
     this.email = email;
-    this.id=id
+    this.id=id;
+    this.firstName=firstName;
+    this.lastName=lastName;
   }
 }
