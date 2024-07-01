@@ -193,6 +193,7 @@ export class CategoryComponent {
   }
 
   deleteSubcategory(subcategoryId:number): void {
+    
     Swal.fire({
       position: 'top',
       title: 'Are you sure?',

@@ -27,12 +27,14 @@ export class AddExpensesComponent implements OnInit {
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
+  isLoading:boolean;
   expensesArray: FormGroup;
   accounts: PaymentType[];
   filteredOptions: string[];
   filterCategoryOption: string[];
   categories: Subcategory[];
-
+  userId:string;
+  showLinebar = false;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private cdr: ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar, private router: Router, private commonService: CommonServiceService) {
    
   }
@@ -68,11 +70,17 @@ export class AddExpensesComponent implements OnInit {
 
 
   ngOnInit() {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     this.expenseForm = this.fb.group({
       date: [null, Validators.required],
       account: [null, Validators.required],
       expenses: this.fb.array([]),
-      totalAmount: [{ value: 0, disabled: true }]
+      totalAmount: [{ value: 0, disabled: true }],
+      userId:[null]
     });
     this.myControl = this.expenseForm.get('account') as FormControl;
     this.addExpense();
@@ -85,7 +93,7 @@ export class AddExpensesComponent implements OnInit {
       }
     })
 
-    this.apiService.getAccount().subscribe({
+    this.apiService.getAccount(this.userId).subscribe({
       next: (data: PaymentType[]) => {
         console.log(data)
         this.accounts = data
@@ -114,6 +122,7 @@ export class AddExpensesComponent implements OnInit {
       account: formData.account,
       category: expense.category,
       amount: expense.amount,
+      userId:this.userId
     }));
   }
 
@@ -133,8 +142,10 @@ export class AddExpensesComponent implements OnInit {
     return true;
   }
   onSubmit(): void {
+    this.isLoading=true;
     if (this.expenseForm.valid) {
       if (this.validateBalance()) {
+        this.expenseForm.get('userId').setValue(this.userId);
         const transformedData: Expense[] = this.transformExpenseData(this.expenseForm.value);
         const accountName = this.expenseForm.get('account').value;
         const totalAmount = this.expenseForm.get('totalAmount').value;
@@ -145,6 +156,10 @@ export class AddExpensesComponent implements OnInit {
           this.updateTotalAmount();
         });
         this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
+        setTimeout(() => {
+          
+          this.isLoading=false;
+        }, 3000);
       } else {
 
         this.snackBar.open('Please Enter The Some Income!!', 'Close', { duration: 3000 });

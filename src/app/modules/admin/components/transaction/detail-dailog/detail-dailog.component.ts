@@ -24,7 +24,7 @@ export class DetailDailogComponent {
   expenseCategories: string[] = [];
   filteredAccounts: string[] = [];
   filteredCategories: string[] = [];
-
+  userId:string;
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DetailDailogComponent>,
@@ -45,7 +45,12 @@ export class DetailDailogComponent {
   }
 
   ngOnInit(): void {
-    this.apiService.getAccount().subscribe({
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
+    this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.accountOptions = response.map(item => item.name);
         this.filteredAccounts = this.accountOptions;

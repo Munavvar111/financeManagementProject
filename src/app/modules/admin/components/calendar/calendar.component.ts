@@ -36,7 +36,7 @@ export class CalendarComponent implements OnInit {
     events: [],
   };
   dataIsLoad:boolean=false;
-
+userId:string;
   private eventMap: {
     [date: string]: { incomes: Incomes[]; expenses: Expense[] };} = {};
   private originalEvents: EventInput[] = [];
@@ -51,10 +51,15 @@ export class CalendarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+if (userString) {
+  const user = JSON.parse(userString);
+  this.userId = user.id;
+}
     if (isPlatformBrowser(this.platformId)) {
       this.loadEvents();
     }
-    this.apiService.getAccount().subscribe({
+    this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.accountType = response;
       },
@@ -85,8 +90,8 @@ export class CalendarComponent implements OnInit {
   loadEvents(): void {
     // Clear the event map to avoid duplication
     this.eventMap = {};
-    this.apiService.getIncomeDetails().subscribe((incomeData) => {
-      this.apiService.getExpenses().subscribe((expenseData) => {
+    this.apiService.getIncomeDetails(this.userId).subscribe((incomeData) => {
+      this.apiService.getExpenses(this.userId).subscribe((expenseData) => {
         const eventMap: {
           [date: string]: { income: number; expense: number };
         } = {};

@@ -1,6 +1,6 @@
 import { Component, HostListener, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MaterialModule } from '../../../common/matrial/matrial.module';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { FooterComponent } from '../footer/footer.component';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent implements AfterViewInit {
 
-  constructor(private cdref: ChangeDetectorRef) {}
+  constructor(private cdref: ChangeDetectorRef,private router:Router) {}
 
   @ViewChild('drawer') drawer!: MatSidenav;
   isScreenSmall = false;
@@ -54,5 +54,9 @@ export class HeaderComponent implements AfterViewInit {
     if (this.drawer) {
       this.drawer.mode = this.isScreenSmall ? 'push' : 'side';
     }
+  }
+  logOutUser(){
+    localStorage.removeItem('user');
+    this.router.navigate(['/'])
   }
 }

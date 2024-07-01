@@ -72,7 +72,7 @@ export class CommonServiceService {
         this.snackBar.open("Balance updated successfully", "Close", { duration: 3000 });
         this.postExpenses(transformedData);
         setTimeout(() => {
-          this.router.navigate(['/transactionData'])
+          this.router.navigate(['/admin/transactionData'])
           
         }, 3000);
 

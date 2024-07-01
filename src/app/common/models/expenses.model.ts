@@ -5,19 +5,24 @@ export interface Expense {
     account:string;
     type: string;
     amount: number ;
+    userId:string;
   }
 
   export interface  PaymentType{
     id?:string,
     name:string,
-    balnce:number
-  }
+    balnce:number,
+    userId:string,
+
+      }
   export interface Incomes{
     id?:string,
     date:Date | string,
     account:string,
     category:string,
     amount:number,
+    userId:string
+
   }
 export  interface Category {
     id: number;
@@ -47,4 +52,24 @@ export interface FieldConfig {
   label: string;
   name: string;
   options?: { value: string, label: string }[];
+}
+export interface Registration{
+  id:string,
+  firstName:string,
+  Lastname:string,
+  email:string,
+  password:string,
+}
+export interface Login{
+  email:string,
+  password:string,
+}
+export class User {
+  public email: string;
+  public id:string;
+
+  constructor( email: string,id:string) {
+    this.email = email;
+    this.id=id
+  }
 }

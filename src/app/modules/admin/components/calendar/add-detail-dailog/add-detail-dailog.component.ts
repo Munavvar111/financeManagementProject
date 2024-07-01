@@ -29,6 +29,7 @@ export class AddDetailDailogComponent {
   filteredCategories: string[] = [];
   category: string[] = [];
   dataIsLoad:boolean=false;
+  userId:string;
 
   constructor(
     private fb: FormBuilder,
@@ -51,8 +52,13 @@ export class AddDetailDailogComponent {
   }
 
   ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     // Load accounts
-    this.apiService.getAccount().subscribe({
+    this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.accountOptions = response.map(item => item.name);
         this.filteredAccounts = this.accountOptions;

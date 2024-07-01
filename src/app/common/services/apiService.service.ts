@@ -5,16 +5,20 @@ import {
   Category,
   Expense,
   Incomes,
+  Login,
   PaymentType,
+  Registration,
   Subcategory,
+  User,
 } from '../models/expenses.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiServiceService {
-  private url = `https://jsonserver-69rb.onrender.com`;
+  private url = `http://localhost:3000`;
 
+ 
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
@@ -23,8 +27,8 @@ export class ApiServiceService {
     });
   }
 
-  getExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.url}/expenses`);
+  getExpenses(userId:string): Observable<Expense[]> {
+    return this.http.get<Expense[]>(`${this.url}/expenses?userId=${userId}`);
   }
 
   postExpenses(expenses: Expense): Observable<Expense> {
@@ -40,8 +44,8 @@ export class ApiServiceService {
       { headers: this.getHeaders() }
     );
   }
-  getAccount(): Observable<PaymentType[]> {
-    return this.http.get<PaymentType[]>(`${this.url}/PaymentType`);
+  getAccount(userId:string): Observable<PaymentType[]> {
+    return this.http.get<PaymentType[]>(`${this.url}/PaymentType?userId=${userId}`);
   }
 
   postAccount(paymentType: PaymentType): Observable<PaymentType> {
@@ -57,8 +61,8 @@ export class ApiServiceService {
       { headers: this.getHeaders() }
     );
   }
-  getIncomeDetails(): Observable<Incomes[]> {
-    return this.http.get<Incomes[]>(`${this.url}/income`);
+  getIncomeDetails(userId:string): Observable<Incomes[]> {
+    return this.http.get<Incomes[]>(`${this.url}/income?userId=${userId}`);
   }
   postIncomeDetails(income: Incomes): Observable<Incomes> {
     return this.http.post<Incomes>(`${this.url}/income`, income, {
@@ -98,13 +102,39 @@ export class ApiServiceService {
     );
   }
 
-  getIncomeAndExpenses(): Observable<any[]> {
-    return forkJoin([this.getIncomeDetails(), this.getExpenses()]);
+  getIncomeAndExpenses(userId:string): Observable<any[]> {
+    return forkJoin([this.getIncomeDetails(userId), this.getExpenses(userId)]);
   }
   deleteExpenses(expenseId: string): Observable<Expense> {
     return this.http.delete<Expense>(`${this.url}/expenses/${expenseId}`);
   }
   deleteIncome(incomeId: string): Observable<Incomes> {
     return this.http.delete<Expense>(`${this.url}/income/${incomeId}`);
+  }
+  registrationUser(registration:Registration):Observable<Registration>{
+    return this.http.post<Registration>(`${this.url}/registration`,registration);
+  }
+  loginUser(email: string, password: string): Observable<Registration[]> {
+    return this.http.get<Registration[]>(`${this.url}/registration`)
+  }
+  checkEmailExists(email: string): Observable<boolean> {
+    return this.http.get<any[]>(`${this.url}/registration`).pipe(
+      map(users => users.some(user => user.email === email))
+    );
+  }
+  public isLoggedIn(): boolean {
+    const user = this.getUser();
+    if (user) {
+      return user.email != null;
+    }
+    return false;
+  }
+  public getUser(): User | null {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const user: User = JSON.parse(userJson);
+      return user;
+    }
+    return null;
   }
 }

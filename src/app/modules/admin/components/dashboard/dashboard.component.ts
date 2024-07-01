@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit {
   currentMonthIncome: number; 
   previousMonthIncome: number;
   dataIsLoad:boolean=false;
+  userId:string;
 
   PaymentType:PaymentType[];
   expenses: Expense[];
@@ -76,6 +77,12 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+// Retrieve user information from localStorage
+const userString = localStorage.getItem('user');
+if (userString) {
+  const user = JSON.parse(userString);
+  this.userId = user.id;
+}
     //for recent Transaction
     this.loadSubCategory();
     this.loadTransactions();
@@ -105,29 +112,30 @@ loadSubCategory(){
   })
 }
   getTotalBalance(){
-    this.service.getAccount().subscribe({
+    this.service.getAccount(this.userId).subscribe({
       next:(response:PaymentType[])=>{
         this.PaymentType=response;
-        this.currentCreditUsage=response.find(item=>item.id=='1').balnce;
+        // this.currentCreditUsage=response.find(item=>item.id=='1').balnce;
         this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
       
       }
     })
   } 
-  get usagePercentage(): number {
-    return (this.currentCreditUsage / this.creditCardLimit) * 100;
-  }
+  // get usagePercentage(): number {
+  //   // return (this.currentCreditUsage / this.creditCardLimit) * 100;
+  // }
 
   loadInitialData(): void {
-    this.service.getIncomeAndExpenses().subscribe(([incomes, expenses]) => {
+    this.service.getIncomeAndExpenses(this.userId).subscribe(([incomes, expenses]) => {
       this.transactions = [
         ...incomes.map(item => ({ ...item, type: 'income' })),
         ...expenses.map(item => ({ ...item, type: 'expenses' })),
       ];
     });
 
-    this.service.getExpenses().subscribe((result) => {
+    this.service.getExpenses(this.userId).subscribe((result) => {
       this.chartdata = result;
+      console.log(this.chartdata)
       if (this.chartdata != null) {
         this.processExpenses(this.chartdata)
         
@@ -138,7 +146,7 @@ loadSubCategory(){
       }
     });
 
-    this.service.getIncomeDetails().subscribe((incomeResult) => {
+    this.service.getIncomeDetails(this.userId).subscribe((incomeResult) => {
       this.incomeData = incomeResult;
       this.processIncome(this.incomeData);
       this.getCurrentAndPreviousMonthData();
@@ -264,12 +272,13 @@ loadSubCategory(){
     const aggregatedData = {};
     for (const item of data) {
       console.log(data)
-      const category = this.subCategory.find(items=>items.id==item.category).name;
+      const category = this.subCategory.find(items=>items.id==item.category);
+      const categoryName=category ? category.name:"other";
       const amount = item.amount;
-      if (aggregatedData[category]) {
-        aggregatedData[category] += amount;
+      if (aggregatedData[categoryName]) {
+        aggregatedData[categoryName] += amount;
       } else {
-        aggregatedData[category] = amount;
+        aggregatedData[categoryName] = amount;
       }
     }
     return aggregatedData;
@@ -277,8 +286,9 @@ loadSubCategory(){
 
   //load the initial data for the money flow diagram in line chart
   private loadData(selectedRange: string): void {
-    this.service.getExpenses().subscribe((expensesResult) => {
+    this.service.getExpenses(this.userId).subscribe((expensesResult) => {
       this.chartdata = expensesResult;
+      console.log(this.chartdata)
       if (this.chartdata != null) {
         switch (selectedRange) {
           case 'last7':
@@ -431,7 +441,7 @@ loadSubCategory(){
   
   //recent transection 
   loadTransactions(): void {
-    this.service.getIncomeAndExpenses().subscribe(([income, expenses]) => {
+    this.service.getIncomeAndExpenses(this.userId).subscribe(([income, expenses]) => {
       this.transactions = [
         ...income.map(item => ({ ...item, type: 'income', icon: 'assets/income.jpg' })), // Add appropriate icon
         ...expenses.map(item => ({ ...item, type: 'expense', icon: 'assets/expenses.png' })) // Add appropriate icon

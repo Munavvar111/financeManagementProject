@@ -26,6 +26,7 @@ export class AccountsComponent implements OnInit {
   editForm: FormGroup;
   dataIsLoad:boolean=false;
   editIndex: number | null = null;
+  userId:string;
 
   constructor(
     private fb: FormBuilder,
@@ -43,6 +44,11 @@ export class AccountsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     this.loadAccounts();
     setTimeout(() => {
       this.dataIsLoad = true
@@ -50,7 +56,7 @@ export class AccountsComponent implements OnInit {
   }
 
   loadAccounts(): void {
-    this.apiService.getAccount().subscribe((accounts) => {
+    this.apiService.getAccount(this.userId).subscribe((accounts) => {
       this.accounts = accounts;
     });
   }
@@ -103,6 +109,7 @@ export class AccountsComponent implements OnInit {
       const newAccount: PaymentType = {
         name: this.accountForm.value.accountName,
         balnce: parseFloat(this.accountForm.value.accountBalance),
+        userId:this.userId
       };
 
       if (this.accounts.some((account) => account.name === newAccount.name)) {

@@ -56,6 +56,7 @@ export class TransectionComponent implements OnInit, AfterViewInit {
     'action',
   ];
   accountType: PaymentType[];
+  userId:string;
   dataIsLoad: boolean =false;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   readonly range = new FormGroup({
@@ -82,7 +83,11 @@ export class TransectionComponent implements OnInit, AfterViewInit {
   
   ngOnInit() {
     this.fetchData();
-    
+    const userString = localStorage.getItem('user');
+if (userString) {
+  const user = JSON.parse(userString);
+  this.userId = user.id;
+}
     this.range.valueChanges.subscribe(() => {
       this.applyFilter();
     });
@@ -108,8 +113,8 @@ export class TransectionComponent implements OnInit, AfterViewInit {
   fetchData() {
   
     forkJoin({
-      expenses: this.apiService.getExpenses(),
-      incomes: this.apiService.getIncomeDetails()
+      expenses: this.apiService.getExpenses(this.userId),
+      incomes: this.apiService.getIncomeDetails(this.userId)
     }).subscribe({
       next: ({ expenses, incomes }) => {
         const combinedData = [
@@ -132,7 +137,7 @@ export class TransectionComponent implements OnInit, AfterViewInit {
         console.error(err);
       }
     });
-    this.apiService.getAccount().subscribe({
+    this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.accountType = response;
         this.dataIsLoad = true;

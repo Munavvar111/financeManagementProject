@@ -21,7 +21,10 @@ export class IncomesComponent implements OnInit {
   paymentTypes: PaymentType[] ;
   filteredOptions: string[];
   filterCategoryOption:string[];
+  isLoading=false;
+  showLinebar=false;
   categories:Subcategory[];
+  userId:string;
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 
@@ -30,12 +33,18 @@ export class IncomesComponent implements OnInit {
       date: ['', Validators.required],
       account: ["", Validators.required],
       category: ['', Validators.required],
-      amount: ["", [Validators.required, Validators.min(0)]]
+      amount: ["", [Validators.required, Validators.min(0)]],
+      userId:[null]
     });
   }
 
   ngOnInit(): void {
-    this.apiService.getAccount().subscribe({
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
+    this.apiService.getAccount(this.userId).subscribe({
       next: (response: PaymentType[]) => {
         this.paymentTypes=response;
         this.accountTypes = response.map(data => data.name);
@@ -70,10 +79,11 @@ export class IncomesComponent implements OnInit {
   // }
 
   onSubmit(): void {
+    this.isLoading=true
     if (this.incomeForm.valid) {
       const formValue = this.incomeForm.value;
 
-
+      this.incomeForm.get('userId').setValue(this.userId)
       // Format the date before submitting
       
       formValue.date = this.commonService.formatedDate(formValue.date);
@@ -92,7 +102,8 @@ export class IncomesComponent implements OnInit {
           this.apiService.postIncomeDetails(this.incomeForm.value).subscribe({
             next:(response:Incomes)=>{  
               setTimeout(() => {
-                this.router.navigate(['/transactionData'])
+                this.isLoading=false;
+                this.router.navigate(['/admin/transactionData'])
                 
               }, 3000);
               this.snackbar.open("Income Details Are Update Succefully!","Close",{duration:3000})

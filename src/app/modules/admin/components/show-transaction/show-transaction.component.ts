@@ -32,8 +32,8 @@ export class ShowTransactionComponent implements OnInit {
   totalItems = 0;
   dataIsLoad:boolean=false;
   accountType:PaymentType[];
+  userId:string;
   private subscriptions: Subscription[] = [];
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private apiService: ApiServiceService, private fb: FormBuilder,private cdr: ChangeDetectorRef,
@@ -52,6 +52,11 @@ export class ShowTransactionComponent implements OnInit {
 
   
   ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+if (userString) {
+  const user = JSON.parse(userString);
+  this.userId = user.id;
+}
     this.accountData();
     this.getSubcategory()
     setTimeout(() => {
@@ -63,7 +68,7 @@ export class ShowTransactionComponent implements OnInit {
   }
  
 accountData(){
-  const accountSub = this.apiService.getAccount().subscribe({
+  const accountSub = this.apiService.getAccount(this.userId).subscribe({
     next: (response: PaymentType[]) => {
       this.accountType = response;
     },
@@ -95,9 +100,9 @@ getSubcategory(){
   fetchData() {
    
   
-     this.apiService.getExpenses().subscribe({
+     this.apiService.getExpenses(this.userId).subscribe({
       next: (expenses: Expense[]) => {
-        const incomeSub = this.apiService.getIncomeDetails().subscribe({
+        const incomeSub = this.apiService.getIncomeDetails(this.userId).subscribe({
           next: (income: Incomes[]) => {
             const combinedData = [
               ...expenses.map(expense => {
@@ -106,7 +111,7 @@ getSubcategory(){
                     
                   const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
                   const account = this.accountType.find(item => item.id == expense.account).name;
-                  const category = subCategoryItem ? subCategoryItem.name : '';
+                  const category = subCategoryItem ? subCategoryItem.name : 'other';
                   return {
                     id: expense.id,
                     date: expense.date,
@@ -119,7 +124,7 @@ getSubcategory(){
               ...income.map(incomeItem => {
                 const subCategoryItem = this.subCategory.find(item => item.id === incomeItem.category);
                 const account = this.accountType.find(item => item.id == incomeItem.account).name;
-                const category = subCategoryItem ? subCategoryItem.name : '';
+                const category = subCategoryItem ? subCategoryItem.name : 'other';
                 return {
                   id: incomeItem.id,
                   date: incomeItem.date,
