@@ -89,19 +89,28 @@
       "category": "11cf",
       "amount": 10,
       "userId": "3caa"
+    },
+    {
+      "id": "69a4",
+      "type": "expense",
+      "date": "2024-07-03",
+      "account": "1",
+      "category": "be0d",
+      "amount": 96,
+      "userId": "76aa"
     }
   ],
   "PaymentType": [
     {
       "id": "1",
       "name": "Credite",
-      "balnce": 1088,
+      "balnce": 992,
       "userId": "76aa"
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 3815,
+      "balnce": 3730,
       "userId": "76aa"
     },
     {
@@ -139,14 +148,6 @@
       "category": "3c1a",
       "amount": 410,
       "id": "dc04",
-      "userId": "76aa"
-    },
-    {
-      "id": "9d47",
-      "date": "2024-07-11T18:30:00.000Z",
-      "account": "2",
-      "category": "3c1a",
-      "amount": 85,
       "userId": "76aa"
     },
     {
