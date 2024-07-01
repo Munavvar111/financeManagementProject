@@ -32,13 +32,21 @@
         </mat-error>
       </mat-form-field>
   
+     
       <mat-form-field appearance="outline">
         <mat-label>Password</mat-label>
         <input matInput formControlName="password" type="password" required>
         <mat-error *ngIf="registerForm.get('password').hasError('required')">
           Password is required
         </mat-error>
+        <mat-error *ngIf="registerForm.get('password').hasError('minlength')">
+          Password must be at least 8 characters long
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password').hasError('pattern')">
+          Password must contain at least one uppercase letter, one lowercase letter, and one number
+        </mat-error>
       </mat-form-field>
+      
   
       <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || emailExists">
         Register

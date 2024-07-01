@@ -64,6 +64,8 @@ export class TransectionComponent implements OnInit, AfterViewInit {
     end: new FormControl<Date | null>(null),
   });
   selected = 'option2';
+  showLinebar = false;
+  isLoading:boolean;
   filterForm = new FormGroup({
     fromDate: new FormControl(),
     toDate: new FormControl(),
@@ -169,6 +171,7 @@ if (userString) {
     };
 
     this.dataSource.filter = combinedFilter;
+    this.isLoading=false;
     this.dataIsLoad = true;
 
     if (this.dataSource.paginator) {
@@ -183,7 +186,9 @@ if (userString) {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.isLoading=true;
       if (result) {
+        result.date=this.commonService.formatedDate(result.date);
         console.log('Dialog result:', result);
         result.id = element.id;
         const updateFn =
@@ -229,6 +234,7 @@ if (userString) {
                   });
                 },
                 error: (err) => {
+                  this.isLoading=false;
                   console.error('Error updating entry', err);
                   this.snackbar.open('Error updating entry', 'Close', {
                     duration: 3000,
@@ -236,6 +242,7 @@ if (userString) {
                 },
               });
             } else {
+              this.isLoading=false;
               this.snackbar.open(
                 'Insufficient balance or account not found',
                 'Close',
@@ -244,6 +251,7 @@ if (userString) {
             }
           },
           error: (err) => {
+            this.isLoading=false;
             this.snackbar.open('Something went wrong', 'Close', {
               duration: 3000,
             });

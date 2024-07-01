@@ -27,7 +27,6 @@ export class AddExpensesComponent implements OnInit {
   expenseForm: FormGroup;
   myControl = new FormControl('');
   options: string[];
-  isLoading:boolean;
   expensesArray: FormGroup;
   accounts: PaymentType[];
   filteredOptions: string[];
@@ -35,6 +34,7 @@ export class AddExpensesComponent implements OnInit {
   categories: Subcategory[];
   userId:string;
   showLinebar = false;
+  isLoading:boolean;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private cdr: ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar, private router: Router, private commonService: CommonServiceService) {
    
   }

@@ -122,6 +122,13 @@ export class ApiServiceService {
       map(users => users.some(user => user.email === email))
     );
   }
+  forgotPassword(registration:Registration):Observable<Registration>{
+    return this.http.put<Registration>(`${this.url}/registration?email=${registration.email}`,registration,{
+      headers: this.getHeaders(),
+    })
+  }
+
+
   public isLoggedIn(): boolean {
     const user = this.getUser();
     if (user) {
@@ -137,4 +144,5 @@ export class ApiServiceService {
     }
     return null;
   }
+
 }

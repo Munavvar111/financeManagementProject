@@ -16,8 +16,14 @@
     <mat-form-field appearance="outline">
       <mat-label>Password</mat-label>
       <input matInput formControlName="password" type="password" required />
-      <mat-error *ngIf="loginForm.get('password').hasError('required')">
-        Password is required
+      <mat-error *ngIf="loginForm.get('email').hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="loginForm.get('email').hasError('email')">
+        Please enter a valid email address
+      </mat-error>
+      <mat-error *ngIf="loginForm.get('email').hasError('emailExists')">
+        This email is already registered
       </mat-error>
     </mat-form-field>
 
@@ -30,6 +36,8 @@
       Login
     </button>
   </form>
+  <!-- <button mat-button (click)="openForgotPasswordDialog()">Forgot Password?</button> -->
+
 </mat-card>
 <div
   class="line-progress-bar"

@@ -25,6 +25,8 @@ export class DetailDailogComponent {
   filteredAccounts: string[] = [];
   filteredCategories: string[] = [];
   userId:string;
+  showLinebar = false;
+  isLoading:boolean;
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DetailDailogComponent>,

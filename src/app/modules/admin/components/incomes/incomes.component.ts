@@ -86,8 +86,8 @@ export class IncomesComponent implements OnInit {
       this.incomeForm.get('userId').setValue(this.userId)
       // Format the date before submitting
       
-      formValue.date = this.commonService.formatedDate(formValue.date);
-  
+      this.incomeForm.get('date').setValue(this.commonService.formatedDate(formValue.date));
+      console.log(formValue.date)
       const selectedAccountType = formValue.account;
       const incomeAmount = formValue.amount;
 
