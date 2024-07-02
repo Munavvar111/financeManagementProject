@@ -12,9 +12,9 @@ describe('ForgotPasswordDialogComponent', () => {
   let dialogRefSpy: jest.Mocked<MatDialogRef<ForgotPasswordDialogComponent>>;
 
   beforeEach(async () => {
-    const dialogRefSpyObj = jest.fn().mockImplementation(() => ({
+    const dialogRefSpyObj = {
       close: jest.fn()
-    }));
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -37,7 +37,7 @@ describe('ForgotPasswordDialogComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(component).not.toBeFalsy();
   });
 
   it('should have an invalid form when fields are empty', () => {
@@ -66,8 +66,8 @@ describe('ForgotPasswordDialogComponent', () => {
     });
   });
 
-  // it('should call dialogRef.close on cancel', () => {
-  //   component.onCancel();
-  //   expect(dialogRefSpy.close).toHaveBeenCalled();
-  // });
+  it('should call dialogRef.close on cancel', () => {
+    component.onCancel();
+    expect(dialogRefSpy.close).toHaveBeenCalled();
+  });
 });
