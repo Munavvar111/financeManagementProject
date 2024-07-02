@@ -21,6 +21,9 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   styleUrl: './accounts.component.css',
 })
 export class AccountsComponent implements OnInit {
+  snackbar(snackbar: any, arg1: string) {
+      throw new Error('Method not implemented.');
+  }
   accounts: PaymentType[] = [];
   accountForm: FormGroup;
   editForm: FormGroup;
