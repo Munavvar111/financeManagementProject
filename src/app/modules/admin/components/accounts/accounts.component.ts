@@ -74,8 +74,8 @@ export class AccountsComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.isLoading=true;
         if (result) {
+          this.isLoading=true;
           this.onSubmit();
         }
       });
@@ -96,8 +96,8 @@ export class AccountsComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.isLoading=true;
         if (result) {
+          this.isLoading=true;
           this.onEditSubmit();
         }
       });

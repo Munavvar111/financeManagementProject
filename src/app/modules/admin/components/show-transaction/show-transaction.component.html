@@ -65,6 +65,7 @@
         </tr>
     }
   }
+ 
 @else {
   <h1>No Data Found</h1>
 }
@@ -77,6 +78,7 @@
     </mat-paginator>
 </div>
 }
+
 @placeholder () {
     <ngx-skeleton-loader appearance="line" count="8"/>
   }
@@ -86,4 +88,8 @@
   }
 
   </div>
-  
+  <div class="line-progress-bar" [class.show-progress]="showLinebar" [class.hide-progress]="!showLinebar"></div>
+  <div class="loader-container" *ngIf="isLoading">
+      <div class="loader">
+      </div>
+  </div>

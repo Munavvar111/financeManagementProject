@@ -32,6 +32,8 @@ export class ShowTransactionComponent implements OnInit {
   totalItems = 0;
   dataIsLoad:boolean=false;
   accountType:PaymentType[];
+  showLinebar = false;
+  isLoading:boolean;
   userId:string;
   private subscriptions: Subscription[] = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -168,7 +170,7 @@ getSubcategory(){
       const searchMatch = query
         ? Object.values(transaction).some(value => value.toString().toLowerCase().includes(query))
         : true;
-
+        this.isLoading=false;
       return dateMatch && searchMatch;
 
     });
@@ -184,6 +186,7 @@ getSubcategory(){
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.isLoading=true;
       if (result) {
         console.log('Dialog result:', result);
         result.id = element.id;
@@ -228,6 +231,7 @@ getSubcategory(){
                   });
                 },
                 error: (err) => {
+                  this.isLoading=false;
                   console.error('Error updating entry', err);
                   this.snackbar.open('Error updating entry', 'Close', {
                     duration: 3000,
@@ -235,6 +239,8 @@ getSubcategory(){
                 },
               });
             } else {
+              this.isLoading=false;
+
               this.snackbar.open(
                 'Insufficient balance or account not found',
                 'Close',
@@ -243,11 +249,16 @@ getSubcategory(){
             }
           },
           error: (err) => {
+            this.isLoading=false;
+
             this.snackbar.open('Something went wrong', 'Close', {
               duration: 3000,
             });
           },
         });
+      }
+      else{
+        this.isLoading=false;
       }
     });
   }

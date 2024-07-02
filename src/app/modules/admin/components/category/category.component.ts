@@ -132,8 +132,8 @@ export class CategoryComponent {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.isLoading=true;
         if (result) {
+          this.isLoading=true;
           this.onSubmit();
         }
       });

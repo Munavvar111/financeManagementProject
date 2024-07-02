@@ -175,11 +175,11 @@ if (userString) {
         })
         .afterClosed()
         .subscribe((result) => {
-          this.isLoading=true;
           result.account=this.accountType.find(item=>item.name==result.account).id,
           result.category=this.subCategory.find(item=>item.name==result.category).id,
           this.dataIsLoad=false;
           if (result) {
+            this.isLoading=true;
             console.log(result);
             if (result.type === 'income') {
               this.commonService
