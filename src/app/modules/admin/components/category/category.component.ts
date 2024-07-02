@@ -43,7 +43,8 @@ export class CategoryComponent {
   selectedSection: 'Income' | 'Expenses' | null = null;
   dataIsLoad: boolean = false;
   displayedColumns: string[] = ['id', 'categoryName', 'subcategoryName', 'actions'];
-
+  showLinebar = false;
+  isLoading:boolean;
   constructor(
     private categoryService: ApiServiceService,
     private fb: FormBuilder,
@@ -114,6 +115,7 @@ export class CategoryComponent {
             });
           });
         }
+        this.isLoading=false;
         return acc;
       }, []);
   }
@@ -130,6 +132,7 @@ export class CategoryComponent {
       })
       .afterClosed()
       .subscribe((result) => {
+        this.isLoading=true;
         if (result) {
           this.onSubmit();
         }
@@ -145,6 +148,7 @@ export class CategoryComponent {
           this.getSubCategory();
         },
         error: (err) => {
+        this.isLoading=false;
           this.snackbar.open('Error While Submitting The Category', 'Close', { duration: 3000 });
         },
       });
@@ -173,6 +177,7 @@ export class CategoryComponent {
       })
       .afterClosed()
       .subscribe((result) => {
+        this.isLoading=true;
         if (result) {
           this.onEditSubmit();
         }
@@ -186,6 +191,7 @@ export class CategoryComponent {
          this.filterCategories("")
         },
         error:err=>{
+        this.isLoading=false;
           this.snackbar.open("Error While The Updateing The Data","Close",{duration:3000})
         }
       });
@@ -193,7 +199,7 @@ export class CategoryComponent {
   }
 
   deleteSubcategory(subcategoryId:number): void {
-    
+
     Swal.fire({
       position: 'top',
       title: 'Are you sure?',
@@ -212,6 +218,7 @@ export class CategoryComponent {
             
           },
           error:err=>{
+            
             this.snackbar.open("error while removing the category","Close",{duration:3000})
           }
           

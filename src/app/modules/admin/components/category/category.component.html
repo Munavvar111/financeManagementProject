@@ -48,6 +48,11 @@
         </table>
       </div>
     </div>
+    <div class="line-progress-bar" [class.show-progress]="showLinebar" [class.hide-progress]="!showLinebar"></div>
+<div class="loader-container" *ngIf="isLoading">
+    <div class="loader">
+    </div>
+</div>
   }
   @placeholder () {
     <ngx-skeleton-loader appearance="line" count="8"/>

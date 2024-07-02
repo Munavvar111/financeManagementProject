@@ -27,6 +27,8 @@ export class AccountsComponent implements OnInit {
   dataIsLoad:boolean=false;
   editIndex: number | null = null;
   userId:string;
+  showLinebar = false;
+  isLoading:boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -72,6 +74,7 @@ export class AccountsComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
+        this.isLoading=true;
         if (result) {
           this.onSubmit();
         }
@@ -93,6 +96,7 @@ export class AccountsComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
+        this.isLoading=true;
         if (result) {
           this.onEditSubmit();
         }
@@ -113,6 +117,7 @@ export class AccountsComponent implements OnInit {
       };
 
       if (this.accounts.some((account) => account.name === newAccount.name)) {
+        this.isLoading=false;
         this.snackBar.open('Account name already exists', 'Close', {
           duration: 3000,
         });
@@ -123,12 +128,14 @@ export class AccountsComponent implements OnInit {
         next: (response: PaymentType) => {
           console.log('Account added successfully', response);
           this.accounts.push(response);
+          this.isLoading=false;
           this.snackBar.open('Account added successfully', 'Close', {
             duration: 3000,
           });
           this.accountForm.reset();
         },
         error: (err) => {
+          this.isLoading=false;
           console.error('Error adding account', err);
           this.snackBar.open('Error adding account', 'Close', {
             duration: 3000,
@@ -152,6 +159,8 @@ export class AccountsComponent implements OnInit {
         this.snackBar.open('Account name already exists', 'Close', {
           duration: 3000,
         });
+        this.isLoading=false;
+
         return;
       }
 
@@ -163,9 +172,11 @@ export class AccountsComponent implements OnInit {
             duration: 3000,
           });
           this.editForm.reset();
+          this.isLoading=false;
           this.editIndex = null;
         },
         error: (err) => {
+          this.isLoading=false;
           console.error('Error updating account', err);
           this.snackBar.open('Error updating account', 'Close', {
             duration: 3000,

@@ -33,8 +33,8 @@ export class AddExpensesComponent implements OnInit {
   filterCategoryOption: string[];
   categories: Subcategory[];
   userId:string;
-  showLinebar = false;
-  isLoading:boolean;
+    showLinebar = false;
+    isLoading:boolean;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private cdr: ChangeDetectorRef, private apiService: ApiServiceService, private snackBar: MatSnackBar, private router: Router, private commonService: CommonServiceService) {
    
   }
@@ -158,7 +158,7 @@ export class AddExpensesComponent implements OnInit {
         this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
         setTimeout(() => {
           
-          this.isLoading=false;
+          this.isLoading=true;
         }, 3000);
       } else {
 
