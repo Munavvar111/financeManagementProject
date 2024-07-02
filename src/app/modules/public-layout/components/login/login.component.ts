@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Registration, User } from '../../../../common/models/expenses.model';
 import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { response } from 'express';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,7 @@ export class LoginComponent {
 
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.apiService.loginUser(email, password).subscribe({
+      this.apiService.loginUser().subscribe({
         next: (register: Registration[]) => {
           const user = register.find(user => user.email === email && user.password === password);
           if (user) {
@@ -68,8 +69,36 @@ export class LoginComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      this.apiService.loginUser().subscribe({
+        next:(response:Registration[])=>{
+          const user = response.find(user => user.email === result.email && user.password === result.oldPassword);
+          if(user){
+            user.password=result.newPassword;
+            this.apiService.forgotPassword(user).subscribe({
+              next:(response:Registration)=>{
+                this.snackBar.open("Forgot Password Successfull","Close",{duration:3000})
+              },
+              error:err=>{
+                this.snackBar.open("Something Went Wrong","Close",{duration:3000})
+                
+              }
+            })
+    
 
-      // this.apiService.forgotPassword().subscribe({})
+          }
+          else{
+            this.snackBar.open("Email Is Not Found","Close",{duration:3000})
+
+          }
+
+        },
+        error:err=>{
+          this.snackBar.open("Something Went Wrong","Close",{duration:3000})
+
+        }
+      })
+      console.log(result)
     });
   }
 

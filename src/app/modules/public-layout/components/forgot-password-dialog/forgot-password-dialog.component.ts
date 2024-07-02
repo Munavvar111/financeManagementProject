@@ -37,7 +37,7 @@ export class ForgotPasswordDialogComponent {
   onSubmit(): void {
     if (this.forgotPasswordForm.valid) {
       console.log(this.forgotPasswordForm.value);
-      this.dialogRef.close();
+      this.dialogRef.close(this.forgotPasswordForm.value);
     }
   }
 }

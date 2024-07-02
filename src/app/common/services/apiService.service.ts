@@ -114,7 +114,7 @@ export class ApiServiceService {
   registrationUser(registration:Registration):Observable<Registration>{
     return this.http.post<Registration>(`${this.url}/registration`,registration);
   }
-  loginUser(email: string, password: string): Observable<Registration[]> {
+  loginUser(): Observable<Registration[]> {
     return this.http.get<Registration[]>(`${this.url}/registration`)
   }
   checkEmailExists(email: string): Observable<boolean> {
@@ -123,7 +123,7 @@ export class ApiServiceService {
     );
   }
   forgotPassword(registration:Registration):Observable<Registration>{
-    return this.http.put<Registration>(`${this.url}/registration?email=${registration.email}`,registration,{
+    return this.http.put<Registration>(`${this.url}/registration/${registration.id}`,registration,{
       headers: this.getHeaders(),
     })
   }
