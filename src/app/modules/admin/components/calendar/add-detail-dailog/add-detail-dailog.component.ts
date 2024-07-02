@@ -78,10 +78,10 @@ export class AddDetailDailogComponent {
         console.log(response);
         this.incomeCategories = response
           .filter(item => item.type === 'income')
-          .flatMap(item => item.subcategories.map(sub => sub.name));
+          .flatMap(item => item.subcategories.filter(item=>item.userId==this.userId).map(sub => sub.name));
         this.expenseCategories = response
           .filter(item => item.type === 'expense')
-          .flatMap(item => item.subcategories.map(sub => sub.name));
+          .flatMap(item => item.subcategories.filter(item=>item.userId==this.userId).map(sub => sub.name));
         
         // Set up value changes subscription only after categories are loaded
         this.form.get('type').valueChanges.subscribe(type => {

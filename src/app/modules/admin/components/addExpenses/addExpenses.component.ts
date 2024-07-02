@@ -85,7 +85,7 @@ export class AddExpensesComponent implements OnInit {
     this.myControl = this.expenseForm.get('account') as FormControl;
     this.addExpense();
 
-    this.apiService.getSubCategories().subscribe({
+    this.apiService.getSubCategories(this.userId).subscribe({
       next: (response: Subcategory[]) => {
         this.categories =response.filter(item => item.categoryId=="2")
         console.log(this.categories)
@@ -158,9 +158,10 @@ export class AddExpensesComponent implements OnInit {
         this.snackBar.open('Expense successfully added', 'Close', { duration: 3000 });
         setTimeout(() => {
           
-          this.isLoading=true;
+          this.isLoading=false;
         }, 3000);
       } else {
+        this.isLoading=false;
 
         this.snackBar.open('Please Enter The Some Income!!', 'Close', { duration: 3000 });
       }

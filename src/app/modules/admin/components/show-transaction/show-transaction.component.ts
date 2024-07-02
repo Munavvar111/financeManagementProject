@@ -83,7 +83,7 @@ accountData(){
 
 }
 getSubcategory(){
-  this.apiService.getSubCategories().subscribe({
+  this.apiService.getSubCategories(this.userId).subscribe({
     next: (response: Subcategory[]) => {
       this.subCategory = response;
       console.log(this.subCategory,"good")
@@ -250,8 +250,7 @@ getSubcategory(){
           },
           error: (err) => {
             this.isLoading=false;
-
-            this.snackbar.open('Something went wrong', 'Close', {
+            this.snackbar.open(err, 'Close', {
               duration: 3000,
             });
           },

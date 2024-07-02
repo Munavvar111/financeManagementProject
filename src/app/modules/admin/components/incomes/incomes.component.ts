@@ -23,7 +23,7 @@ export class IncomesComponent implements OnInit {
   filterCategoryOption:string[];
   isLoading=false;
   showLinebar=false;
-  categories:Subcategory[];
+  Incomecategories:Subcategory[];
   userId:string;
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
@@ -60,10 +60,10 @@ export class IncomesComponent implements OnInit {
     //     this.categories=response.filter(item=>item.type==='income').flatMap(item=>item.subcategories.map(item=>item.name))
     //   }
     // })
-    this.apiService.getSubCategories().subscribe({
+    this.apiService.getSubCategories(this.userId).subscribe({
       next: (response: Subcategory[]) => {
-        this.categories =response.filter(item => item.categoryId=="1")
-        console.log(this.categories)
+        this.Incomecategories =response.filter(item => item.categoryId=="1")
+        console.log(this.Incomecategories)
 
       }
     })

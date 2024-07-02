@@ -70,9 +70,16 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Category</mat-label>
                   <mat-select formControlName="category" >
-                    <mat-option *ngFor="let option of categories" [value]="option.id">
-                      {{ option.name }}
-                    </mat-option>
+                    @if (categories.length>0) {
+                      <mat-option *ngFor="let option of categories" [value]="option.id">
+                        {{ option.name }}
+                      </mat-option>
+                    }
+                    @else {
+                      <mat-option disabled>
+                        No Category Found
+                      </mat-option>
+                    }
                   </mat-select>
                 </mat-form-field>
                 

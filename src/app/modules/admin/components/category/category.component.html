@@ -26,7 +26,7 @@
           </tr>
         </thead>
           <tbody>
-            @if (displayedSubcategories) {
+            @if (displayedSubcategories.length>0) {
 
               @for (subcategory of displayedSubcategories; track $index) {
                 
@@ -36,13 +36,13 @@
                   <td>{{ subcategory.subcategoryName }}</td>
                   <td>
                     <button mat-button color="primary" (click)="updateCategory(subcategory.id)">Edit</button>
-                    <!-- <button mat-button color="warn" (click)="deleteSubcategory(subcategory.id)">Delete</button> -->
+                    <button mat-button color="warn" (click)="deleteSubcategory(subcategory.id)">Delete</button>
                   </td>
                 </tr>
               }
-            }@else {
-              <h1>Data Is Not Found</h1>
-            }
+              }@else {
+                <h1>Data Is Not Found</h1>
+              }
 
           </tbody>
         </table>

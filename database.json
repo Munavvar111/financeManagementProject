@@ -4,19 +4,10 @@
       "type": "Expense",
       "date": "2024-06-11",
       "account": "2",
-      "category": "29",
+      "category": "11cf",
       "amount": 500,
-      "id": "e026",
-      "userId": "76aa"
-    },
-    {
-      "type": "Expense",
-      "date": "2024-06-13",
-      "account": "2",
-      "category": "83ec",
-      "amount": 1000,
-      "id": "887c",
-      "userId": "76aa"
+      "userId": "76aa",
+      "id": "e026"
     },
     {
       "id": "ab62",
@@ -33,33 +24,6 @@
       "date": "2024-06-04",
       "account": "2",
       "category": "30",
-      "amount": 100,
-      "userId": "76aa"
-    },
-    {
-      "id": "34ba",
-      "type": "expense",
-      "date": "2024-06-17",
-      "account": "1",
-      "category": "30",
-      "amount": 10,
-      "userId": "76aa"
-    },
-    {
-      "id": "fffc",
-      "type": "expense",
-      "date": "2024-06-17",
-      "account": "1",
-      "category": "83ec",
-      "amount": 100,
-      "userId": "76aa"
-    },
-    {
-      "id": "c4c6",
-      "type": "expense",
-      "date": "2024-07-03",
-      "account": "1",
-      "category": "83ec",
       "amount": 100,
       "userId": "76aa"
     },
@@ -91,29 +55,65 @@
       "userId": "3caa"
     },
     {
-      "id": "69a4",
+      "id": "f882",
       "type": "expense",
-      "date": "2024-07-03",
-      "account": "1",
-      "category": "be0d",
-      "amount": 96,
-      "userId": "76aa"
-    },
-    {
-      "id": "99e2",
-      "type": "expense",
-      "date": "2024-07-03",
-      "account": "1",
-      "category": "be0d",
+      "date": "2024-07-01",
+      "account": "a364",
+      "category": "eae0",
       "amount": 100,
+      "userId": "6ab6"
+    },
+    {
+      "id": "c3ab",
+      "type": "expense",
+      "date": "2024-07-09",
+      "account": "9411",
+      "category": "37ce",
+      "amount": 100,
+      "userId": "ba79"
+    },
+    {
+      "id": "40ae",
+      "type": "expense",
+      "date": "2024-07-04",
+      "account": "9411",
+      "category": "37ce",
+      "amount": 100,
+      "userId": "ba79"
+    },
+    {
+      "id": "e9f8",
+      "type": "expense",
+      "date": "2024-07-04",
+      "account": "9411",
+      "category": "d130",
+      "amount": 10,
+      "userId": "ba79"
+    },
+    {
+      "id": "b929",
+      "type": "expense",
+      "date": "2024-07-01",
+      "account": "1",
+      "category": "29",
+      "amount": 10,
       "userId": "76aa"
     },
     {
-      "id": "a64c",
+      "type": "Expense",
+      "date": "2024-07-03",
+      "account": "1",
+      "category": "30",
+      "amount": 10,
+      "userId": "76aa",
+      "id": "2ca7"
+    },
+    {
+      "id": "e407",
       "type": "expense",
-      "date": "2024-07-08",
+      "date": "2024-07-14",
       "account": "2",
-      "category": "11cf",
+      "category": "83ec",
       "amount": 100,
       "userId": "76aa"
     }
@@ -121,14 +121,14 @@
   "PaymentType": [
     {
       "id": "1",
-      "name": "Credite",
-      "balnce": 892,
+      "name": "Crediter",
+      "balnce": 1288,
       "userId": "76aa"
     },
     {
       "id": "2",
       "name": "Debit",
-      "balnce": 3630,
+      "balnce": 4630,
       "userId": "76aa"
     },
     {
@@ -148,6 +148,18 @@
       "name": "good",
       "balnce": 100,
       "userId": "3caa"
+    },
+    {
+      "id": "a364",
+      "name": "Default Account",
+      "balnce": 900,
+      "userId": "6ab6"
+    },
+    {
+      "id": "9411",
+      "name": "cash",
+      "balnce": 900,
+      "userId": "ba79"
     }
   ],
   "income": [
@@ -183,6 +195,32 @@
       "category": "3c1a",
       "amount": 10,
       "userId": "3caa"
+    },
+    {
+      "id": "ae4a",
+      "date": "2024-07-09",
+      "account": "9411",
+      "category": "4933",
+      "amount": 100,
+      "userId": "ba79"
+    },
+    {
+      "id": "b0c5",
+      "type": "income",
+      "date": "2024-07-03",
+      "account": "9411",
+      "category": "4933",
+      "amount": 10,
+      "userId": "ba79"
+    },
+    {
+      "id": "b7ff",
+      "type": "income",
+      "date": "2024-07-01",
+      "account": "1",
+      "category": "3c1a",
+      "amount": 10,
+      "userId": "76aa"
     }
   ],
   "categories": [
@@ -203,47 +241,92 @@
     {
       "id": "29",
       "name": "Travelsers",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "30",
       "name": "Other (Expenses)",
-      "categoryId": "2"
-    },
-    {
-      "id": "3c1a",
-      "name": "info",
-      "categoryId": "1"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "83ec",
       "name": "Clothing",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "be0d",
       "name": "Shoes",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "11cf",
       "name": "Gifts",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "dccd",
       "name": "Fuel",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "9ff5",
       "name": "Entertainment ",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "76aa"
     },
     {
       "id": "c7c3",
       "name": "foods",
-      "categoryId": "2"
+      "categoryId": "2",
+      "userId": "3caa"
+    },
+    {
+      "id": "6de3",
+      "name": "hospital",
+      "categoryId": "2",
+      "userId": "76aa"
+    },
+    {
+      "id": "159a",
+      "name": "hospital",
+      "categoryId": "1",
+      "userId": "6ab6"
+    },
+    {
+      "id": "eae0",
+      "name": "incharge",
+      "categoryId": "2",
+      "userId": "6ab6"
+    },
+    {
+      "id": "37ce",
+      "name": "cash",
+      "categoryId": "2",
+      "userId": "ba79"
+    },
+    {
+      "id": "2d71",
+      "name": "loan",
+      "categoryId": "1",
+      "userId": "ba79"
+    },
+    {
+      "id": "f5e9",
+      "name": "cash",
+      "categoryId": "1",
+      "userId": "76aa"
+    },
+    {
+      "id": "2758",
+      "name": "car",
+      "categoryId": "1",
+      "userId": "76aa"
     }
   ],
   "registration": [
@@ -252,7 +335,7 @@
       "firstName": "mjunav",
       "lastName": "popa",
       "email": "jayesh@gmail.com",
-      "password": "123"
+      "password": "123@Abcabca"
     },
     {
       "id": "3caa",
@@ -260,6 +343,20 @@
       "lastName": "popatiya",
       "email": "kunj@gmail.com",
       "password": "123456789"
+    },
+    {
+      "id": "6ab6",
+      "firstName": "yash",
+      "lastName": "patel",
+      "email": "yash@gmail.com",
+      "password": "123@ABCabc"
+    },
+    {
+      "id": "ba79",
+      "firstName": "rahul",
+      "lastName": "shah",
+      "email": "rahul@gmail.com",
+      "password": "123@ABCabc"
     }
   ]
 }

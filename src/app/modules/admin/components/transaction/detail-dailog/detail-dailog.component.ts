@@ -64,9 +64,9 @@ export class DetailDailogComponent {
     this.apiService.getCategories().subscribe({
       next: (response: Category[]) => {
         this.incomeCategories = response.filter(item => item.type === 'income')
-          .flatMap(item => item.subcategories.map(sub => sub.name));
-        this.expenseCategories = response.filter(item => item.type === 'expense')
-          .flatMap(item => item.subcategories.map(sub => sub.name));
+          .flatMap(item => item.subcategories.filter(item=>item.userId==this.userId).map(sub => sub.name));
+        this.expenseCategories = response.filter(item => item.type === 'expense' )
+          .flatMap(item => item.subcategories.filter(item=>item.userId==this.userId).map(sub => sub.name));
         
         this.filteredCategories = this.data.type === 'Income' ? this.incomeCategories : this.expenseCategories;
       }

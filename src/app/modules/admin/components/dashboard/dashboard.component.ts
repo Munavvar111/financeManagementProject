@@ -102,7 +102,7 @@ if (userString) {
     }, 3000);
   }
 loadSubCategory(){
-  this.service.getSubCategories().subscribe({
+  this.service.getSubCategories(this.userId).subscribe({
     next:(response:Subcategory[])=>{
       this.subCategory=response;
     },

@@ -35,7 +35,7 @@ export class CommonServiceService {
     }
   
     if (!this.validateBalance(account, amount, type, previousAmount)) {
-      throw new Error("Insufficient Balance"); 
+      return throwError(new Error('Insufficient Balance'));
     }
   
     if (type === 'Expenses') {

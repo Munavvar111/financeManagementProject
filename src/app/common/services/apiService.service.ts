@@ -16,7 +16,7 @@ import {
   providedIn: 'root',
 })
 export class ApiServiceService {
-  private url = `https://jsonserver-69rb.onrender.com`;
+  private url = `http://localhost:3000`;
 
  
   constructor(private http: HttpClient) {}
@@ -80,8 +80,8 @@ export class ApiServiceService {
       `${this.url}/categories?_embed=subcategories`
     );
   }
-  getSubCategories():Observable<Subcategory[]>{
-    return this.http.get<Subcategory[]>(`${this.url}/subcategories`)
+  getSubCategories(userId:string):Observable<Subcategory[]>{
+    return this.http.get<Subcategory[]>(`${this.url}/subcategories?userId=${userId}`)
   }
   addSubCategory(subCategory): Observable<Subcategory> {
     return this.http.post<Subcategory>(

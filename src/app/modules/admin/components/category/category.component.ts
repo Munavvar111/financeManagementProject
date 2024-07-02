@@ -44,6 +44,7 @@ export class CategoryComponent {
   dataIsLoad: boolean = false;
   displayedColumns: string[] = ['id', 'categoryName', 'subcategoryName', 'actions'];
   showLinebar = false;
+  userId:string;
   isLoading:boolean;
   constructor(
     private categoryService: ApiServiceService,
@@ -56,15 +57,22 @@ export class CategoryComponent {
     this.addCategoryForm = this.fb.group({
       name: ['', Validators.required],
       categoryId: ['', Validators.required],
+      userId:[null]
     });
     this.editForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       categoryId: ['', Validators.required],
+      userId:[null]
     });
   }
 
   ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     this.searchForm = this.fb.group({
       filterText: [''],
     });
@@ -79,7 +87,7 @@ export class CategoryComponent {
   }
 
   getSubCategory():void{
-    this.categoryService.getSubCategories().subscribe({
+    this.categoryService.getSubCategories(this.userId).subscribe({
       next:(response:Subcategory[])=>{
         console.log(response)
         this.subcategories=response;
@@ -104,7 +112,7 @@ export class CategoryComponent {
     this.displayedSubcategories = this.categories
       .reduce((acc, category) => {
         const matchingSubcategories = category.subcategories.filter(subcategory =>
-          subcategory.name.toLowerCase().includes(lowerSearchText)
+          subcategory.name.toLowerCase().includes(lowerSearchText) && subcategory.userId==this.userId
         );
         if (matchingSubcategories.length > 0 || category.name.toLowerCase().includes(lowerSearchText)) {
           matchingSubcategories.forEach(subcategory => {
@@ -141,11 +149,13 @@ export class CategoryComponent {
 
   onSubmit() {
     if (this.addCategoryForm.valid) {
+      this.addCategoryForm.get('userId').setValue(this.userId)
       this.categoryService.addSubCategory(this.addCategoryForm.value).subscribe({
         next: (response: Subcategory) => {
           this.getCategory();
           this.filterCategories('');
           this.getSubCategory();
+          this.addCategoryForm.reset()
         },
         error: (err) => {
         this.isLoading=false;
@@ -162,9 +172,11 @@ export class CategoryComponent {
       (item) => item.id == subcategoryId
     );
     this.editForm.setValue({
+      
       id: subcategoryById.id,
       name: subcategoryById.name,
       categoryId: subcategoryById.categoryId,
+      userId:this.userId
     });
     this.dialog
       .open(AddCategoryComponent, {
@@ -177,8 +189,8 @@ export class CategoryComponent {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.isLoading=true;
         if (result) {
+          this.isLoading=true;
           this.onEditSubmit();
         }
       });

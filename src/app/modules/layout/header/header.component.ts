@@ -23,7 +23,15 @@ export class HeaderComponent implements AfterViewInit {
   isScreenSmall = false;
   isNamesVisible = true; 
   firstName:string;
-  
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscKeydown(event: KeyboardEvent) {
+    console.log("this")
+    if (this.drawer && this.drawer.close && event.key === 'Escape') {
+      this.drawer.open();
+    }
+    
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.isScreenSmall = event.target.innerWidth < 992;

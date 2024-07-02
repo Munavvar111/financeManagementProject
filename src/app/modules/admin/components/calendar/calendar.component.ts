@@ -80,7 +80,7 @@ if (userString) {
   }
 
   getSubCategory(){
-    this.apiService.getSubCategories().subscribe({
+    this.apiService.getSubCategories(this.userId).subscribe({
       next:(response:Subcategory[])=>{
         this.subCategory=response;
       },
