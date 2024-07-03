@@ -44,7 +44,7 @@ export class IncomesComponent implements OnInit {
       const user = JSON.parse(userString);
       this.userId = user.id;
     }
-    this.apiService.getAccount(this.userId).subscribe({
+    this.apiService.getAccount(this.userId).subscribe({ 
       next: (response: PaymentType[]) => {
         this.paymentTypes=response;
         this.accountTypes = response.map(data => data.name);
@@ -54,12 +54,7 @@ export class IncomesComponent implements OnInit {
         console.log(err);
       }
     });
-    // this.apiService.getCategories().subscribe({
-    //   next:(response:Category[])=>{
-    //     console.log(response)
-    //     this.categories=response.filter(item=>item.type==='income').flatMap(item=>item.subcategories.map(item=>item.name))
-    //   }
-    // })
+
     this.apiService.getSubCategories(this.userId).subscribe({
       next: (response: Subcategory[]) => {
         this.Incomecategories =response.filter(item => item.categoryId=="1")

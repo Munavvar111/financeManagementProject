@@ -1,28 +1,48 @@
-import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import { ApiServiceService } from '../../../../common/services/apiService.service';
-import { Expense, Incomes, PaymentType, Subcategory, Transection } from '../../../../common/models/expenses.model';
+import {
+  Expense,
+  Incomes,
+  PaymentType,
+  Subcategory,
+  Transection,
+} from '../../../../common/models/expenses.model';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { GenericChartComponent } from '../../../../common/chart/generic-chart/generic-chart.component';
-import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CalendarComponent } from '../calendar/calendar.component';
+import {
+  NgxSkeletonLoaderComponent,
+  NgxSkeletonLoaderModule,
+} from 'ngx-skeleton-loader';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, CommonModule, GenericChartComponent,NgxSkeletonLoaderModule,CalendarComponent],
+  imports: [
+    ReactiveFormsModule,
+    MaterialModule,
+    CommonModule,
+    GenericChartComponent,
+    NgxSkeletonLoaderModule,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-  chartdata: Expense[];
+  chartdata: Expense[] = [];
   labeldata: string[] = [];
-  incomeData: Incomes[];
-  subCategory:Subcategory[];
+  incomeData: Incomes[] = [];
+  subCategory: Subcategory[];
   realdata: number[] = [];
   colordata: string[] = [];
   last7DaysData: { date: string; amount: number }[] = [];
@@ -31,28 +51,31 @@ export class DashboardComponent implements OnInit {
   monthlyExpenses: number[] = Array(12).fill(0);
   monthlyIncome: number[] = Array(12).fill(0);
   rangeForm: FormGroup;
-  totalBalance:number=0;
-  currentMonthExpenses: number; 
-  previousMonthExpenses: number; 
-  currentMonthIncome: number; 
+  totalBalance: number = 0;
+  currentMonthExpenses: number;
+  previousMonthExpenses: number;
+  currentMonthIncome: number;
   previousMonthIncome: number;
-  dataIsLoad:boolean=false;
-  userId:string;
-
-  PaymentType:PaymentType[];
+  dataIsLoad: boolean = false;
+  userId: string;
+  showLinebar = false;
+  isLoading:boolean=true;
+  PaymentType: PaymentType[];
   expenses: Expense[];
   transactions: Transection[] = [];
   filteredTransactions: Transection[] = [];
   selectedType: string = 'all';
-  creditCardLimit: number = 100000;  // Define the credit card limit
-  currentCreditUsage: number ; // Define the current credit usage
+  creditCardLimit: number = 100000; // Define the credit card limit
+  currentCreditUsage: number; // Define the current credit usage
 
   doughnutChartData: ChartConfiguration['data'] | null = null;
   doughnutChartOptions: ChartConfiguration['options'] | null = null;
   doughnutChartDataCurrentMonthData: ChartConfiguration['data'] | null = null;
-  doughnutChartDataCurrentMonthOptions: ChartConfiguration['options'] | null = null;
+  doughnutChartDataCurrentMonthOptions: ChartConfiguration['options'] | null =
+    null;
   doughnutChartDataLastMonthData: ChartConfiguration['data'] | null = null;
-  doughnutChartDataLastMonthOptions: ChartConfiguration['options'] | null = null;
+  doughnutChartDataLastMonthOptions: ChartConfiguration['options'] | null =
+    null;
   barChartData: ChartConfiguration['data'] | null = null;
   barChartOptions: ChartConfiguration['options'] | null = null;
   incomeVsExpenseChartData: ChartConfiguration['data'] | null = null;
@@ -63,7 +86,6 @@ export class DashboardComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
-
   ) {
     this.rangeForm = this.fb.group({
       selectedRange: [''], // Initial form control value
@@ -77,72 +99,76 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-// Retrieve user information from localStorage
-const userString = localStorage.getItem('user');
-if (userString) {
-  const user = JSON.parse(userString);
-  this.userId = user.id;
-}
+    // Retrieve user information from localStorage
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.userId = user.id;
+    }
     //for recent Transaction
     this.loadSubCategory();
     this.loadTransactions();
     //for patchValue in dropdown in money flow chart
     this.rangeForm.patchValue({ selectedRange: 'last365' });
-    //initial data 
+    //initial data
     //total balance for to display in the data
     this.getTotalBalance();
     setTimeout(() => {
-    this.loadInitialData();
-      
+      this.loadInitialData();
     }, 1000);
     //
-    this.getCurrentAndPreviousMonthData()
+    this.getCurrentAndPreviousMonthData();
+    
     setTimeout(() => {
-      this.dataIsLoad = true
+      this.dataIsLoad = true;
     }, 3000);
   }
-loadSubCategory(){
-  this.service.getSubCategories(this.userId).subscribe({
-    next:(response:Subcategory[])=>{
-      this.subCategory=response;
-    },
-    error:err=>{
-      console.log("Something Went Wrong")
-    }
-  })
-}
-  getTotalBalance(){
+  loadSubCategory() {
+    this.service.getSubCategories(this.userId).subscribe({
+      next: (response: Subcategory[]) => {
+        this.subCategory = response;
+        this.isLoading=false;
+      },
+      error: (err) => {
+        console.log('Something Went Wrong');
+      },
+    });
+  }
+  getTotalBalance() {
     this.service.getAccount(this.userId).subscribe({
-      next:(response:PaymentType[])=>{
-        this.PaymentType=response;
+      next: (response: PaymentType[]) => {
+        this.PaymentType = response;
         // this.currentCreditUsage=response.find(item=>item.id=='1').balnce;
-        this.totalBalance = response.reduce((acc, item) => acc + (item.balnce || 0), 0);
-      
-      }
-    })
-  } 
+        this.totalBalance = response.reduce(
+          (acc, item) => acc + (item.balnce || 0),
+          0
+        );
+      },
+    });
+  }
   // get usagePercentage(): number {
   //   // return (this.currentCreditUsage / this.creditCardLimit) * 100;
   // }
 
   loadInitialData(): void {
-    this.service.getIncomeAndExpenses(this.userId).subscribe(([incomes, expenses]) => {
-      this.transactions = [
-        ...incomes.map(item => ({ ...item, type: 'income' })),
-        ...expenses.map(item => ({ ...item, type: 'expenses' })),
-      ];
-    });
+    this.service
+      .getIncomeAndExpenses(this.userId)
+      .subscribe(([incomes, expenses]) => {
+        this.transactions = [
+          ...incomes.map((item) => ({ ...item, type: 'income' })),
+          ...expenses.map((item) => ({ ...item, type: 'expenses' })),
+        ];
+      });
 
     this.service.getExpenses(this.userId).subscribe((result) => {
       this.chartdata = result;
-      console.log(this.chartdata)
+      console.log(this.chartdata);
       if (this.chartdata != null) {
-        this.processExpenses(this.chartdata)
-        
-        this.cdr.detectChanges()
+        this.processExpenses(this.chartdata);
+
+        this.cdr.detectChanges();
         this.initializeDoughnutChart();
         this.initializeBarChart();
-        
       }
     });
 
@@ -153,47 +179,49 @@ loadSubCategory(){
 
       this.initializeDoughnutChartForCurrentMonth();
       this.initializeDoughnutChartForLastMonth();
-      this.cdr.detectChanges()
+      this.cdr.detectChanges();
     });
 
     this.loadData('last365');
   }
   initializeDoughnutChartForCurrentMonth(): void {
-    this.labeldata = ["Income", "Expenses"];
+    this.labeldata = ['Income', 'Expenses'];
     this.realdata = [this.currentMonthIncome, this.currentMonthExpenses];
     this.colordata = [this.getRandomColor(1, 3), this.getRandomColor(0, 2)];
 
     this.doughnutChartDataCurrentMonthData = {
       labels: this.labeldata,
-      datasets: [{
-        data: this.realdata,
-        backgroundColor: this.colordata,
-      }],
+      datasets: [
+        {
+          data: this.realdata,
+          backgroundColor: this.colordata,
+        },
+      ],
     };
-    
+
     this.doughnutChartDataCurrentMonthOptions = {
       responsive: true,
       maintainAspectRatio: false,
-
-        };
+    };
   }
 
   initializeDoughnutChartForLastMonth(): void {
-    this.labeldata = ["Income", "Expenses"];
+    this.labeldata = ['Income', 'Expenses'];
     this.realdata = [this.previousMonthIncome, this.previousMonthExpenses];
     this.colordata = [this.getRandomColor(1, 3), this.getRandomColor(0, 2)];
 
     this.doughnutChartDataLastMonthData = {
       labels: this.labeldata,
-      datasets: [{
-        data: this.realdata,
-        borderRadius:2,
-        backgroundColor: this.colordata,
-      }],
+      datasets: [
+        {
+          data: this.realdata,
+          borderRadius: 2,
+          backgroundColor: this.colordata,
+        },
+      ],
     };
     this.doughnutChartDataLastMonthOptions = {
       responsive: true,
-
     };
   }
   //initialize the doughnutchart of the category
@@ -225,8 +253,7 @@ loadSubCategory(){
     };
     this.doughnutChartOptions = {
       responsive: true,
-      maintainAspectRatio:false,
-
+      maintainAspectRatio: false,
     };
   }
   //initialize the bar chart data in data
@@ -239,7 +266,7 @@ loadSubCategory(){
       labels: last7DaysLabels,
       datasets: [
         {
-          label:"Expenses",
+          label: 'Expenses',
           data: last7DaysAmounts,
           backgroundColor: 'red',
         },
@@ -259,7 +286,7 @@ loadSubCategory(){
   getCurrentAndPreviousMonthData(): void {
     const now = new Date();
     const currentMonth = now.getMonth();
-    const previousMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
     this.currentMonthExpenses = this.monthlyExpenses[currentMonth];
     this.previousMonthExpenses = this.monthlyExpenses[previousMonth];
@@ -268,12 +295,16 @@ loadSubCategory(){
   }
 
   //add all expenses for the particular category
-  private aggregateDataByCategory(data: Expense[]): { [category: string]: number } {
+  private aggregateDataByCategory(data: Expense[]): {
+    [category: string]: number;
+  } {
     const aggregatedData = {};
     for (const item of data) {
-      console.log(data)
-      const category = this.subCategory.find(items=>items.id==item.category);
-      const categoryName=category ? category.name:"other";
+      console.log(data);
+      const category = this.subCategory.find(
+        (items) => items.id == item.category
+      );
+      const categoryName = category ? category.name : 'other';
       const amount = item.amount;
       if (aggregatedData[categoryName]) {
         aggregatedData[categoryName] += amount;
@@ -288,20 +319,51 @@ loadSubCategory(){
   private loadData(selectedRange: string): void {
     this.service.getExpenses(this.userId).subscribe((expensesResult) => {
       this.chartdata = expensesResult;
-      console.log(this.chartdata)
+      console.log(this.chartdata);
       if (this.chartdata != null) {
         switch (selectedRange) {
           case 'last7':
-            this.lastNDaysExpenses = this.getLastnDaysExpenses(this.chartdata, 7);
-            this.lastNDaysIncomes = this.getLastnDaysIncomes(this.incomeData, 7);
-            this.initializeIncomeVsExpenseChart(this.last7DaysData.map((item) => item.date), this.lastNDaysIncomes, this.lastNDaysExpenses);
+            this.lastNDaysExpenses = this.getLastnDaysExpenses(
+              this.chartdata,
+              7
+            );
+            this.lastNDaysIncomes = this.getLastnDaysIncomes(
+              this.incomeData,
+              7
+            );
+            this.initializeIncomeVsExpenseChart(
+              this.last7DaysData.map((item) => item.date),
+              this.lastNDaysIncomes,
+              this.lastNDaysExpenses
+            );
             break;
           case 'last30':
-            this.initializeIncomeVsExpenseChart(this.getLastnDaysLabels(30), this.getLastnDaysIncomes(this.incomeData, 30), this.getLastnDaysExpenses(this.chartdata, 30));
+            this.initializeIncomeVsExpenseChart(
+              this.getLastnDaysLabels(30),
+              this.getLastnDaysIncomes(this.incomeData, 30),
+              this.getLastnDaysExpenses(this.chartdata, 30)
+            );
             break;
           case 'last365':
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            this.initializeIncomeVsExpenseChart(months, this.monthlyIncome, this.monthlyExpenses);
+            const months = [
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec',
+            ];
+            this.initializeIncomeVsExpenseChart(
+              months,
+              this.monthlyIncome,
+              this.monthlyExpenses
+            );
             break;
           default:
             break;
@@ -310,17 +372,16 @@ loadSubCategory(){
     });
   }
 
-
   //get the monthely expenses add all expenses that credited in months
   processExpenses(expenses: Expense[]): void {
-    console.log(expenses)
+    console.log(expenses);
     expenses.forEach((expense) => {
-      console.log(expense)
+      console.log(expense);
       const month = new Date(expense.date).getMonth();
-      console.log(expense.amount)
+      console.log(expense.amount);
       this.monthlyExpenses[month] += expense.amount;
     });
-    console.log(this.monthlyExpenses)
+    console.log(this.monthlyExpenses);
   }
 
   //get the monthely income add all income that recived in months
@@ -332,7 +393,11 @@ loadSubCategory(){
   }
 
   //config for the income vs expenses chart
-  initializeIncomeVsExpenseChart(labels: string[], incomes: number[], expenses: number[]): void {
+  initializeIncomeVsExpenseChart(
+    labels: string[],
+    incomes: number[],
+    expenses: number[]
+  ): void {
     this.incomeVsExpenseChartData = {
       labels: labels,
       datasets: [
@@ -364,7 +429,6 @@ loadSubCategory(){
         },
       },
     };
-
   }
 
   //bar chart get last 7 day expenses
@@ -409,7 +473,9 @@ loadSubCategory(){
     data.forEach((item) => {
       const itemDate = new Date(item.date);
       if (itemDate >= startDate && itemDate <= today) {
-        const index = Math.floor((itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)+1);
+        const index = Math.floor(
+          (itemDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1
+        );
         expenses[index] += item.amount;
       }
     });
@@ -417,7 +483,7 @@ loadSubCategory(){
     return expenses;
   }
 
-  private getLastnDaysIncomes(data: Incomes[], days: number): number[] {  
+  private getLastnDaysIncomes(data: Incomes[], days: number): number[] {
     const today = new Date();
     const lastNDaysIncomes: number[] = Array(days).fill(0);
 
@@ -438,33 +504,46 @@ loadSubCategory(){
     return `hsl(${hue}, 70%, 50%)`;
   }
 
-  
-  //recent transection 
+  //recent transection
   loadTransactions(): void {
-    this.service.getIncomeAndExpenses(this.userId).subscribe(([income, expenses]) => {
-      this.transactions = [
-        ...income.map(item => ({ ...item, type: 'income', icon: 'assets/income.jpg' })), // Add appropriate icon
-        ...expenses.map(item => ({ ...item, type: 'expense', icon: 'assets/expenses.png' })) // Add appropriate icon
-      ];
-      this.applyFilter(this.selectedType);
-    });
+    this.service
+      .getIncomeAndExpenses(this.userId)
+      .subscribe(([income, expenses]) => {
+        this.transactions = [
+          ...income.map((item) => ({
+            ...item,
+            type: 'income',
+            icon: 'assets/income.jpg',
+          })), // Add appropriate icon
+          ...expenses.map((item) => ({
+            ...item,
+            type: 'expense',
+            icon: 'assets/expenses.png',
+          })), // Add appropriate icon
+        ];
+        this.applyFilter(this.selectedType);
+      });
   }
 
   applyFilter(type: string): void {
     this.selectedType = type;
     let filtered = this.transactions;
     if (type !== 'all') {
-      filtered = this.transactions.filter(transaction => transaction.type === type);
+      filtered = this.transactions.filter(
+        (transaction) => transaction.type === type
+      );
     }
 
     // Sort transactions by date
-    filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    filtered.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 
     // Limit to the last 5 transactions
     this.filteredTransactions = filtered.slice(0, 5);
   }
 
   filterTransactions(type: string): void {
-    this.applyFilter(type); 
+    this.applyFilter(type);
   }
 }

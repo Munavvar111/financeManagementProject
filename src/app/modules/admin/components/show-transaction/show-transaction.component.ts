@@ -62,8 +62,8 @@ if (userString) {
     this.accountData();
     this.getSubcategory()
     setTimeout(() => {
-      
       this.fetchData();
+      
     }, 1000);
     this.filterForm.valueChanges.subscribe(() => this.applyFilter());
    
