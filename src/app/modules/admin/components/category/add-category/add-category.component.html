@@ -6,11 +6,12 @@
             <input matInput formControlName="name" />
      
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field >
             <mat-label>Select Account</mat-label>
-            <mat-select formControlName="categoryId" name="food">
+
+            <mat-select formControlName="categoryId" name="food" >
               @for (category of data.categories; track category) {
-                <mat-option [value]="category.id">{{category.name}}</mat-option>
+                <mat-option [value]="category.id" [disabled]="data.isEdit">{{category.name}}</mat-option>
               }
             </mat-select>
           </mat-form-field>
