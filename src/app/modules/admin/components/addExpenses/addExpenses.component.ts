@@ -272,7 +272,17 @@ export class AddExpensesComponent implements OnInit {
       { name: 'amount', label: 'Amount', type: 'input', inputType: 'number', required: true }
     ];
   
-    this.dailogService.openFormDialog('Edit Expense', fields);
+    const dialogRef = this.dailogService.openFormDialog('Edit Expense', fields);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.handleFormResult(result);
+      }
+    });
+  }
+
+  handleFormResult(result: any): void {
+    console.log('Form result:', result);
   }
   
   

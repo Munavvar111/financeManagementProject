@@ -9,14 +9,14 @@ export class DailogService {
 
   constructor(private dialog: MatDialog) { }
 
-  openDialog(component: any, title: string, componentData?: any): void {
-    this.dialog.open(component, {
+  openDialog(component: any, title: string, componentData?: any) {
+    return this.dialog.open(component, {
       width: '400px',
       data: { title, component, componentData }
     });
   }
 
-  openFormDialog(title: string, fields: any[]): void {
-    this.openDialog(DailogComponent, title, { fields });
+  openFormDialog(title: string, fields: any[]) {
+    return this.openDialog(DailogComponent, title, { fields });
   }
 }
