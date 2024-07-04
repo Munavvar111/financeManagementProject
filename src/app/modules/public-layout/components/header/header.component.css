@@ -1,4 +1,4 @@
-header {
+/* header {
     background-color: #f5f7fa;
     padding: 10px 0;
     border-bottom: 1px solid #ddd;
@@ -52,7 +52,7 @@ header {
   nav ul li a:hover {
     color: #007bff;
   }
-  
+   */
 header {
   background: #fff;
   border-bottom: 1px solid #ccc;

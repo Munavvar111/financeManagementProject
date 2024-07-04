@@ -16,7 +16,6 @@
                 matInput
                 [matDatepicker]="picker"
                 formControlName="date"
-                id="date"
               />
               <mat-datepicker-toggle
                 matIconSuffix
@@ -145,6 +144,8 @@
             >
               Cancel
             </button>
+            <button mat-button color="primary" type="button" (click)="editElement()">Edit</button>
+
           </div>
         </form>
       </div>
