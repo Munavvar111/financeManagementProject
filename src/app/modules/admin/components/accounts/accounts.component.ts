@@ -7,11 +7,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { AddAccountsComponent } from './add-accounts/add-accounts.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { DailogService } from '../../../../common/services/dailog.service';
 
 @Component({
   selector: 'app-accounts',
@@ -37,7 +37,8 @@ export class AccountsComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiServiceService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dailogService:DailogService
   ) {
     this.accountForm = this.fb.group({
       accountName: ['', Validators.required],
@@ -67,41 +68,59 @@ export class AccountsComponent implements OnInit {
   }
 
   openDialog(): void {
-    this.dialog
-      .open(AddAccountsComponent, {
-        width: '300px',
-        data: {
-          form: this.accountForm,
-          isEdit: false,
-        },
-      })
-      .afterClosed()
+    const fields=[
+      {
+        name:'accountName',
+        label:'Account Name',
+        type:'input',
+        inputType:'text',
+        require:true
+      },
+      {
+        name:'accountBalance',
+        label:"Account Balance",
+        type:'input',
+        inputType:'number',
+        require:true
+      }
+    ]
+    const title ='Add Account';
+    const dialogRef = this.dailogService.openFormDialog(title, fields);
+
+   
+      dialogRef.afterClosed()
       .subscribe((result) => {
+        console.log(result)
+
         if (result) {
           this.isLoading=true;
-          this.onSubmit();
+          this.onSubmit(result);
         }
       });
   }
 
   openEditDialog(index: number): void {
-    this.editIndex = index;
-    this.editForm.setValue({
-      accountName: this.accounts[index].name,
-    });
-    this.dialog
-      .open(AddAccountsComponent, {
-        width: '300px',
-        data: {
-          form: this.editForm,
-          isEdit: true,
-        },
-      })
-      .afterClosed()
+    this.editIndex=index;
+    const fields=[
+      {
+        name:'accountName',
+        label:'Account Name',
+        type:'input',
+        value:this.accounts[index].name,
+        inputType:'text',
+        require:true
+      }
+    
+    ]
+    const title ='Edit Account';
+    const dialogRef = this.dailogService.openFormDialog(title, fields);
+
+      dialogRef.afterClosed()
       .subscribe((result) => {
         if (result) {
+          console.log(result)
           this.isLoading=true;
-          this.onEditSubmit();
+          this.onEditSubmit(result);
         }
       });
   }
@@ -111,11 +130,10 @@ export class AccountsComponent implements OnInit {
     return control ? control.invalid && control.touched : false;
   }
 
-  onSubmit(): void {
-    if (this.accountForm.valid) {
+  onSubmit(result): void {
       const newAccount: PaymentType = {
-        name: this.accountForm.value.accountName,
-        balnce: parseFloat(this.accountForm.value.accountBalance),
+        name: result.accountName,
+        balnce: parseFloat(result.accountBalance),
         userId:this.userId
       };
 
@@ -145,14 +163,12 @@ export class AccountsComponent implements OnInit {
           });
         },
       });
-    } else {
-      this.accountForm.markAllAsTouched();
     }
-  }
 
-  onEditSubmit(): void {
-    if (this.editForm.valid && this.editIndex !== null) {
-      const updatedName = this.editForm.value.accountName;
+  onEditSubmit(result): void {
+    console.log(result)
+    console.log(this.accounts)
+      const updatedName = result.accountName;
 
       if (
         this.accounts.some(
@@ -186,8 +202,5 @@ export class AccountsComponent implements OnInit {
           });
         },
       });
-    } else {
-      this.editForm.markAllAsTouched();
     }
-  }
 }

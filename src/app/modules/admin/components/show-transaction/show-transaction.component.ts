@@ -10,9 +10,9 @@ import Swal from 'sweetalert2';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DetailDailogComponent } from '../transaction/detail-dailog/detail-dailog.component';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { DailogService } from '../../../../common/services/dailog.service';
 
 @Component({
   selector: 'app-show-transaction',
@@ -41,6 +41,7 @@ export class ShowTransactionComponent implements OnInit {
   constructor(private apiService: ApiServiceService, private fb: FormBuilder,private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
     private router:Router,
+    private dailogService:DailogService,
     private commonService: CommonServiceService,
     private snackbar: MatSnackBar) {
     this.filterForm = this.fb.group({
@@ -107,13 +108,13 @@ getSubcategory(){
         const incomeSub = this.apiService.getIncomeDetails(this.userId).subscribe({
           next: (income: Incomes[]) => {
             const combinedData = [
-              ...expenses.map(expense => {
+              ...expenses.map(expense => {  
                 console.log(expenses)
                 console.log(this.subCategory)
                     
                   const subCategoryItem = this.subCategory.find(item => item.id === expense.category);
                   const account = this.accountType.find(item => item.id == expense.account).name;
-                  const category = subCategoryItem ? subCategoryItem.name : 'other';
+                  const category = subCategoryItem ? subCategoryItem.name : (this.subCategory.length > 0 ? this.subCategory.filter(item=>item.categoryId=="2")[0].name : undefined);
                   return {
                     id: expense.id,
                     date: expense.date,
@@ -126,7 +127,7 @@ getSubcategory(){
               ...income.map(incomeItem => {
                 const subCategoryItem = this.subCategory.find(item => item.id === incomeItem.category);
                 const account = this.accountType.find(item => item.id == incomeItem.account).name;
-                const category = subCategoryItem ? subCategoryItem.name : 'other';
+                const category = subCategoryItem ? subCategoryItem.name : (this.subCategory.length > 0 ? this.subCategory.filter(item=>item.categoryId=="1")[0].name : undefined);
                 return {
                   id: incomeItem.id,
                   date: incomeItem.date,
@@ -179,17 +180,61 @@ getSubcategory(){
     this.paginateData();
   }
   editElement(element: Transection): void {
-    const title = element.type === 'Income' ? 'Edit Income' : 'Edit Expense';
-    const dialogRef = this.dialog.open(DetailDailogComponent, {
-      width: '400px',
-      data: { ...element, title },
-    });
+    console.log(element)
+    const accountOptions = this.accountType.map(account => ({
+      value: account.name,
+      label: account.name
+    }));
+    const incomeCategories = this.subCategory.filter(item=>item.categoryId=="1").map(item=>({
+      value:item.name,
+      label:item.name
+    }))
+    const expensesCategories = this.subCategory.filter(item=>item.categoryId=="2").map(item=>({
+      value:item.name,
+      label:item.name
+    }))
+    const getCategoryOptions = (type) => {
+      return type === 'Income' ? incomeCategories : expensesCategories;
+    };
 
+    const fields=[
+      {
+        name: 'type', 
+        label: 'Type', 
+        type: 'select', 
+        options: [
+          { value: 'Income', label: "Income",disabled:true, },
+          { value: "Expense", label: "Expense",disabled:true, }
+        ],
+        required: true,
+        value:element.type,
+        
+        onChange: (newValue, form) => {
+          const categoryField = form.fields.find(field => field.name === 'category');
+          if (categoryField) {
+            categoryField.options = getCategoryOptions(newValue);
+            form.form.get('category')?.setValue('');
+          }
+        }
+      },
+      { name: 'date', label: 'Date', type: 'date', required: true,value:element.date },
+      { name: 'account', label: 'Account', type: 'select', options: accountOptions, required: true,value:element.account },
+      { name: 'category', label: 'Category', type: 'select', options: getCategoryOptions(element.type), required: true,value:element.category },
+      { name: 'amount', label: 'Amount', type: 'input', inputType: 'number', required: true,value:element.amount }
+    ];
+    const title = element.type === 'Income' ? 'Edit Income' : 'Edit Expense';
+    const dialogRef = this.dailogService.openFormDialog(title, fields);
+
+
+    
     dialogRef.afterClosed().subscribe((result) => {
       this.isLoading=true;
+      result.amount=parseFloat(result.amount)
       if (result) {
+        result.date=this.commonService.formatedDate(result.date)
         console.log('Dialog result:', result);
         result.id = element.id;
+        result.userId=this.userId
         result.category=this.subCategory.find(item=>item.name==result.category).id;
         result.account=this.accountType.find(item=>item.name==result.account).id;
         const updateFn =
@@ -261,6 +306,10 @@ getSubcategory(){
       }
     });
   }
+  handleFormResult(result: any): void {
+    console.log('Form result:', result);
+  }
+  
 
   deleteElement(element: Transection): void {
     Swal.fire({

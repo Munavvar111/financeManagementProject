@@ -47,6 +47,7 @@ export interface Transection{
   account:string;
   icon: string;
   type: string; 
+  category:string;
 }
 export interface FieldConfig {
   type: string;

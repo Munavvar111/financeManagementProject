@@ -14,10 +14,10 @@ import {
 import { DetailDailogComponent } from './detail-dailog/detail-dailog.component';
 import { MaterialModule } from '../../../../common/matrial/matrial.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { AddDetailDailogComponent } from './add-detail-dailog/add-detail-dailog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonServiceService } from '../../../../common/services/common-service.service';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { DailogService } from '../../../../common/services/dailog.service';
 
 @Component({
   selector: 'app-calendar',
@@ -50,6 +50,7 @@ showLinebar = false;
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
     @Inject(PLATFORM_ID) private platformId: any,
+    private dailogService:DailogService,
     private commonService: CommonServiceService
   ) {}
 
@@ -169,19 +170,62 @@ if (userString) {
   handleDateClick(arg) {
     if (isPlatformBrowser(this.platformId)) {
       const date = arg.dateStr;
-      this.dialog
-        .open(AddDetailDailogComponent, {
-          data: { date },
-        })
-        .afterClosed()
+      const accountOptions = this.accountType.map(account => ({
+        value: account.name,
+        label: account.name
+      }));
+      const incomeCategories = this.subCategory.filter(item=>item.categoryId=="1").map(item=>({
+        value:item.name,
+        label:item.name
+      }))
+      const expensesCategories = this.subCategory.filter(item=>item.categoryId=="2").map(item=>({
+        value:item.name,
+        label:item.name
+      }))
+      const getCategoryOptions = (type) => {
+        return type === 'Income' ? incomeCategories : expensesCategories;
+      };
+  
+      const fields=[
+        {
+          name: 'type', 
+          label: 'Type', 
+          type: 'select', 
+          options: [
+            { value: 'Income', label: "Income" },
+            { value: "Expense", label: "Expense" }
+          ],
+          required: true,
+          
+          onChange: (newValue, form) => {
+            const categoryField = form.fields.find(field => field.name === 'category');
+            if (categoryField) {
+              categoryField.options = getCategoryOptions(newValue);
+              form.form.get('category')?.setValue('');
+            }
+          }
+        },
+        { name: 'date', label: 'Date', type: 'date', required: true,value:date },
+        { name: 'account', label: 'Account', type: 'select', options: accountOptions, required: true},
+        { name: 'category', label: 'Category', type: 'select', options: getCategoryOptions(''), required: true },
+        { name: 'amount', label: 'Amount', type: 'input', inputType: 'number', required: true }
+      ];
+      const title = "Add Income/Expense";
+      const dialogRef = this.dailogService.openFormDialog(title, fields);
+  
+        
+      dialogRef.afterClosed()
         .subscribe((result) => {
+          result.amount=parseFloat(result.amount)
+          console.log(typeof(result.amount))
           result.account=this.accountType.find(item=>item.name==result.account).id,
           result.category=this.subCategory.find(item=>item.name==result.category).id,
           this.dataIsLoad=false;
           if (result) {
+            result.userId=this.userId;
             this.isLoading=true;
             console.log(result);
-            if (result.type === 'income') {
+            if (result.type === 'Income') {
               this.commonService
                 .updateAccountBalance(
                   result.account,

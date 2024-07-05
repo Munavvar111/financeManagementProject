@@ -19,10 +19,7 @@ export const layoutRoutes: Routes = [
                 path:'addExpenses',
                 loadComponent:()=>import('../admin/components/addExpenses/addExpenses.component').then((m)=>m.AddExpensesComponent  )
             },
-            {
-                path:'transactions',
-                loadComponent:()=>import('../admin/components/transaction/transection.component').then((m)=>m.TransectionComponent)
-            },
+            
             {
                 path:'accounts',
                 loadComponent:()=>import('../admin/components/accounts/accounts.component').then((m)=>m.AccountsComponent)

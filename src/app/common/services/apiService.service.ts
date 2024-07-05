@@ -1,11 +1,10 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
+import { NetworkService } from './network.service'; // Make sure to import the NetworkService
 import {
   Category,
   Expense,
   Incomes,
-  Login,
   PaymentType,
   Registration,
   Subcategory,
@@ -16,118 +15,94 @@ import {
   providedIn: 'root',
 })
 export class ApiServiceService {
-  private url = `https://jsonserver-69rb.onrender.com`;
+  constructor(private networkService: NetworkService) {}
 
- 
-  constructor(private http: HttpClient) {}
-
-  private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-  }
-
-  getExpenses(userId:string): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.url}/expenses?userId=${userId}`);
+  getExpenses(userId: string): Observable<Expense[]> {
+    return this.networkService.get<Expense[]>(`/expenses`, { userId });
   }
 
   postExpenses(expenses: Expense): Observable<Expense> {
-    return this.http.post<Expense>(`${this.url}/expenses`, expenses, {
-      headers: this.getHeaders(),
-    });
+    return this.networkService.post<Expense>(`/expenses`, expenses);
   }
 
   updateExpense(expenses: Expense): Observable<Expense> {
-    return this.http.put<Expense>(
-      `${this.url}/expenses/${expenses.id}`,
-      expenses,
-      { headers: this.getHeaders() }
-    );
+    return this.networkService.put<Expense>(`/expenses/${expenses.id}`, expenses);
   }
-  getAccount(userId:string): Observable<PaymentType[]> {
-    return this.http.get<PaymentType[]>(`${this.url}/PaymentType?userId=${userId}`);
+
+  getAccount(userId: string): Observable<PaymentType[]> {
+    return this.networkService.get<PaymentType[]>(`/PaymentType`, { userId });
   }
 
   postAccount(paymentType: PaymentType): Observable<PaymentType> {
-    return this.http.post<PaymentType>(`${this.url}/PaymentType`, paymentType, {
-      headers: this.getHeaders(),
-    });
+    return this.networkService.post<PaymentType>(`/PaymentType`, paymentType);
   }
+
   updateAccount(account: PaymentType): Observable<PaymentType> {
     console.log(account);
-    return this.http.put<PaymentType>(
-      `${this.url}/PaymentType/${account.id}`,
-      account,
-      { headers: this.getHeaders() }
-    );
+    return this.networkService.put<PaymentType>(`/PaymentType/${account.id}`, account);
   }
-  getIncomeDetails(userId:string): Observable<Incomes[]> {
-    return this.http.get<Incomes[]>(`${this.url}/income?userId=${userId}`);
+
+  getIncomeDetails(userId: string): Observable<Incomes[]> {
+    return this.networkService.get<Incomes[]>(`/income`, { userId });
   }
+
   postIncomeDetails(income: Incomes): Observable<Incomes> {
-    return this.http.post<Incomes>(`${this.url}/income`, income, {
-      headers: this.getHeaders(),
-    });
+    return this.networkService.post<Incomes>(`/income`, income);
   }
+
   updateIncomeDetails(income: Incomes): Observable<Incomes> {
-    return this.http.put<Incomes>(`${this.url}/income/${income.id}`, income, {
-      headers: this.getHeaders(),
-    });
+    return this.networkService.put<Incomes>(`/income/${income.id}`, income);
   }
 
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(
-      `${this.url}/categories?_embed=subcategories`
-    );
+    return this.networkService.get<Category[]>(`/categories`, { _embed: 'subcategories' });
   }
-  getSubCategories(userId:string):Observable<Subcategory[]>{
-    return this.http.get<Subcategory[]>(`${this.url}/subcategories?userId=${userId}`)
+
+  getSubCategories(userId: string): Observable<Subcategory[]> {
+    return this.networkService.get<Subcategory[]>(`/subcategories`, { userId });
   }
-  addSubCategory(subCategory): Observable<Subcategory> {
-    return this.http.post<Subcategory>(
-      `${this.url}/subcategories`,
-      subCategory
-    );
+
+  addSubCategory(subCategory: Subcategory): Observable<Subcategory> {
+    return this.networkService.post<Subcategory>(`/subcategories`, subCategory);
   }
 
   deleteSubCategory(subcategoryId: number): Observable<Subcategory> {
-    return this.http.delete<Subcategory>(
-      `${this.url}/subcategories/${subcategoryId}`
-    );
-  }
-  updateSubCategory(subcategory: Subcategory): Observable<Subcategory> {
-    return this.http.put<Subcategory>(
-      `${this.url}/subcategories/${subcategory.id}`,
-      subcategory
-    );
+    return this.networkService.delete<Subcategory>(`/subcategories/${subcategoryId}`);
   }
 
-  getIncomeAndExpenses(userId:string): Observable<any[]> {
+  updateSubCategory(subcategory: Subcategory): Observable<Subcategory> {
+    return this.networkService.put<Subcategory>(`/subcategories/${subcategory.id}`, subcategory);
+  }
+
+  getIncomeAndExpenses(userId: string): Observable<any[]> {
     return forkJoin([this.getIncomeDetails(userId), this.getExpenses(userId)]);
   }
+
   deleteExpenses(expenseId: string): Observable<Expense> {
-    return this.http.delete<Expense>(`${this.url}/expenses/${expenseId}`);
+    return this.networkService.delete<Expense>(`/expenses/${expenseId}`);
   }
+
   deleteIncome(incomeId: string): Observable<Incomes> {
-    return this.http.delete<Expense>(`${this.url}/income/${incomeId}`);
+    return this.networkService.delete<Incomes>(`/income/${incomeId}`);
   }
-  registrationUser(registration:Registration):Observable<Registration>{
-    return this.http.post<Registration>(`${this.url}/registration`,registration);
+
+  registrationUser(registration: Registration): Observable<Registration> {
+    return this.networkService.post<Registration>(`/registration`, registration);
   }
+
   loginUser(): Observable<Registration[]> {
-    return this.http.get<Registration[]>(`${this.url}/registration`)
+    return this.networkService.get<Registration[]>(`/registration`);
   }
+
   checkEmailExists(email: string): Observable<boolean> {
-    return this.http.get<any[]>(`${this.url}/registration`).pipe(
+    return this.networkService.get<any[]>(`/registration`).pipe(
       map(users => users.some(user => user.email === email))
     );
   }
-  forgotPassword(registration:Registration):Observable<Registration>{
-    return this.http.put<Registration>(`${this.url}/registration/${registration.id}`,registration,{
-      headers: this.getHeaders(),
-    })
-  }
 
+  forgotPassword(registration: Registration): Observable<Registration> {
+    return this.networkService.put<Registration>(`/registration/${registration.id}`, registration);
+  }
 
   public isLoggedIn(): boolean {
     const user = this.getUser();
@@ -136,6 +111,7 @@ export class ApiServiceService {
     }
     return false;
   }
+
   public getUser(): User | null {
     const userJson = localStorage.getItem('user');
     if (userJson) {
@@ -144,5 +120,4 @@ export class ApiServiceService {
     }
     return null;
   }
-
 }
